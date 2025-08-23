@@ -123,7 +123,7 @@ end
 
 function getMyGuiScreenSize()
     local screenWidth, screenHeight = sm.gui.getScreenSize()
-    
+
     -- 720p, 1080p, 1440p, 4k
 
     if screenWidth >= 3840 and screenHeight >= 2160 then
@@ -144,7 +144,7 @@ end
 sm.log.info("[SM ReGui] ----- Scrap Mechanic ReGui - The new way of making advanced user interfaces -----")
 
 ---@class sm.regui
-sm.regui = {}
+sm.regui = sm.regui or {}
 sm.regui.version = sm.json.open("$CONTENT_DATA/version.json") ---@type number
 
 dofile("./Logger.lua")
@@ -272,11 +272,11 @@ function sm.regui:render()
     local function renderWidget(widget)
         if not widget.instanceProperties.type then
             -- We should skip this widget or else MyGui will throw a critcial error and crash
-            
+
             warn("Widget without type found, skipping: " .. (instanceProperties.name or "Unnamed"))
             return ""
         end
-        
+
         local output = "<Widget"
         local instanceProperties = widget.instanceProperties and unpack({widget.instanceProperties}) or {}
         if widget.positionSize then
@@ -394,7 +394,7 @@ local function findWidgetRecursiveRaw(gui, widgetName)
         if widget.instanceProperties.name and widget.instanceProperties.name == widgetName then
             return widget
         end
-        
+
         for _, child in pairs(widget.children) do
             local widget = iterator(child)
             if widget then
@@ -416,35 +416,30 @@ function sm.regui:setWidgetPosition(widgetName, position)
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
     assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
 
-    local xVal = position.x ~= nil and position.x or position[1]
-    local yVal = position.y ~= nil and position.y or position[2]
-    assert(type(xVal) == "number", "'x' (or index 1) not found or was not a number")
-    assert(type(yVal) == "number", "'y' (or index 2) not found or was not a number")
+    local x = position.x ~= nil and position.x or position[1]
+    local y = position.y ~= nil and position.y or position[2]
+    assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
+    assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
-    local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
-    local screenWidth, screenHeight = sm.gui.getScreenSize()
-    
-    local x = sm.util.clamp(math.floor(xVal), 0, screenWidth)
-    local y = sm.util.clamp(math.floor(yVal), 0, screenHeight)
 
     local width = current.width
     local height = current.height
 
     if not current.usePixels then
-        width  = math.floor(myguiScreenWidth  / width)
-        height = math.floor(myguiScreenHeight / height)
+        width  = 1920 / width
+        height = 1080 / height
     end
 
     widget.positionSize = {
         usePixels = true,
-        x         = x,
-        y         = y,
-        width     = width,
-        height    = height
+        x         = math.floor(x),
+        y         = math.floor(y),
+        width     = math.floor(width ),
+        height    = math.floor(height)
     }
 end
 
@@ -453,27 +448,23 @@ function sm.regui:setWidgetPositionPercentage(widgetName, position)
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
     assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
 
-    local xVal = position.x ~= nil and position.x or position[1]
-    local yVal = position.y ~= nil and position.y or position[2]
-    assert(type(xVal) == "number", "'x' (or index 1) not found or was not a number")
-    assert(type(yVal) == "number", "'y' (or index 2) not found or was not a number")
+    local x = position.x ~= nil and position.x or position[1]
+    local y = position.y ~= nil and position.y or position[2]
+    assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
+    assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
-    local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
-
-    local x = sm.util.clamp(xVal, 0, 1)
-    local y = sm.util.clamp(yVal, 0, 1)
 
     local width = current.width
     local height = current.height
 
     -- Convert pixel dimensions to percentages if needed
     if current.usePixels then
-        width  = width  / myguiScreenWidth
-        height = height / myguiScreenHeight
+        width  = width  / 1920
+        height = height / 1080
     end
 
     widget.positionSize = {
@@ -490,35 +481,30 @@ function sm.regui:setWidgetSize(widgetName, size)
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
     assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
 
-    local widthVal = size.x ~= nil and size.x or size[1]
-    local heightVal = size.y ~= nil and size.y or size[2]
-    assert(type(widthVal) == "number", "'width' (or index 1) not found or was not a number")
-    assert(type(heightVal) == "number", "'height' (or index 2) not found or was not a number")
+    local width = size.x ~= nil and size.x or size[1]
+    local height = size.y ~= nil and size.y or size[2]
+    assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
+    assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
-    local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
-    local screenWidth, screenHeight = sm.gui.getScreenSize()
-
-    local width = sm.util.clamp(math.floor(widthVal), 0, screenWidth)
-    local height = sm.util.clamp(math.floor(heightVal), 0, screenHeight)
 
     local x = current.x
     local y = current.y
 
     if not current.usePixels then
-        x = math.floor(myguiScreenWidth  * x)
-        y = math.floor(myguiScreenHeight * y)
+        x = 1920 * x
+        y = 1080 * y
     end
 
     widget.positionSize = {
         usePixels = true,
-        x         = x,
-        y         = y,
-        width     = width,
-        height    = height
+        x         = math.floor(x),
+        y         = math.floor(y),
+        width     = math.floor(width ),
+        height    = math.floor(height)
     }
 end
 
@@ -527,26 +513,22 @@ function sm.regui:setWidgetSizePercentage(widgetName, size)
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
     assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
 
-    local widthVal = size.x ~= nil and size.x or size[1]
-    local heightVal = size.y ~= nil and size.y or size[2]
-    assert(type(widthVal) == "number", "'width' (or index 1) not found or was not a number")
-    assert(type(heightVal) == "number", "'height' (or index 2) not found or was not a number")
+    local width = size.x ~= nil and size.x or size[1]
+    local height = size.y ~= nil and size.y or size[2]
+    assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
+    assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
-    local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
-
-    local width = sm.util.clamp(widthVal, 0, 1)
-    local height = sm.util.clamp(heightVal, 0, 1)
 
     local x = current.x
     local y = current.y
 
     if current.usePixels then
-        x = x / myguiScreenWidth
-        y = y / myguiScreenHeight
+        x = x / 1920
+        y = y / 1080
     end
 
     widget.positionSize = {
@@ -600,7 +582,7 @@ function sm.regui:setWidgetProperties(widgetName, data)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
     assert(type(data) == "table", "data is expected to be a table")
-    
+
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
@@ -637,7 +619,7 @@ local function createControllerWrapper(controller, widget)
         setType = function(self, newType)
             assert(type(self) == "table", "Invalid ReGuiInstance!")
             assert(type(newType) == "string", "newType is expected to be a string")
-            
+
             controller.type = newType
         end,
 
@@ -700,6 +682,19 @@ end
 local function createWidgetWrapper(gui, parentWidget, widget)
     ---@class ReGui.Widget
     local output = {
+        setTemplateContents = function (self, state)
+            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            assert(type(state) == "boolean", "stat is expected to be a boolean")
+            
+            widget.isTemplateContents = state
+        end,
+
+        isTemplateContents = function (self)
+            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            
+            return widget.isTemplateContents
+        end,
+
         getName = function(self)
             assert(type(self) == "table", "Invalid ReGuiInstance!")
             return widget.instanceProperties.name or ""
@@ -789,7 +784,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         setProperties = function (self, data)
             assert(type(self) == "table", "Invalid ReGuiInstance!")
             assert(type(data) == "table", "data is expected to be a table")
-            
+
             for key, value in pairs(data) do
                 self:setProperty(key, value)
             end
@@ -816,7 +811,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
                     output = tostring(translatedText)
                 }
             end
-            
+
             widget.properties[index] = tostring(value)
         end,
 
@@ -850,30 +845,25 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
 
-            local xVal = position.x ~= nil and position.x or position[1]
-            local yVal = position.y ~= nil and position.y or position[2]
-            assert(type(xVal) == "number", "'x' (or index 1) not found or was not a number")
-            assert(type(yVal) == "number", "'y' (or index 2) not found or was not a number")
+            local x = position.x ~= nil and position.x or position[1]
+            local y = position.y ~= nil and position.y or position[2]
+            assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
+            assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
 
-            local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
-            local screenWidth, screenHeight = sm.gui.getScreenSize()
-            local x = sm.util.clamp(math.floor(xVal), 0, screenWidth)
-            local y = sm.util.clamp(math.floor(yVal), 0, screenHeight)
-
-            local width = widget.positionSize.width
+            local width  = widget.positionSize.width
             local height = widget.positionSize.height
 
             if not widget.positionSize.usePixels then
-                width  = math.floor(myguiScreenWidth  / width)
-                height = math.floor(myguiScreenHeight / height)
+                width  = 1080 / width
+                height = 1920 / height
             end
 
             widget.positionSize = {
                 usePixels = true,
-                x         = x,
-                y         = y,
-                width     = width,
-                height    = height
+                x         = math.floor(x),
+                y         = math.floor(y),
+                width     = math.floor(width ),
+                height    = math.floor(height)
             }
         end,
 
@@ -882,21 +872,17 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
 
-            local xVal = position.x ~= nil and position.x or position[1]
-            local yVal = position.y ~= nil and position.y or position[2]
-            assert(type(xVal) == "number", "'x' (or index 1) not found or was not a number")
-            assert(type(yVal) == "number", "'y' (or index 2) not found or was not a number")
-
-            local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()            
-            local x = sm.util.clamp(xVal, 0, 1)
-            local y = sm.util.clamp(yVal, 0, 1)
+            local x = position.x ~= nil and position.x or position[1]
+            local y = position.y ~= nil and position.y or position[2]
+            assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
+            assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
 
             local width = widget.positionSize.width
             local height = widget.positionSize.height
 
             if widget.positionSize.usePixels then
-                width  = width / myguiScreenWidth
-                height = height / myguiScreenHeight
+                width  = width  / 1920
+                height = height / 1080
             end
 
             widget.positionSize = {
@@ -913,30 +899,25 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
 
-            local widthVal = size.x ~= nil and size.x or size[1]
-            local heightVal = size.y ~= nil and size.y or size[2]
-            assert(type(widthVal) == "number", "'width' (or index 1) not found or was not a number")
-            assert(type(heightVal) == "number", "'height' (or index 2) not found or was not a number")
-
-            local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
-            local screenWidth, screenHeight = sm.gui.getScreenSize()
-            local width = sm.util.clamp(math.floor(widthVal), 0, screenWidth)
-            local height = sm.util.clamp(math.floor(heightVal), 0, screenHeight)
+            local width = size.x ~= nil and size.x or size[1]
+            local height = size.y ~= nil and size.y or size[2]
+            assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
+            assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
 
             local x = widget.positionSize.x
             local y = widget.positionSize.y
 
             if not widget.positionSize.usePixels then
-                x = math.floor(myguiScreenWidth * x)
-                y = math.floor(myguiScreenHeight * y)
+                x = 1080 * x
+                y = 1920 * y
             end
 
             widget.positionSize = {
                 usePixels = true,
-                x         = x,
-                y         = y,
-                width     = width,
-                height    = height
+                x         = math.floor(x),
+                y         = math.floor(y),
+                width     = math.floor(width ),
+                height    = math.floor(height)
             }
         end,
 
@@ -945,21 +926,17 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
 
-            local widthVal = size.x ~= nil and size.x or size[1]
-            local heightVal = size.y ~= nil and size.y or size[2]
-            assert(type(widthVal) == "number", "'width' (or index 1) not found or was not a number")
-            assert(type(heightVal) == "number", "'height' (or index 2) not found or was not a number")
-
-            local screenWidth, screenHeight = getMyGuiScreenSize()
-            local width  = sm.util.clamp(widthVal , 0, 1)
-            local height = sm.util.clamp(heightVal, 0, 1)
+            local width = size.x ~= nil and size.x or size[1]
+            local height = size.y ~= nil and size.y or size[2]
+            assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
+            assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
 
             local x = widget.positionSize.x
             local y = widget.positionSize.y
 
             if widget.positionSize.usePixels then
-                x = x / screenWidth
-                y = y / screenHeight
+                x = x / 1920
+                y = y / 1080
             end
 
             widget.positionSize = {
@@ -1013,15 +990,21 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             return false
         end,
 
-        createWidget = function(self, widgetName)
+        createWidget = function(self, widgetName, widgetType, skin)
             assert(type(self) == "table", "Invalid ReGuiInstance!")
 
             assert(type(widgetName) == "string", "widgetName is expected to be a string")
+            if widgetType then
+                assert(type(widgetType) == "string", "widgetType is expected to be a optional string")
+            end
 
+            if skin then
+                assert(type(skin) == "string", "skin is expected to be a optional string")
+            end
             print("Creating widget \"" .. widgetName .. "\" inside \"" .. (self:getName() ~= "" and self:getName() or "(unnamed)") .. "\"")
 
             local newWidget = {
-                instanceProperties = { name = widgetName, type = "Widget", skin = "PanelEmpty" },
+                instanceProperties = { name = widgetName, type = widgetType or "Widget", skin = skin or "PanelEmpty" },
                 positionSize = {
                     usePixels = true,
                     x = 0,
@@ -1032,7 +1015,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
                 properties = {},
                 children = {}
             }
-        
+
             table.insert(widget.children, newWidget)
 
             return createWidgetWrapper(gui, widget, newWidget)
@@ -1155,15 +1138,23 @@ function sm.regui:getRootChildren()
 end
 
 ---@param self ReGui.GUI
-function sm.regui:createWidget(widgetName)
+function sm.regui:createWidget(widgetName, widgetType, skin)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")    
+    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+
+    if widgetType then
+        assert(type(widgetType) == "string", "widgetType is expected to be a optional string")
+    end
+
+    if skin then
+        assert(type(skin) == "string", "skin is expected to be a optional string")
+    end
 
     print("Creating widget \"" .. widgetName .. "\"...")
 
     ---@type ReGui.LayoutFile.Widget
     local widget = {
-        instanceProperties = { name = widgetName, type = "Widget", skin = "PanelEmpty" },
+        instanceProperties = { name = widgetName, type = widgetType or "Widget", skin = skin or "PanelEmpty" },
         positionSize = {
             usePixels = true,
             x         = 0,
@@ -1178,7 +1169,7 @@ function sm.regui:createWidget(widgetName)
     }
 
     table.insert(self.data.data, widget)
-    
+
     return createWidgetWrapper(self, nil, widget)
 end
 
@@ -1236,7 +1227,7 @@ function sm.regui:rerunTranslations()
         if data.text then
             local translatedText = self.translatorFunction(unpack(data.text.input))
             data.text.output = tostring(translatedText)
-            
+
             if self.gui and sm.exists(self.gui) then
                 self.gui:setText(widgetName, data.text.output)
             end
@@ -1246,7 +1237,7 @@ end
 
 function sm.regui:setData(widgetName, data)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
-    
+
     local widget = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
@@ -1362,7 +1353,7 @@ function sm.regui:createHorizontalSlider(widgetName, range, value, callback, ena
     assert(type(range) == "table", "range is expected to be a table")
     assert(type(value) == "number", "value is expected to be a number")
     assert(type(callback) == "string", "callback is expected to be a string")
-    
+
     if enableNumbers ~= nil then
         assert(type(enableNumbers) == "boolean", "enableNumbers is expected to be a boolean")
     else
@@ -1462,7 +1453,7 @@ end
 function sm.regui:setFadeRange(range)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(range) == "number", "range is expected to be a number")
-    
+
     table.insert(self.commands, {"setFadeRange", {range}})
     runPreviousCommand(self)
 end
@@ -1526,7 +1517,7 @@ function sm.regui:setHost(widget, host, joint)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widget) == "string", "widget is expected to be a string")
     assert(type(host) == "Shape" or type(host) == "Character", "host is expected to be a Shape or a Character")
-    
+
     if joint ~= nil then
         assert(type(joint) == "string", "joint is expected to be a string")
     end
