@@ -2,7 +2,6 @@
     "Lua.runtime.version": "LuaJIT",
     "Lua.workspace.library": [
         "sm.lua",
-        "moddatabase.lua"
     ],
     "Lua.diagnostics.disable": [
         "duplicate-set-field",
@@ -23,14 +22,8 @@
     "files.associations": {
         "*.layout": "xml",
         "*.json": "jsonc",
-        "*.shapeset": "jsonc",
-        "*.shapedb": "jsonc",
-        "*.rotationset": "jsonc",
-        "*.rend": "jsonc",
-        "*.effectset": "jsonc",
         "*.tooldb": "jsonc",
         "*.toolset": "jsonc",
-        "*.scmf": "jsonc",
-        "*.lua.template": "lua"
+        "*.relayout": "jsonc"
     }
 }
