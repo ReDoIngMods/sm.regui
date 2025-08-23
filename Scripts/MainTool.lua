@@ -57,107 +57,68 @@ local function parseLayoutToValidJsonXML(xmlString)
     return xmlString
 end
 
-function hashTable(tbl)
-    local function fnv1aHash(str)
-        local hash = 2166136261
-        for i = 1, #str do
-            hash = bit.bxor(hash, str:byte(i))
-            hash = (hash * 16777619) % 2^32
-        end
-        return string.format("%08x", hash)
-    end
-
-    local function serialize(tbl)
-        local function serializeValue(val)
-            if type(val) == "table" then
-                return serialize(val)
-            elseif type(val) == "string" then
-                return string.format("%q", val)
-            else
-                return tostring(val)
-            end
-        end
-
-        local str = "{"
-        local keys = {}
-
-        for k in pairs(tbl) do
-            table.insert(keys, k)
-        end
-        table.sort(keys, function(a, b)
-            return tostring(a) < tostring(b)
-        end)
-
-        for _, k in ipairs(keys) do
-            local v = tbl[k]
-            str = str .. "[" .. serializeValue(k) .. "]=" .. serializeValue(v) .. ","
-        end
-
-        return str .. "}"
-    end
-
-    return fnv1aHash(serialize(tbl))
-end
-
-local FNV_OFFSET_BASIS = { 0x84222325, 0xcbf29ce4 }
-local FNV_PRIME        = { 0x1b3, 0x00000100 }
-
--- 64-bit multiplication of two 32-bit parts
-local function mul64(a, b)
-    local a_lo, a_hi = a[1], a[2]
-    local b_lo, b_hi = b[1], b[2]
-
-    local lo_lo = bit.band(a_lo * b_lo, 0xFFFFFFFF)
-    local hi_lo = bit.band(a_hi * b_lo + a_lo * b_hi, 0xFFFFFFFF)
-    local hi_hi = bit.band(a_hi * b_hi, 0xFFFFFFFF)
-
-    -- simulate 64-bit overflow:
-    local mid = bit.rshift(a_lo * b_lo, 32) + bit.band(hi_lo, 0xFFFFFFFF)
-    local lo = bit.band(lo_lo, 0xFFFFFFFF)
-    local hi = bit.band(mid + hi_hi, 0xFFFFFFFF)
-
-    return { lo, hi }
-end
-
--- 64-bit XOR
-local function xor64(a, b)
-    return { bit.bxor(a[1], b), a[2] }
-end
-
--- Convert 64-bit {lo, hi} to hex string
-local function toHex64(value)
-    return string.format("%08x%08x", value[2], value[1])
-end
-
--- FNV-1a 64-bit hash
-local function fnv1a64(str)
-    local hash = { FNV_OFFSET_BASIS[1], FNV_OFFSET_BASIS[2] }
-
-    for i = 1, #str do
-        local byte = string.byte(str, i)
-        hash = xor64(hash, byte)
-        hash = mul64(hash, FNV_PRIME)
-    end
-
-    return hash
-end
-
 ---@param instance ReGui.GUI
 ---@return string
 local function createHashFromGuiInstance(instance)
-    local jsonData = hashTable(instance.data)
-    local jsonMods = hashTable(instance.modifiers)
+    local function serialize(tbl)
+        local keys, str = {}, "{"
+        for k in pairs(tbl) do
+            table.insert(keys, k)
+        end
 
-    local hash1 = fnv1a64(jsonData)
-    local hash2 = fnv1a64(jsonMods)
+        table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
 
-    -- Add two 64-bit values
-    local lo = (hash1[1] + hash2[1]) % 2^32
-    local carry = math.floor((hash1[1] + hash2[1]) / 2^32)
-    local hi = (hash1[2] + hash2[2] + carry) % 2^32
+        for _, k in ipairs(keys) do
+            local v = tbl[k]
+            local function valToStr(val)
+                if type(val) == "table" then
+                    return serialize(val)
+                elseif type(val) == "string" then
+                    return string.format("%q", val)
+                else
+                    return tostring(val)
+                end
+            end
 
-    local combinedHash = { lo, hi }
-    return toHex64(combinedHash)
+            str = str .. "[" .. valToStr(k) .. "]=" .. valToStr(v) .. ","
+        end
+        return str .. "}"
+    end
+
+    local function fnv1a64(str)
+        local hash = { 0x84222325, 0xcbf29ce4 }
+        for i = 1, #str do
+            local byte = string.byte(str, i)
+            hash = { bit.bxor(hash[1], byte), hash[2] }
+
+            local a_lo, a_hi = hash[1], hash[2]
+            local b_lo, b_hi = 0x1b3, 0x100
+            local lo_lo = bit.band(a_lo * b_lo, 0xFFFFFFFF)
+            local hi_lo = bit.band(a_hi * b_lo + a_lo * b_hi, 0xFFFFFFFF)
+            local hi_hi = bit.band(a_hi * b_hi, 0xFFFFFFFF)
+            local mid = bit.rshift(a_lo * b_lo, 32) + bit.band(hi_lo, 0xFFFFFFFF)
+
+            hash = {
+                bit.band(lo_lo, 0xFFFFFFFF),
+                bit.band(mid + hi_hi, 0xFFFFFFFF)
+            }
+        end
+
+        return hash
+    end
+
+    local function toHex64(v)
+        return string.format("%08x%08x", v[2], v[1])
+    end
+
+    local h1 = fnv1a64(serialize(instance.data))
+    local h2 = fnv1a64(serialize(instance.modifiers))
+
+    local lo = (h1[1] + h2[1]) % 2^32
+    local carry = math.floor((h1[1] + h2[1]) / 2^32)
+    local hi = (h1[2] + h2[2] + carry) % 2^32
+
+    return toHex64({ lo, hi })
 end
 
 function getMyGuiScreenSize()
@@ -187,7 +148,6 @@ sm.regui = {}
 sm.regui.version = sm.json.open("$CONTENT_DATA/version.json") ---@type number
 
 dofile("./Logger.lua")
-dofile("./Base64.lua")
 
 print("Loaded base libraries!")
 
@@ -410,7 +370,7 @@ function sm.regui:close()
 end
 
 ---@param gui ReGui.GUI
-local function RunPreviousCommand(gui)
+local function runPreviousCommand(gui)
     local latestCommand = gui.commands[#gui.commands]
     local guiInterface = gui.gui
     if guiInterface and sm.exists(guiInterface) and guiInterface:isActive() then
@@ -421,7 +381,7 @@ end
 ---@param gui ReGui.GUI
 ---@return ReGui.LayoutFile.Widget?
 ---@return ReGui.LayoutFile.Widget?
-local function FindWidgetRecursiveRaw(gui, widgetName)
+local function findWidgetRecursiveRaw(gui, widgetName)
     ---@param widget ReGui.LayoutFile.Widget
     local function iterator(widget)
         if widget.instanceProperties.name and widget.instanceProperties.name == widgetName then
@@ -622,7 +582,7 @@ function sm.regui:widgetExists(widgetName)
     return widget ~= nil
 end
 
-local function CreateControllerWrapper(controller, widget)
+local function createControllerWrapper(controller, widget)
     return {
         getType = function(self)
             assert(type(self) == "table", "Invalid ReGuiInstance!")
@@ -683,7 +643,7 @@ end
 ---@param parentWidget ReGui.LayoutFile.Widget?
 ---@param widget ReGui.LayoutFile.Widget
 ---@return ReGui.Widget
-local function CreateWidgetWrapper(gui, parentWidget, widget)
+local function createWidgetWrapper(gui, parentWidget, widget)
     ---@class ReGui.Widget
     local output = {
         getName = function(self)
