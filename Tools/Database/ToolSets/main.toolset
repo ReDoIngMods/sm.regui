@@ -1,0 +1,10 @@
+{
+	"toolList": [
+		{
+			"uuid": "a4f45ac4-99e4-4d01-b787-f8897dc442db",
+			"showInInventory": false,
+			"autoTool": true,
+			"script": { "class": "MainToolClass", "file": "$CONTENT_DATA/Scripts/MainTool.lua" }
+		}
+	]
+}
