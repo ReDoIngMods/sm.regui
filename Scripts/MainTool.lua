@@ -126,14 +126,14 @@ function getMyGuiScreenSize()
     
     -- 720p, 1080p, 1440p, 4k
 
-    if screenWidth <= 1280 and screenHeight <= 720 then
-        return 1280, 720
-    elseif screenWidth <= 1920 and screenHeight <= 1080 then
-        return 1920, 1080
-    elseif screenWidth < 3840 and screenHeight < 2160 then
-        return 2560, 1440
+    if screenWidth >= 3840 and screenHeight >= 2160 then
+        return 3840, 2160 -- 4K
+    elseif screenWidth >= 2560 and screenHeight >= 1440 then
+        return 2560, 1440 -- 1440p
+    elseif screenWidth >= 1920 and screenHeight >= 1080 then
+        return 1920, 1080 -- 1080p
     else
-        return 3840, 2160
+        return 1280, 720 -- 720p
     end
 end
 
