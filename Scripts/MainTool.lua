@@ -252,6 +252,7 @@ end
 ---@param self ReGui.GUI
 function sm.regui:render()
     assert(type(self) == "table", "Invalid ReGuiInstance!")
+
     local function escapeXMLString(xmlString)
         xmlString = xmlString:gsub("&", "&amp;" ) -- Escape & with &amp; to prevent xml issues
         xmlString = xmlString:gsub("<", "&lt;"  ) -- Escape < with &lt; to prevent xml issues
@@ -303,7 +304,13 @@ function sm.regui:render()
         -- Property handling
         do
             for key, value in predictablePairs(widget.properties or {}) do
-                output = output .. "<Property key=\"" .. key .. "\" value=\"" .. escapeXMLString(tostring(value)) .. "\"/>"
+                local outputValue = tostring(value)
+
+                if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
+                    outputValue = tostring(value[1] or value.x) .. " " .. tostring(value[2] or value.y)
+                end
+
+                output = output .. "<Property key=\"" .. key .. "\" value=\"" .. escapeXMLString(outputValue) .. "\"/>"
             end
         end
 
@@ -551,6 +558,7 @@ function sm.regui:setWidgetSizePercentage(widgetName, size)
     }
 end
 
+---@param self ReGui.GUI
 function sm.regui:setWidgetProperty(widgetName, index, value)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
@@ -560,7 +568,21 @@ function sm.regui:setWidgetProperty(widgetName, index, value)
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
-    widget.properties[index] = tostring(value)
+    if index == "Caption" then
+        local translatedText = self.translatorFunction(value)
+
+        self.modifiers[widget.instanceProperties.name] = self.modifiers[widget.instanceProperties.name] or {}
+        self.modifiers[widget.instanceProperties.name].text = {
+            input = {value},
+            output = tostring(translatedText)
+        }
+
+        widget.properties[index] = tostring(value)
+    elseif type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
+        widget.properties[index] = value
+    else
+        widget.properties[index] = tostring(value)
+    end
 end
 
 function sm.regui:getWidgetProperty(widgetName, index)
@@ -622,6 +644,15 @@ local function createControllerWrapper(controller, widget)
         getProperties = function(self)
             assert(type(self) == "table", "Invalid ReGuiInstance!")
             return unpack({controller.properties})
+        end,
+
+        setProperties = function (self, data)
+            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            assert(type(data) == "table", "data is expected to be a table")
+
+            for key, value in pairs(data) do
+                self:setProperty(key, value)
+            end
         end,
 
         setProperty = function(self, key, value)
@@ -760,7 +791,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             assert(type(data) == "table", "data is expected to be a table")
             
             for key, value in pairs(data) do
-                widget.properties[key] = value
+                self:setProperty(key, value)
             end
         end,
 
