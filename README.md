@@ -28,7 +28,7 @@ For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file.
 > This GUI library uses a GUI exploit that allows modders to create MyGui Layout Files! As a result, the library may break in future game updates.
 
 > [!CAUTION]
-> <h3>Consider optimization if you're using `sm.regui` for animations, etc.</h3>
+> **Consider optimization if you're using `sm.regui` for animations, etc.**
 >   
 > The GUI exploit being used may result in bloated files that **cannot be deleted without user assistance**.  
 > 
@@ -38,7 +38,7 @@ For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file.
 > The latest known version that works with this library is: `Scrap Mechanic BETA Ver 0.7.3 Build 776`
 
 > [!WARNING]
-> <h3>Not Supported in MyGui LayoutEditor</h3>
+> **Not Supported in MyGui LayoutEditor**
 > 
 > `sm.regui` uses a custom layout file structure that is not only incompatible with the LayoutEditor, but it's also written in JSON!
 > 
