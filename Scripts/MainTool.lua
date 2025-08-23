@@ -414,7 +414,7 @@ function sm.regui:setWidgetPosition(widgetName, position)
     assert(type(xVal) == "number", "'x' (or index 1) not found or was not a number")
     assert(type(yVal) == "number", "'y' (or index 2) not found or was not a number")
 
-    local widget, _ = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
@@ -451,7 +451,7 @@ function sm.regui:setWidgetPositionPercentage(widgetName, position)
     assert(type(xVal) == "number", "'x' (or index 1) not found or was not a number")
     assert(type(yVal) == "number", "'y' (or index 2) not found or was not a number")
 
-    local widget, _ = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
@@ -488,7 +488,7 @@ function sm.regui:setWidgetSize(widgetName, size)
     assert(type(widthVal) == "number", "'width' (or index 1) not found or was not a number")
     assert(type(heightVal) == "number", "'height' (or index 2) not found or was not a number")
 
-    local widget, _ = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
@@ -525,7 +525,7 @@ function sm.regui:setWidgetSizePercentage(widgetName, size)
     assert(type(widthVal) == "number", "'width' (or index 1) not found or was not a number")
     assert(type(heightVal) == "number", "'height' (or index 2) not found or was not a number")
 
-    local widget, _ = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     local current = widget.positionSize
@@ -551,34 +551,57 @@ function sm.regui:setWidgetSizePercentage(widgetName, size)
     }
 end
 
-function sm.regui:setProperty(widgetName, index, value)
+function sm.regui:setWidgetProperty(widgetName, index, value)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
     assert(type(index) == "string", "index is expected to be a string")
     assert(value ~= nil, "value cannot be nil")
 
-    local widget, _ = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     widget.properties[index] = tostring(value)
 end
 
-function sm.regui:getProperty(widgetName, index)
+function sm.regui:getWidgetProperty(widgetName, index)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
     assert(type(index) == "string", "index is expected to be a string")
 
-    local widget, _ = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     return widget.properties[index]
+end
+
+function sm.regui:setWidgetProperties(widgetName, data)
+    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+    assert(type(data) == "table", "data is expected to be a table")
+    
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
+    assert(widget, "Widget not found!")
+
+    for key, value in pairs(data) do
+        widget.properties[key] = tostring(value)
+    end
+end
+
+function sm.regui:getWidgetProperties(widgetName)
+    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
+    assert(widget, "Widget not found!")
+
+    return unpack({widget.properties})
 end
 
 function sm.regui:widgetExists(widgetName)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
 
-    local widget, _ = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     return widget ~= nil
 end
 
@@ -663,7 +686,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
         getParent = function(self)
             assert(type(self) == "table", "Invalid ReGuiInstance!")
-            return parentWidget and CreateWidgetWrapper(gui, nil, parentWidget) or nil
+            return parentWidget and createWidgetWrapper(gui, nil, parentWidget) or nil
         end,
 
         getChildren = function(self)
@@ -671,7 +694,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             local children = {}
             for _, child in pairs(widget.children) do
-                table.insert(children, CreateWidgetWrapper(gui, widget, child))
+                table.insert(children, createWidgetWrapper(gui, widget, child))
             end
             return children
         end,
@@ -729,6 +752,15 @@ local function createWidgetWrapper(gui, parentWidget, widget)
                 }
             else
                 return { x = widget.positionSize.width, y = widget.positionSize.height }
+            end
+        end,
+
+        setProperties = function (self, data)
+            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            assert(type(data) == "table", "data is expected to be a table")
+            
+            for key, value in pairs(data) do
+                widget.properties[key] = value
             end
         end,
 
@@ -972,7 +1004,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         
             table.insert(widget.children, newWidget)
 
-            return CreateWidgetWrapper(gui, widget, newWidget)
+            return createWidgetWrapper(gui, widget, newWidget)
         end,
 
         getRawWidgetContents = function (self)
@@ -995,7 +1027,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             widget.controllers = widget.controllers or {}
             table.insert(widget.controllers, controller)
 
-            return CreateControllerWrapper(controller, widget)
+            return createControllerWrapper(controller, widget)
         end,
 
         findController = function (self, controllerType)
@@ -1004,7 +1036,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             for _, controller in ipairs(widget.controllers or {}) do
                 if controller.type == controllerType then
-                    return CreateControllerWrapper(controller, widget)
+                    return createControllerWrapper(controller, widget)
                 end
             end
 
@@ -1059,12 +1091,12 @@ function sm.regui:findWidgetRecursive(widgetName)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
 
-    local widget, parentChild = FindWidgetRecursiveRaw(self, widgetName)
+    local widget, parentChild = findWidgetRecursiveRaw(self, widgetName)
     if not widget then
         return nil
     end
 
-    return CreateWidgetWrapper(gui, parentChild, widget)
+    return createWidgetWrapper(gui, parentChild, widget)
 end
 
 ---@param self ReGui.GUI
@@ -1074,18 +1106,18 @@ function sm.regui:findWidget(widgetName)
 
     for _, child in pairs(self.data.data) do
         if child.instanceProperties.name and child.instanceProperties.name == widgetName then
-            return CreateWidgetWrapper(self, nil, child)
+            return createWidgetWrapper(self, nil, child)
         end
     end
 end
 
 ---@param self ReGui.GUI
-function sm.regui:getChildren()
+function sm.regui:getRootChildren()
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     local children = {}
 
     for _, child in pairs(self.data.data) do
-        table.insert(children, CreateWidgetWrapper(self, nil, child))
+        table.insert(children, createWidgetWrapper(self, nil, child))
     end
 
     return children
@@ -1116,7 +1148,7 @@ function sm.regui:createWidget(widgetName)
 
     table.insert(self.data.data, widget)
     
-    return CreateWidgetWrapper(self, nil, widget)
+    return createWidgetWrapper(self, nil, widget)
 end
 
 ---@param self ReGui.GUI
@@ -1137,12 +1169,6 @@ end
 function sm.regui:isActive()
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     return self.gui and self.gui:isActive()
-end
-
----@param self ReGui.GUI
-function sm.regui:getRawContents()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    return self.data
 end
 
 ---@param self ReGui.GUI
@@ -1190,7 +1216,7 @@ end
 function sm.regui:setData(widgetName, data)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     
-    local widget = FindWidgetRecursiveRaw(self, widgetName)
+    local widget = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     for key, value in pairs(data) do
@@ -1205,7 +1231,7 @@ function sm.regui:getData(widgetName)
     assert(type(self) == "table", "Invalid ReGuiInstance!")
     assert(type(widgetName) == "string", "widgetName is expected to be a string")
 
-    local widget = FindWidgetRecursiveRaw(self, widgetName)
+    local widget = findWidgetRecursiveRaw(self, widgetName)
     assert(widget, "Widget not found!")
 
     return unpack({widget.properties})
@@ -1222,7 +1248,7 @@ function sm.regui:addGridItem(widgetName, item)
     assert(type(item) == "table", "item is expected to be a table")
 
     table.insert(self.commands, {"addGridItem", {widgetName, item}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 ---@param self ReGui.GUI
@@ -1233,7 +1259,7 @@ function sm.regui:addGridItemsFromFile(gridName, jsonPath, additionalData)
     assert(type(additionalData) == "table", "additionalData is expected to be a table")
 
     table.insert(self.commands, {"addGridItemsFromFile", {gridName, jsonPath, additionalData}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 ---@param self ReGui.GUI
@@ -1244,7 +1270,7 @@ function sm.regui:addListItem(listName, itemName, data)
     assert(type(data) == "table", "data is expected to be a table")
 
     table.insert(self.commands, {"addListItem", {listName, itemName, data}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 ---@param self ReGui.GUI
@@ -1253,7 +1279,7 @@ function sm.regui:clearGrid(gridName)
     assert(type(gridName) == "string", "gridName is expected to be a string")
 
     table.insert(self.commands, {"clearGrid", {gridName}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 ---@param self ReGui.GUI
@@ -1262,7 +1288,7 @@ function sm.regui:clearList(listName)
     assert(type(listName) == "string", "listName is expected to be a string")
 
     table.insert(self.commands, {"clearList", {listName}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:createDropDown(widgetName, functionName, options)
@@ -1272,7 +1298,7 @@ function sm.regui:createDropDown(widgetName, functionName, options)
     assert(type(options) == "table", "options is expected to be a table")
 
     table.insert(self.commands, {"createDropDown", {widgetName, functionName, options}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:createGridFromJson(gridName, data)
@@ -1296,7 +1322,7 @@ function sm.regui:createGridFromJson(gridName, data)
     assert(type(data.itemCount) == "number", "data.itemCount is expected to be a number")
 
     table.insert(self.commands, {"createGridFromJson", {gridName, data}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:createHorizontalSlider(widgetName, range, value, callback, enableNumbers)
@@ -1313,7 +1339,7 @@ function sm.regui:createHorizontalSlider(widgetName, range, value, callback, ena
     end
 
     table.insert(self.commands, {"createHorizontalSlider", {widgetName, range, value, callback, enableNumbers}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:createVerticalSlider(widgetName, range, value, callback)
@@ -1324,7 +1350,7 @@ function sm.regui:createVerticalSlider(widgetName, range, value, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"createVerticalSlider", {widgetName, range, value, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:destroy()
@@ -1339,7 +1365,7 @@ function sm.regui:playEffect(widget, effect, restart)
     assert(type(restart) == "boolean", "restart is expected to be a boolean")
 
     table.insert(self.commands, {"playEffect", {widget, effect, restart}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:playGridEffect(gridName, index, effectName, restart)
@@ -1350,7 +1376,7 @@ function sm.regui:playGridEffect(gridName, index, effectName, restart)
     assert(type(restart) == "boolean", "restart is expected to be a boolean")
 
     table.insert(self.commands, {"playGridEffect", {gridName, index, effectName, restart}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setButtonCallback(button, callback)
@@ -1359,7 +1385,7 @@ function sm.regui:setButtonCallback(button, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setButtonCallback", {button, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setButtonState(button, state)
@@ -1368,7 +1394,7 @@ function sm.regui:setButtonState(button, state)
     assert(type(state) == "boolean", "state is expected to be a boolean")
 
     table.insert(self.commands, {"setButtonState", {button, state}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setColor(widget, color)
@@ -1377,7 +1403,7 @@ function sm.regui:setColor(widget, color)
     assert(type(color) == "Color", "color is expected to be a Color")
 
     table.insert(self.commands, {"setColor", {widget, color}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setContainer(gridName, container)
@@ -1386,7 +1412,7 @@ function sm.regui:setContainer(gridName, container)
     assert(type(container) == "Container", "container is expected to be a Container")
 
     table.insert(self.commands, {"setContainer", {gridName, container}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setContainers(gridName, containers)
@@ -1399,7 +1425,7 @@ function sm.regui:setContainers(gridName, containers)
     end
 
     table.insert(self.commands, {"setContainers", {gridName, containers}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setFadeRange(range)
@@ -1407,7 +1433,7 @@ function sm.regui:setFadeRange(range)
     assert(type(range) == "number", "range is expected to be a number")
     
     table.insert(self.commands, {"setFadeRange", {range}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setFocus(widget)
@@ -1415,7 +1441,7 @@ function sm.regui:setFocus(widget)
     assert(type(widget) == "string", "widget is expected to be a string")
 
     table.insert(self.commands, {"setFocus", {widget}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setGridButtonCallback(buttonName, callback)
@@ -1424,7 +1450,7 @@ function sm.regui:setGridButtonCallback(buttonName, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setGridButtonCallback", {buttonName, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setGridItem(gridName, index, item)
@@ -1434,7 +1460,7 @@ function sm.regui:setGridItem(gridName, index, item)
     assert(type(item) == "table", "item is expected to be a table")
 
     table.insert(self.commands, {"setGridItem", {gridName, index, item}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setGridItemChangedCallback(gridName, callback)
@@ -1443,7 +1469,7 @@ function sm.regui:setGridItemChangedCallback(gridName, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setGridItemChangedCallback", {gridName, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setGridMouseFocusCallback(widgetName, callbackName, gridName)
@@ -1453,7 +1479,7 @@ function sm.regui:setGridMouseFocusCallback(widgetName, callbackName, gridName)
     assert(type(gridName) == "string", "gridName is expected to be a string")
 
     table.insert(self.commands, {"setGridMouseFocusCallback", {widgetName, callbackName, gridName}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setGridSize(gridName, size)
@@ -1462,7 +1488,7 @@ function sm.regui:setGridSize(gridName, size)
     assert(type(size) == "number", "size is expected to be a number")
 
     table.insert(self.commands, {"setGridSize", {gridName, size}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setHost(widget, host, joint)
@@ -1475,7 +1501,7 @@ function sm.regui:setHost(widget, host, joint)
     end
 
     table.insert(self.commands, {"setHost", {widget, host, joint}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setIconImage(itemBox, uuid)
@@ -1484,7 +1510,7 @@ function sm.regui:setIconImage(itemBox, uuid)
     assert(type(uuid) == "Uuid", "uuid is expected to be a string")
 
     table.insert(self.commands, {"setIconImage", {itemBox, uuid}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setImage(imageBox, image)
@@ -1493,7 +1519,7 @@ function sm.regui:setImage(imageBox, image)
     assert(type(image) == "string", "image is expected to be a string")
 
     table.insert(self.commands, {"setImage", {imageBox, image}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setItemIcon(imageBox, itemResource, itemGroup, itemName)
@@ -1504,7 +1530,7 @@ function sm.regui:setItemIcon(imageBox, itemResource, itemGroup, itemName)
     assert(type(itemName) == "string", "itemName is expected to be a string")
 
     table.insert(self.commands, {"setItemIcon", {imageBox, itemResource, itemGroup, itemName}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setListSelectionCallback(listName, callback)
@@ -1513,7 +1539,7 @@ function sm.regui:setListSelectionCallback(listName, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setListSelectionCallback", {listName, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setMaxRenderDistance(distance)
@@ -1521,7 +1547,7 @@ function sm.regui:setMaxRenderDistance(distance)
     assert(type(distance) == "number", "distance is expected to be a number")
 
     table.insert(self.commands, {"setMaxRenderDistance", {distance}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setMeshPreview(widgetName, uuid)
@@ -1530,7 +1556,7 @@ function sm.regui:setMeshPreview(widgetName, uuid)
     assert(type(uuid) == "Uuid", "uuid is expected to be a Uuid")
 
     table.insert(self.commands, {"setMeshPreview", {widgetName, uuid}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setOnCloseCallback(callback)
@@ -1538,7 +1564,7 @@ function sm.regui:setOnCloseCallback(callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setOnCloseCallback", {callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setRequireLineOfSight(state)
@@ -1546,7 +1572,7 @@ function sm.regui:setRequireLineOfSight(state)
     assert(type(state) == "boolean", "state is expected to be a boolean")
 
     table.insert(self.commands, {"setRequireLineOfSight", {state}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setSelectedDropDownItem(dropDownName, itemName)
@@ -1555,7 +1581,7 @@ function sm.regui:setSelectedDropDownItem(dropDownName, itemName)
     assert(type(itemName) == "string", "itemName is expected to be a string")
 
     table.insert(self.commands, {"setSelectedDropDownItem", {dropDownName, itemName}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setSelectedListItem(listName, itemName)
@@ -1564,7 +1590,7 @@ function sm.regui:setSelectedListItem(listName, itemName)
     assert(type(itemName) == "string", "itemName is expected to be a string")
 
     table.insert(self.commands, {"setSelectedListItem", {listName, itemName}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setSliderCallback(sliderName, callback)
@@ -1573,7 +1599,7 @@ function sm.regui:setSliderCallback(sliderName, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setSliderCallback", {sliderName, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setSliderData(sliderName, range, position)
@@ -1583,7 +1609,7 @@ function sm.regui:setSliderData(sliderName, range, position)
     assert(type(position) == "number", "position is expected to be a number")
 
     table.insert(self.commands, {"setSliderData", {sliderName, range, position}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setSliderPosition(sliderName, position)
@@ -1592,7 +1618,7 @@ function sm.regui:setSliderPosition(sliderName, position)
     assert(type(position) == "number", "position is expected to be a number")
 
     table.insert(self.commands, {"setSliderPosition", {sliderName, position}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setSliderRange(sliderName, range)
@@ -1601,7 +1627,7 @@ function sm.regui:setSliderRange(sliderName, range)
     assert(type(range) == "number", "range is expected to be a number")
 
     table.insert(self.commands, {"setSliderRange", {sliderName, range}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setSliderRangeLimit(sliderName, limit)
@@ -1610,7 +1636,7 @@ function sm.regui:setSliderRangeLimit(sliderName, limit)
     assert(type(limit) == "number", "limit is expected to be a number")
 
     table.insert(self.commands, {"setSliderRangeLimit", {sliderName, limit}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setTextAcceptedCallback(editboxName, callback)
@@ -1619,7 +1645,7 @@ function sm.regui:setTextAcceptedCallback(editboxName, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setTextAcceptedCallback", {editboxName, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setTextChangedCallback(editboxName, callback)
@@ -1628,7 +1654,7 @@ function sm.regui:setTextChangedCallback(editboxName, callback)
     assert(type(callback) == "string", "callback is expected to be a string")
 
     table.insert(self.commands, {"setTextChangedCallback", {editboxName, callback}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setVisible(widget, state)
@@ -1637,7 +1663,7 @@ function sm.regui:setVisible(widget, state)
     assert(type(state) == "boolean", "state is expected to be a boolean")
 
     table.insert(self.commands, {"setVisible", {widget, state}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:setWorldPosition(pos, world)
@@ -1646,7 +1672,7 @@ function sm.regui:setWorldPosition(pos, world)
     assert(type(world) == "World", "world is expected to be a World")
 
     table.insert(self.commands, {"setWorldPosition", {pos, world}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:stopEffect(widget, effect, immediate)
@@ -1656,7 +1682,7 @@ function sm.regui:stopEffect(widget, effect, immediate)
     assert(type(immediate) == "boolean", "immediate is expected to be a boolean")
 
     table.insert(self.commands, {"stopEffect", {widget, effect, immediate}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:stopGridEffect(gridName, index, effectName)
@@ -1666,7 +1692,7 @@ function sm.regui:stopGridEffect(gridName, index, effectName)
     assert(type(effectName) == "string", "effectName is expected to be a string")
 
     table.insert(self.commands, {"stopGridEffect", {gridName, index, effectName}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:trackQuest(name, title, mainQuest, questTasks)
@@ -1691,7 +1717,7 @@ function sm.regui:trackQuest(name, title, mainQuest, questTasks)
     assert(type(questTasks.complete) == "boolean", "questTasks.complete is expected to be a boolean")
 
     table.insert(self.commands, {"trackQuest", {name, title, mainQuest, questTasks}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 function sm.regui:untrackQuest(name)
@@ -1699,7 +1725,7 @@ function sm.regui:untrackQuest(name)
     assert(type(name) == "string", "name is expected to be a string")
 
     table.insert(self.commands, {"untrackQuest", {name}})
-    RunPreviousCommand(self)
+    runPreviousCommand(self)
 end
 
 -- Load additional libaries
