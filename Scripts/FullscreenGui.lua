@@ -3,9 +3,9 @@ local scaleFactor = 2
 sm.regui.fullscreen = {}
 
 function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasFixedAspectRatio, alignment)
-    assert(type(guiInterface) == "table", "guiInterface is expected to be a ReGuiInterface")
-    assert(type(hasFixedAspectRatio) == "boolean", "hasFixedAspectRatio is expected to be a boolean")
-    assert(type(alignment) == "string", "alignment is expected to be a string")
+    AssertArgument(guiInterface, 1, {"table"}, {"ReGuiInterface"})
+    AssertArgument(hasFixedAspectRatio, 2, {"boolean"})
+    AssertArgument(alignment, 3, {"string"})
 
     local alignment = alignment:lower()
 
@@ -22,39 +22,39 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
 
     return {
         getGui = function (self)
-            assert(type(self) == "table", "No self provided!")
+            SelfAssert(self)
 
             return outputGui
         end,
 
         getAlignment = function (self)
-            assert(type(self) == "table", "No self provided!")
+            SelfAssert(self)
 
             return alignment:lower()
         end,
 
         setAlignment = function (self, newAlignment)
-            assert(type(self) == "table", "No self provided!")
-            assert(type(newAlignment) == "string", "newAlignment is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(newAlignment, 1, {"string"})
 
             alignment = newAlignment:lower()
         end,
 
         hasFixedAspectRatio = function (self)
-            assert(type(self) == "table", "No self provided!")
+            SelfAssert(self)
 
             return hasFixedAspectRatio
         end,
 
         setFixedAspectRatio = function (self, state)
-            assert(type(self) == "table", "No self provided!")
-            assert(type(state) == "boolean", "state is expected to be a string")
+            SelfAssert(self)
+            ValueAssert(state, 1, {"boolean"})
 
             hasFixedAspectRatio = state
         end,
 
         update = function (self)
-            assert(type(self) == "table", "No self provided!")
+            SelfAssert(self)
             
             -- Update FullscreenWidget --
 
@@ -141,40 +141,6 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
             outputWidget:setPosition({outputX, outputY})
         end
     }
-end
-
----@param self ReGui.FullscreenGUI
-function sm.regui.fullscreen:rescaleFullscreenGui()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(self.isFullscreenGui == true, "Not a fullscreen gui!")
-    
-    local screenWidth, screenHeight = sm.gui.getScreenSize()
-
-    local widgetWidth  = screenWidth
-    local widgetHeight = screenHeight    
-
-    local myGuiScreenWidth, myGuiScreenHeight = getMyGuiScreenSize()
-
-    -- 1440p = 86
-    -- 1080p = 64
-    -- 720p  = 42
-    local yOffset = math.floor(0.0611 * myGuiScreenHeight + -1.984)
-
-    if myGuiScreenHeight == 720 then
-        yOffset = yOffset + 1
-    elseif myGuiScreenHeight == 1080 then
-        widgetWidth  = widgetWidth + 2
-        widgetHeight = widgetHeight + 2
-    end
-
-    local backPanelWidth  = myGuiScreenWidth * scaleFactor
-    local backPanelHeight = myGuiScreenHeight * scaleFactor
-    
-    local centerX = (backPanelWidth  / 2) - (widgetWidth  / 2)
-    local centerY = (backPanelHeight / 2) - (widgetHeight / 2)
-
-    self.fullscreenWidget:setPosition({centerX, centerY + yOffset})
-    self.fullscreenWidget:setSize({widgetWidth, widgetHeight})
 end
 
 print("Loaded fullscreen gui!")

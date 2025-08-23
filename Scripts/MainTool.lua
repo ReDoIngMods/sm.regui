@@ -148,6 +148,7 @@ sm.regui = sm.regui or {}
 sm.regui.version = sm.json.open("$CONTENT_DATA/version.json") ---@type number
 
 dofile("./Logger.lua")
+dofile("./ErrorHandler.lua")
 
 print("Loaded base libraries!")
 
@@ -164,8 +165,8 @@ local function loadSettings()
 end
 
 function sm.regui.new(path)
-    assert(type(path) == "string", "path is expected to be a string!")
-    assert(sm.json.fileExists(path), "File not found!")
+    AssertArgument(path, 1, {"string"})
+    ValueAssert(sm.json.fileExists(path), 1, "File not found!")
 
     print("Creating new gui interface...")
 
@@ -185,8 +186,8 @@ function sm.regui.new(path)
         end
     }
 
-    assert(self.data.identifier == "ReGui", "Not a ReGui Layout File!")
-    assert(self.data.version == sm.regui.version, "ReGui version mismatch!")
+    ValueAssert(self.data.identifier == "ReGui"         , 1, "Not a ReGui Layout File!")
+    ValueAssert(self.data.version    == sm.regui.version, 1, "ReGui version mismatch!")
 
     for key, value in pairs(sm.regui) do
         if type(value) == "function" then
@@ -251,7 +252,7 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:render()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
 
     local function escapeXMLString(xmlString)
         xmlString = xmlString:gsub("&", "&amp;" ) -- Escape & with &amp; to prevent xml issues
@@ -261,6 +262,7 @@ function sm.regui:render()
         xmlString = xmlString:gsub("'", "&apos;") -- Escape ' with &apos; to prevent xml issues
         return xmlString
     end
+
     local hash = createHashFromGuiInstance(self)
     self.renderedPath = loadSettings().cacheDirectory .. "Layout_" .. hash .. ".layout"
 
@@ -354,7 +356,8 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:open()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
+
     self:close()
     self:render()
 
@@ -370,16 +373,18 @@ function sm.regui:open()
 end
 
 function sm.regui:close()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
+
     if sm.exists(self.gui) then
         self.gui:close()
     end
 end
 
----@param gui ReGui.GUI
-local function runPreviousCommand(gui)
-    local latestCommand = gui.commands[#gui.commands]
-    local guiInterface = gui.gui
+---@param self ReGui.GUI
+local function runPreviousCommand(self)
+    local latestCommand = self.commands[#self.commands]
+    local guiInterface = self.gui
+
     if guiInterface and sm.exists(guiInterface) and guiInterface:isActive() then
         guiInterface[latestCommand[1]](guiInterface, unpack(latestCommand[2]))
     end
@@ -412,17 +417,18 @@ local function findWidgetRecursiveRaw(gui, widgetName)
 end
 
 function sm.regui:setWidgetPosition(widgetName, position)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
+    SelfAssert(self)
+
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(position  , 2, {"table"})
 
     local x = position.x ~= nil and position.x or position[1]
     local y = position.y ~= nil and position.y or position[2]
-    assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
-    assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
+    ValueAssert(type(x) == "number", 2, "Expected x or [1] to be a number!")
+    ValueAssert(type(y) == "number", 2, "Expected y or [2] to be a number!")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     local current = widget.positionSize
 
@@ -444,17 +450,17 @@ function sm.regui:setWidgetPosition(widgetName, position)
 end
 
 function sm.regui:setWidgetPositionPercentage(widgetName, position)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(position  , 2, {"table"})
 
     local x = position.x ~= nil and position.x or position[1]
     local y = position.y ~= nil and position.y or position[2]
-    assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
-    assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
+    ValueAssert(type(x) == "number", 2, "Expected x or [1] to be a number!")
+    ValueAssert(type(y) == "number", 2, "Expected y or [2] to be a number!")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     local current = widget.positionSize
 
@@ -477,17 +483,17 @@ function sm.regui:setWidgetPositionPercentage(widgetName, position)
 end
 
 function sm.regui:setWidgetSize(widgetName, size)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(size, 2, {"table"})
 
     local width = size.x ~= nil and size.x or size[1]
     local height = size.y ~= nil and size.y or size[2]
-    assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
-    assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
+    ValueAssert(type(width ) == "number", 2, "Expected x or [1] to be a number!")
+    ValueAssert(type(height) == "number", 2, "Expected y or [2] to be a number!")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     local current = widget.positionSize
 
@@ -509,17 +515,17 @@ function sm.regui:setWidgetSize(widgetName, size)
 end
 
 function sm.regui:setWidgetSizePercentage(widgetName, size)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(size, 2, {"table"})
 
     local width = size.x ~= nil and size.x or size[1]
     local height = size.y ~= nil and size.y or size[2]
-    assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
-    assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
+    ValueAssert(type(width ) == "number", 2, "Expected x or [1] to be a number!")
+    ValueAssert(type(height) == "number", 2, "Expected y or [2] to be a number!")
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     local current = widget.positionSize
 
@@ -542,13 +548,13 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:setWidgetProperty(widgetName, index, value)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(index) == "string", "index is expected to be a string")
-    assert(value ~= nil, "value cannot be nil")
-
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(index     , 2, {"string"})
+    AssertArgument(value     , 3, {"string", "number", "boolean"})
+    
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     if index == "Caption" then
         local translatedText = self.translatorFunction(value)
@@ -568,23 +574,23 @@ function sm.regui:setWidgetProperty(widgetName, index, value)
 end
 
 function sm.regui:getWidgetProperty(widgetName, index)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(index) == "string", "index is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(index     , 2, {"string"})
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     return widget.properties[index]
 end
 
 function sm.regui:setWidgetProperties(widgetName, data)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(data) == "table", "data is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(data      , 2, {"table"})
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     for key, value in pairs(data) do
         widget.properties[key] = tostring(value)
@@ -592,18 +598,18 @@ function sm.regui:setWidgetProperties(widgetName, data)
 end
 
 function sm.regui:getWidgetProperties(widgetName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     return unpack({widget.properties})
 end
 
 function sm.regui:widgetExists(widgetName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
 
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     return widget ~= nil
@@ -612,25 +618,25 @@ end
 local function createControllerWrapper(controller, widget)
     return {
         getType = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
             return controller.type
         end,
 
         setType = function(self, newType)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(newType) == "string", "newType is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(newType, 1, {"string"})
 
             controller.type = newType
         end,
 
         getProperties = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
             return unpack({controller.properties})
         end,
 
         setProperties = function (self, data)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(data) == "table", "data is expected to be a table")
+            SelfAssert(self)
+            AssertArgument(data, 1, {"table"})
 
             for key, value in pairs(data) do
                 self:setProperty(key, value)
@@ -638,9 +644,9 @@ local function createControllerWrapper(controller, widget)
         end,
 
         setProperty = function(self, key, value)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(key) == "string", "key is expected to be a string")
-            assert(value ~= nil, "value cannot be nil")
+            SelfAssert(self)
+            AssertArgument(index, 2, {"string"})
+            AssertArgument(value, 3, {"string", "number", "boolean"})
 
             if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
                 controller.properties[key] = value
@@ -650,20 +656,14 @@ local function createControllerWrapper(controller, widget)
         end,
 
         getProperty = function(self, key)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(key) == "string", "key is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(index, 2, {"string"})
 
             return controller.properties[key]
         end,
 
-        getRawContents = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            return controller
-        end,
-
         destroy = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             for i, ctrl in ipairs(gui.controllers or {}) do
                 if ctrl == controller then
@@ -683,40 +683,40 @@ local function createWidgetWrapper(gui, parentWidget, widget)
     ---@class ReGui.Widget
     local output = {
         setTemplateContents = function (self, state)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(state) == "boolean", "stat is expected to be a boolean")
+            SelfAssert(self)
+            AssertArgument(state, 1, {"boolean"})
             
             widget.isTemplateContents = state
         end,
 
         isTemplateContents = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
             
             return widget.isTemplateContents
         end,
 
         getName = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
             return widget.instanceProperties.name or ""
         end,
 
         getType = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
             return widget.instanceProperties.type
         end,
 
         getSkin = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
             return widget.instanceProperties.skin
         end,
 
         getParent = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
             return parentWidget and createWidgetWrapper(gui, nil, parentWidget) or nil
         end,
 
         getChildren = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             local children = {}
             for _, child in pairs(widget.children) do
@@ -726,7 +726,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         getPosition = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             if widget.positionSize.usePixels then
                 return { x = widget.positionSize.x, y = widget.positionSize.y }
@@ -740,7 +740,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         getPositionPercentage = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             if widget.positionSize.usePixels then
                 local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
@@ -754,7 +754,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         getSize = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             if widget.positionSize.usePixels then
                 return { x = widget.positionSize.width, y = widget.positionSize.height }
@@ -768,7 +768,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         getSizePercentage = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             if widget.positionSize.usePixels then
                 local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
@@ -782,25 +782,24 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         setProperties = function (self, data)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(data) == "table", "data is expected to be a table")
-
+            SelfAssert(self)
+            AssertArgument(data, 1, {"table"})
+            
             for key, value in pairs(data) do
                 self:setProperty(key, value)
             end
         end,
 
         getProperties = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             return unpack({widget.properties})
         end,
 
         setProperty = function(self, index, value)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            assert(type(index) == "string", "index is expected to be a string")
-            assert(value ~= nil, "value cannot be nil")
+            SelfAssert(self)
+            AssertArgument(index, 1, {"string"})
+            AssertArgument(value, 2, {"string", "number", "boolean"})
 
             if index == "Caption" then
                 local translatedText = gui.translatorFunction(value)
@@ -816,39 +815,35 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         getProperty = function(self, index)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            assert(type(index) == "string", "index is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(index, 1, {"string"})
 
             return widget.properties[index]
         end,
 
         setInstanceProperty = function(self, key, value)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            assert(type(key) == "string", "key is expected to be a string")
-            assert(value ~= nil, "value cannot be nil")
+            SelfAssert(self)
+            AssertArgument(index, 2, {"string"})
+            AssertArgument(value, 3, {"string", "number", "boolean"})
 
             widget.instanceProperties[key] = tostring(value)
         end,
 
         getInstanceProperty = function(self, key)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            assert(type(key) == "string", "key is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(key, 1, {"string"})
 
             return widget.instanceProperties[key]
         end,
 
         setPosition = function(self, position)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
+            SelfAssert(self)
+            AssertArgument(position, 2, {"table"})
 
             local x = position.x ~= nil and position.x or position[1]
             local y = position.y ~= nil and position.y or position[2]
-            assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
-            assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
+            ValueAssert(type(x) == "number", 2, "Expected x or [1] to be a number!")
+            ValueAssert(type(y) == "number", 2, "Expected y or [2] to be a number!")
 
             local width  = widget.positionSize.width
             local height = widget.positionSize.height
@@ -868,16 +863,15 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         setPositionPercentage = function(self, position)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            assert(type(position) == "table", "position is expected to be a table with 'x' and 'y' keys or indices")
+            SelfAssert(self)
+            AssertArgument(position  , 2, {"table"})
 
             local x = position.x ~= nil and position.x or position[1]
             local y = position.y ~= nil and position.y or position[2]
-            assert(type(x) == "number", "'x' (or index 1) not found or was not a number")
-            assert(type(y) == "number", "'y' (or index 2) not found or was not a number")
+            ValueAssert(type(x) == "number", 2, "Expected x or [1] to be a number!")
+            ValueAssert(type(y) == "number", 2, "Expected y or [2] to be a number!")
 
-            local width = widget.positionSize.width
+            local width  = widget.positionSize.width
             local height = widget.positionSize.height
 
             if widget.positionSize.usePixels then
@@ -895,14 +889,13 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         setSize = function(self, size)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
+            AssertArgument(size, 2, {"table"})
 
-            assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
-
-            local width = size.x ~= nil and size.x or size[1]
+            local width  = size.x ~= nil and size.x or size[1]
             local height = size.y ~= nil and size.y or size[2]
-            assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
-            assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
+            ValueAssert(type(width ) == "number", 2, "Expected x or [1] to be a number!")
+            ValueAssert(type(height) == "number", 2, "Expected y or [2] to be a number!")
 
             local x = widget.positionSize.x
             local y = widget.positionSize.y
@@ -922,14 +915,14 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         setSizePercentage = function(self, size)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
-            assert(type(size) == "table", "size is expected to be a table with 'width' and 'height' keys or indices")
+            AssertArgument(size, 2, {"table"})
 
-            local width = size.x ~= nil and size.x or size[1]
+            local width  = size.x ~= nil and size.x or size[1]
             local height = size.y ~= nil and size.y or size[2]
-            assert(type(width) == "number", "'width' (or index 1) not found or was not a number")
-            assert(type(height) == "number", "'height' (or index 2) not found or was not a number")
+            ValueAssert(type(width ) == "number", 2, "Expected x or [1] to be a number!")
+            ValueAssert(type(height) == "number", 2, "Expected y or [2] to be a number!")
 
             local x = widget.positionSize.x
             local y = widget.positionSize.y
@@ -949,19 +942,12 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         exists = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
-            if parentWidget then
-                for _, child in ipairs(parentWidget.children) do
-                    if child.instanceProperties.name == widget.instanceProperties.name then
-                        return true
-                    end
-                end
-            else
-                for _, child in ipairs(gui.data.data) do
-                    if child.instanceProperties.name == widget.instanceProperties.name then
-                        return true
-                    end
+            local tbl = parentWidget and parentWidget.children or gui.data.data
+            for _, child in ipairs(tbl) do
+                if child.instanceProperties.name == widget.instanceProperties.name then
+                    return true
                 end
             end
 
@@ -969,21 +955,13 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         destroy = function(self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
-            if parentWidget then
-                for i, child in ipairs(parentWidget.children) do
-                    if child.instanceProperties.name == widget.instanceProperties.name then
-                        table.remove(parentWidget.children, i)
-                        return true
-                    end
-                end
-            else
-                for i, child in ipairs(gui.data.data) do
-                    if child.instanceProperties.name == widget.instanceProperties.name then
-                        table.remove(gui.data.data, i)
-                        return true
-                    end
+            local tbl = parentWidget and parentWidget.children or gui.data.data
+            for i, child in ipairs(tbl) do
+                if child.instanceProperties.name == widget.instanceProperties.name then
+                    table.remove(tbl, i)
+                    return true
                 end
             end
 
@@ -991,16 +969,11 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         createWidget = function(self, widgetName, widgetType, skin)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-
-            assert(type(widgetName) == "string", "widgetName is expected to be a string")
-            if widgetType then
-                assert(type(widgetType) == "string", "widgetType is expected to be a optional string")
-            end
-
-            if skin then
-                assert(type(skin) == "string", "skin is expected to be a optional string")
-            end
+            SelfAssert(self)
+            AssertArgument(widgetName, 1, {"string"})
+            AssertArgument(widgetType, 2, {"string", "nil"})
+            AssertArgument(skin      , 3, {"string", "nil"})
+            
             print("Creating widget \"" .. widgetName .. "\" inside \"" .. (self:getName() ~= "" and self:getName() or "(unnamed)") .. "\"")
 
             local newWidget = {
@@ -1022,14 +995,14 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         getRawWidgetContents = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             return widget
         end,
 
         createController = function (self, controllerType)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(controllerType) == "string", "controllerType is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(controllerType, 1, {"string"})
 
             print("Creating controller for widget \"" .. (self:getName() ~= "" and self:getName() or "(unnamed)") .. "\": " .. controllerType)
 
@@ -1045,8 +1018,8 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         findController = function (self, controllerType)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(controllerType) == "string", "controllerType is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(controllerType, 1, {"string"})
 
             for _, controller in ipairs(widget.controllers or {}) do
                 if controller.type == controllerType then
@@ -1058,8 +1031,8 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         destroyController = function (self, controllerType)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(controllerType) == "string", "controllerType is expected to be a string")
+            SelfAssert(self)
+            AssertArgument(controllerType, 1, {"string"})
 
             for i, controller in ipairs(widget.controllers or {}) do
                 if controller.type == controllerType then
@@ -1072,26 +1045,20 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         setVisible = function (self, visible)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
-            assert(type(visible) == "boolean", "visible is expected to be a boolean")
+            SelfAssert(self)
+            AssertArgument(visible, 1, {"boolean"})
 
             gui:setVisible(widget.instanceProperties.name, visible)
         end,
 
         setText = function (self, ...)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
-            local translatedText = gui.translatorFunction(...)
-
-            gui.modifiers[widget.instanceProperties.name] = gui.modifiers[widget.instanceProperties.name] or {}
-            gui.modifiers[widget.instanceProperties.name].text = {
-                input = {...},
-                output = tostring(translatedText)
-            }
+            gui:setText(widget.instanceProperties.name, ...)
         end,
 
         getText = function (self)
-            assert(type(self) == "table", "Invalid ReGuiInstance!")
+            SelfAssert(self)
 
             return (gui.modifiers[widget.instanceProperties.name] and gui.modifiers[widget.instanceProperties.name].text) and gui.modifiers[widget.instanceProperties.name].text.output or nil
         end
@@ -1102,8 +1069,8 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:findWidgetRecursive(widgetName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
 
     local widget, parentChild = findWidgetRecursiveRaw(self, widgetName)
     if not widget then
@@ -1115,8 +1082,8 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:findWidget(widgetName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
 
     for _, child in pairs(self.data.data) do
         if child.instanceProperties.name and child.instanceProperties.name == widgetName then
@@ -1127,7 +1094,7 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:getRootChildren()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
     local children = {}
 
     for _, child in pairs(self.data.data) do
@@ -1139,16 +1106,10 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:createWidget(widgetName, widgetType, skin)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-
-    if widgetType then
-        assert(type(widgetType) == "string", "widgetType is expected to be a optional string")
-    end
-
-    if skin then
-        assert(type(skin) == "string", "skin is expected to be a optional string")
-    end
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(widgetType, 2, {"string", "nil"})
+    AssertArgument(skin      , 3, {"string", "nil"})
 
     print("Creating widget \"" .. widgetName .. "\"...")
 
@@ -1175,35 +1136,36 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:getSettings()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
     return unpack({self.settings})
 end
 
 ---@param self ReGui.GUI
 function sm.regui:setSettings(settings)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(settings) == "table", "settings is expected to be a table")
+    SelfAssert(self)
+    ValueAssert(settings, 1, {"table"}, {"GuiSettings"})
 
     self.settings = settings
 end
 
 ---@param self ReGui.GUI
 function sm.regui:isActive()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
     return self.gui and self.gui:isActive()
 end
 
 ---@param self ReGui.GUI
 function sm.regui:setTextTranslation(translatorFunction)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(translatorFunction) == "function", "translatorFunction is expected to be a function")
+    SelfAssert(self)
+    AssertArgument(translatorFunction, 1, {"function", "nil"})
 
-    self.translatorFunction = translatorFunction
+    self.translatorFunction = translatorFunction or function(...) return ... end
 end
 
 ---@param self ReGui.GUI
 function sm.regui:setText(widgetName, ...)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
+    
     local translatedText = self.translatorFunction(...)
 
     self.modifiers[widgetName] = self.modifiers[widgetName] or {}
@@ -1215,14 +1177,15 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:getText(widgetName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
 
     return (self.modifiers[widgetName] and self.modifiers[widgetName].text) and self.modifiers[widgetName].text.output or nil
 end
 
 function sm.regui:rerunTranslations()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
+
     for widgetName, data in pairs(self.modifiers) do
         if data.text then
             local translatedText = self.translatorFunction(unpack(data.text.input))
@@ -1236,13 +1199,14 @@ function sm.regui:rerunTranslations()
 end
 
 function sm.regui:setData(widgetName, data)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
 
     local widget = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     for key, value in pairs(data) do
         widget.properties[key] = value
+
         if key == "Caption" then
             self:setText(widgetName, value)
         end
@@ -1250,11 +1214,11 @@ function sm.regui:setData(widgetName, data)
 end
 
 function sm.regui:getData(widgetName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
 
     local widget = findWidgetRecursiveRaw(self, widgetName)
-    assert(widget, "Widget not found!")
+    ValueAssert(widget, 1, "Widget not found!")
 
     return unpack({widget.properties})
 end
@@ -1265,9 +1229,9 @@ print("Loaded custom functions! Now adding all GuiInterface functions...")
 
 ---@param self ReGui.GUI
 function sm.regui:addGridItem(widgetName, item)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(item) == "table", "item is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(item, 2, "table")
 
     table.insert(self.commands, {"addGridItem", {widgetName, item}})
     runPreviousCommand(self)
@@ -1275,10 +1239,10 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:addGridItemsFromFile(gridName, jsonPath, additionalData)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(jsonPath) == "string", "jsonPath is expected to be a string")
-    assert(type(additionalData) == "table", "additionalData is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(jsonPath, 2, {"string"})
+    AssertArgument(additionalData, 3, {"table"})
 
     table.insert(self.commands, {"addGridItemsFromFile", {gridName, jsonPath, additionalData}})
     runPreviousCommand(self)
@@ -1286,10 +1250,10 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:addListItem(listName, itemName, data)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(listName) == "string", "listName is expected to be a string")
-    assert(type(itemName) == "string", "itemName is expected to be a string")
-    assert(type(data) == "table", "data is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(listName, 1, {"string"})
+    AssertArgument(itemName, 2, {"string"})
+    AssertArgument(data, 3, {"table"})
 
     table.insert(self.commands, {"addListItem", {listName, itemName, data}})
     runPreviousCommand(self)
@@ -1297,8 +1261,8 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:clearGrid(gridName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
 
     table.insert(self.commands, {"clearGrid", {gridName}})
     runPreviousCommand(self)
@@ -1306,57 +1270,48 @@ end
 
 ---@param self ReGui.GUI
 function sm.regui:clearList(listName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(listName) == "string", "listName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(listName, 1, {"string"})
 
     table.insert(self.commands, {"clearList", {listName}})
     runPreviousCommand(self)
 end
 
 function sm.regui:createDropDown(widgetName, functionName, options)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(functionName) == "string", "functionName is expected to be a string")
-    assert(type(options) == "table", "options is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(functionName, 2, {"string"})
+    AssertArgument(options, 3, {"table"})
 
     table.insert(self.commands, {"createDropDown", {widgetName, functionName, options}})
     runPreviousCommand(self)
 end
 
 function sm.regui:createGridFromJson(gridName, data)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(data) == "table", "data is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(data, 2, {"table"})
 
-    -- Data structure
-    -- {
-    -- 	type = string,
-    -- 	layout = string,
-    -- 	itemWidth = int,
-    -- 	itemHeight = int,
-    -- 	itemCount = int
-    -- }
-
-    assert(type(data.type) == "string", "data.type is expected to be a string")
-    assert(type(data.layout) == "string", "data.layout is expected to be a string")
-    assert(type(data.itemWidth) == "number", "data.itemWidth is expected to be a number")
-    assert(type(data.itemHeight) == "number", "data.itemHeight is expected to be a number")
-    assert(type(data.itemCount) == "number", "data.itemCount is expected to be a number")
+    ValueAssert(type(data.type      ) == "string", 2, "data.type is expected to be a string")
+    ValueAssert(type(data.layout    ) == "string", 2, "data.layout is expected to be a string")
+    ValueAssert(type(data.itemWidth ) == "number", 2, "data.itemWidth is expected to be a number")
+    ValueAssert(type(data.itemHeight) == "number", 2, "data.itemHeight is expected to be a number")
+    ValueAssert(type(data.itemCount ) == "number", 2, "data.itemCount is expected to be a number")
 
     table.insert(self.commands, {"createGridFromJson", {gridName, data}})
     runPreviousCommand(self)
 end
 
-function sm.regui:createHorizontalSlider(widgetName, range, value, callback, enableNumbers)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(range) == "table", "range is expected to be a table")
-    assert(type(value) == "number", "value is expected to be a number")
-    assert(type(callback) == "string", "callback is expected to be a string")
 
-    if enableNumbers ~= nil then
-        assert(type(enableNumbers) == "boolean", "enableNumbers is expected to be a boolean")
-    else
+function sm.regui:createHorizontalSlider(widgetName, range, value, callback, enableNumbers)
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(range, 2, {"table"})
+    AssertArgument(value, 3, {"number"})
+    AssertArgument(callback, 4, {"string"})
+    AssertArgument(enableNumbers, 5, {"boolean", "nil"})
+
+    if enableNumbers == nil then
         enableNumbers = false
     end
 
@@ -1365,85 +1320,85 @@ function sm.regui:createHorizontalSlider(widgetName, range, value, callback, ena
 end
 
 function sm.regui:createVerticalSlider(widgetName, range, value, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(range) == "table", "range is expected to be a table")
-    assert(type(value) == "number", "value is expected to be a number")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(range, 2, {"table"})
+    AssertArgument(value, 3, {"number"})
+    AssertArgument(callback, 4, {"string"})
 
     table.insert(self.commands, {"createVerticalSlider", {widgetName, range, value, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:destroy()
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
+    SelfAssert(self)
     warn("UNIMPLEMENTED destroy")
 end
 
 function sm.regui:playEffect(widget, effect, restart)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widget) == "string", "widget is expected to be a string")
-    assert(type(effect) == "string", "effect is expected to be a string")
-    assert(type(restart) == "boolean", "restart is expected to be a boolean")
+    SelfAssert(self)
+    AssertArgument(widget, 1, {"string"})
+    AssertArgument(effect, 2, {"string"})
+    AssertArgument(restart, 3, {"boolean"})
 
     table.insert(self.commands, {"playEffect", {widget, effect, restart}})
     runPreviousCommand(self)
 end
 
 function sm.regui:playGridEffect(gridName, index, effectName, restart)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(index) == "number", "index is expected to be a number")
-    assert(type(effectName) == "string", "effectName is expected to be a string")
-    assert(type(restart) == "boolean", "restart is expected to be a boolean")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(index, 2, {"number"})
+    AssertArgument(effectName, 3, {"string"})
+    AssertArgument(restart, 4, {"boolean"})
 
     table.insert(self.commands, {"playGridEffect", {gridName, index, effectName, restart}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setButtonCallback(button, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(button) == "string", "button is expected to be a string")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(button, 1, {"string"})
+    AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setButtonCallback", {button, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setButtonState(button, state)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(button) == "string", "button is expected to be a string")
-    assert(type(state) == "boolean", "state is expected to be a boolean")
+    SelfAssert(self)
+    AssertArgument(button, 1, {"string"})
+    AssertArgument(state, 2, {"boolean"})
 
     table.insert(self.commands, {"setButtonState", {button, state}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setColor(widget, color)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widget) == "string", "widget is expected to be a string")
-    assert(type(color) == "Color", "color is expected to be a Color")
+    SelfAssert(self)
+    AssertArgument(widget, 1, {"string"})
+    AssertArgument(color, 2, {"Color"})
 
     table.insert(self.commands, {"setColor", {widget, color}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setContainer(gridName, container)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(container) == "Container", "container is expected to be a Container")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(container, 2, {"Container"})
 
     table.insert(self.commands, {"setContainer", {gridName, container}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setContainers(gridName, containers)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(containers) == "table", "containers is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(containers, 2, {"table"})
 
     for i, container in ipairs(containers) do
-        assert(type(container) == "Container", "container is expected to be a Container")
+        ValueAssert(type(container) == "Container", 2, "container is expected to be a Container")
     end
 
     table.insert(self.commands, {"setContainers", {gridName, containers}})
@@ -1451,278 +1406,275 @@ function sm.regui:setContainers(gridName, containers)
 end
 
 function sm.regui:setFadeRange(range)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(range) == "number", "range is expected to be a number")
+    SelfAssert(self)
+    AssertArgument(range, 1, {"number"})
 
     table.insert(self.commands, {"setFadeRange", {range}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setFocus(widget)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widget) == "string", "widget is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widget, 1, {"string"})
 
     table.insert(self.commands, {"setFocus", {widget}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setGridButtonCallback(buttonName, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(buttonName) == "string", "buttonName is expected to be a string")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(buttonName, 1, {"string"})
+    AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setGridButtonCallback", {buttonName, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setGridItem(gridName, index, item)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(index) == "number", "index is expected to be a number")
-    assert(type(item) == "table", "item is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(index, 2, {"number"})
+    AssertArgument(item, 3, {"table"})
 
     table.insert(self.commands, {"setGridItem", {gridName, index, item}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setGridItemChangedCallback(gridName, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setGridItemChangedCallback", {gridName, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setGridMouseFocusCallback(widgetName, callbackName, gridName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(callbackName) == "string", "callbackName is expected to be a string")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(callbackName, 2, {"string"})
+    AssertArgument(gridName, 3, {"string"})
 
     table.insert(self.commands, {"setGridMouseFocusCallback", {widgetName, callbackName, gridName}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setGridSize(gridName, size)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(size) == "number", "size is expected to be a number")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(size, 2, {"number"})
 
     table.insert(self.commands, {"setGridSize", {gridName, size}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setHost(widget, host, joint)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widget) == "string", "widget is expected to be a string")
-    assert(type(host) == "Shape" or type(host) == "Character", "host is expected to be a Shape or a Character")
-
-    if joint ~= nil then
-        assert(type(joint) == "string", "joint is expected to be a string")
-    end
+    SelfAssert(self)
+    AssertArgument(widget, 1, {"string"})
+    AssertArgument(host, 2, {"Shape", "Character"})
+    AssertArgument(joint, 3, {"string", "nil"})  -- optional
 
     table.insert(self.commands, {"setHost", {widget, host, joint}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setIconImage(itemBox, uuid)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(itemBox) == "string", "itemBox is expected to be a string")
-    assert(type(uuid) == "Uuid", "uuid is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(itemBox, 1, {"string"})
+    AssertArgument(uuid, 2, {"Uuid"})
 
     table.insert(self.commands, {"setIconImage", {itemBox, uuid}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setImage(imageBox, image)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(imageBox) == "string", "imageBox is expected to be a string")
-    assert(type(image) == "string", "image is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(imageBox, 1, {"string"})
+    AssertArgument(image, 2, {"string"})
 
     table.insert(self.commands, {"setImage", {imageBox, image}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setItemIcon(imageBox, itemResource, itemGroup, itemName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(imageBox) == "string", "imageBox is expected to be a string")
-    assert(type(itemResource) == "string", "itemResource is expected to be a string")
-    assert(type(itemGroup) == "string", "itemGroup is expected to be a string")
-    assert(type(itemName) == "string", "itemName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(imageBox, 1, {"string"})
+    AssertArgument(itemResource, 2, {"string"})
+    AssertArgument(itemGroup, 3, {"string"})
+    AssertArgument(itemName, 4, {"string"})
 
     table.insert(self.commands, {"setItemIcon", {imageBox, itemResource, itemGroup, itemName}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setListSelectionCallback(listName, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(listName) == "string", "listName is expected to be a string")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(listName, 1, {"string"})
+    AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setListSelectionCallback", {listName, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setMaxRenderDistance(distance)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(distance) == "number", "distance is expected to be a number")
+    SelfAssert(self)
+    AssertArgument(distance, 1, {"number"})
 
     table.insert(self.commands, {"setMaxRenderDistance", {distance}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setMeshPreview(widgetName, uuid)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widgetName) == "string", "widgetName is expected to be a string")
-    assert(type(uuid) == "Uuid", "uuid is expected to be a Uuid")
+    SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(uuid, 2, {"Uuid"})
 
     table.insert(self.commands, {"setMeshPreview", {widgetName, uuid}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setOnCloseCallback(callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(callback, 1, {"string"})
 
     table.insert(self.commands, {"setOnCloseCallback", {callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setRequireLineOfSight(state)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(state) == "boolean", "state is expected to be a boolean")
+    SelfAssert(self)
+    AssertArgument(state, 1, {"boolean"})
 
     table.insert(self.commands, {"setRequireLineOfSight", {state}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setSelectedDropDownItem(dropDownName, itemName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(dropDownName) == "string", "dropDownName is expected to be a string")
-    assert(type(itemName) == "string", "itemName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(dropDownName, 1, {"string"})
+    AssertArgument(itemName, 2, {"string"})
 
     table.insert(self.commands, {"setSelectedDropDownItem", {dropDownName, itemName}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setSelectedListItem(listName, itemName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(listName) == "string", "listName is expected to be a string")
-    assert(type(itemName) == "string", "itemName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(listName, 1, {"string"})
+    AssertArgument(itemName, 2, {"string"})
 
     table.insert(self.commands, {"setSelectedListItem", {listName, itemName}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setSliderCallback(sliderName, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(sliderName) == "string", "sliderName is expected to be a string")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(sliderName, 1, {"string"})
+    AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setSliderCallback", {sliderName, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setSliderData(sliderName, range, position)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(sliderName) == "string", "sliderName is expected to be a string")
-    assert(type(range) == "number", "range is expected to be a number")
-    assert(type(position) == "number", "position is expected to be a number")
+    SelfAssert(self)
+    AssertArgument(sliderName, 1, {"string"})
+    AssertArgument(range, 2, {"number"})
+    AssertArgument(position, 3, {"number"})
 
     table.insert(self.commands, {"setSliderData", {sliderName, range, position}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setSliderPosition(sliderName, position)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(sliderName) == "string", "sliderName is expected to be a string")
-    assert(type(position) == "number", "position is expected to be a number")
+    SelfAssert(self)
+    AssertArgument(sliderName, 1, {"string"})
+    AssertArgument(position, 2, {"number"})
 
     table.insert(self.commands, {"setSliderPosition", {sliderName, position}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setSliderRange(sliderName, range)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(sliderName) == "string", "sliderName is expected to be a string")
-    assert(type(range) == "number", "range is expected to be a number")
+    SelfAssert(self)
+    AssertArgument(sliderName, 1, {"string"})
+    AssertArgument(range, 2, {"number"})
 
     table.insert(self.commands, {"setSliderRange", {sliderName, range}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setSliderRangeLimit(sliderName, limit)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(sliderName) == "string", "sliderName is expected to be a string")
-    assert(type(limit) == "number", "limit is expected to be a number")
+    SelfAssert(self)
+    AssertArgument(sliderName, 1, {"string"})
+    AssertArgument(limit, 2, {"number"})
 
     table.insert(self.commands, {"setSliderRangeLimit", {sliderName, limit}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setTextAcceptedCallback(editboxName, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(editboxName) == "string", "editboxName is expected to be a string")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(editboxName, 1, {"string"})
+    AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setTextAcceptedCallback", {editboxName, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setTextChangedCallback(editboxName, callback)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(editboxName) == "string", "editboxName is expected to be a string")
-    assert(type(callback) == "string", "callback is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(editboxName, 1, {"string"})
+    AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setTextChangedCallback", {editboxName, callback}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setVisible(widget, state)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widget) == "string", "widget is expected to be a string")
-    assert(type(state) == "boolean", "state is expected to be a boolean")
+    SelfAssert(self)
+    AssertArgument(widget, 1, {"string"})
+    AssertArgument(state, 2, {"boolean"})
 
     table.insert(self.commands, {"setVisible", {widget, state}})
     runPreviousCommand(self)
 end
 
 function sm.regui:setWorldPosition(pos, world)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(pos) == "Vec3", "pos is expected to be a Vector3")
-    assert(type(world) == "World", "world is expected to be a World")
+    SelfAssert(self)
+    AssertArgument(pos, 1, {"Vec3"})
+    AssertArgument(world, 2, {"World"})
 
     table.insert(self.commands, {"setWorldPosition", {pos, world}})
     runPreviousCommand(self)
 end
 
 function sm.regui:stopEffect(widget, effect, immediate)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(widget) == "string", "widget is expected to be a string")
-    assert(type(effect) == "string", "effect is expected to be a string")
-    assert(type(immediate) == "boolean", "immediate is expected to be a boolean")
+    SelfAssert(self)
+    AssertArgument(widget, 1, {"string"})
+    AssertArgument(effect, 2, {"string"})
+    AssertArgument(immediate, 3, {"boolean"})
 
     table.insert(self.commands, {"stopEffect", {widget, effect, immediate}})
     runPreviousCommand(self)
 end
 
 function sm.regui:stopGridEffect(gridName, index, effectName)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(gridName) == "string", "gridName is expected to be a string")
-    assert(type(index) == "number", "index is expected to be a number")
-    assert(type(effectName) == "string", "effectName is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(gridName, 1, {"string"})
+    AssertArgument(index, 2, {"number"})
+    AssertArgument(effectName, 3, {"string"})
 
     table.insert(self.commands, {"stopGridEffect", {gridName, index, effectName}})
     runPreviousCommand(self)
 end
 
 function sm.regui:trackQuest(name, title, mainQuest, questTasks)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(name) == "string", "name is expected to be a string")
-    assert(type(title) == "string", "title is expected to be a string")
-    assert(type(mainQuest) == "boolean", "mainQuest is expected to be a boolean")
-    assert(type(questTasks) == "table", "questTasks is expected to be a table")
+    SelfAssert(self)
+    AssertArgument(name, 1, {"string"})
+    AssertArgument(title, 2, {"string"})
+    AssertArgument(mainQuest, 3, {"boolean"})
+    AssertArgument(questTasks, 4, {"table"})
 
     -- QuestTasks structure
     --    {
@@ -1732,19 +1684,19 @@ function sm.regui:trackQuest(name, title, mainQuest, questTasks)
     --      target = number,
     --      complete = bool
     --    }
-    assert(type(questTasks.name) == "string", "questTasks.name is expected to be a string")
-    assert(type(questTasks.text) == "string", "questTasks.text is expected to be a string")
-    assert(type(questTasks.count) == "number", "questTasks.count is expected to be a number")
-    assert(type(questTasks.target) == "number", "questTasks.target is expected to be a number")
-    assert(type(questTasks.complete) == "boolean", "questTasks.complete is expected to be a boolean")
+    AssertArgument(questTasks.name, 4, {"string"})
+    AssertArgument(questTasks.text, 4, {"string"})
+    AssertArgument(questTasks.count, 4, {"number"})
+    AssertArgument(questTasks.target, 4, {"number"})
+    AssertArgument(questTasks.complete, 4, {"boolean"})
 
     table.insert(self.commands, {"trackQuest", {name, title, mainQuest, questTasks}})
     runPreviousCommand(self)
 end
 
 function sm.regui:untrackQuest(name)
-    assert(type(self) == "table", "Invalid ReGuiInstance!")
-    assert(type(name) == "string", "name is expected to be a string")
+    SelfAssert(self)
+    AssertArgument(name, 1, {"string"})
 
     table.insert(self.commands, {"untrackQuest", {name}})
     runPreviousCommand(self)

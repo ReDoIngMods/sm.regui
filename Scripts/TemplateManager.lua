@@ -2,8 +2,8 @@
 sm.regui.template = {}
 
 function sm.regui.template.createTemplate(path)
-    assert(type(path) == "string", "path is expected to be a string!")
-    assert(sm.json.fileExists(path), "File not found!")
+    AssertArgument(path, 1, {"string"})
+    ValueAssert(sm.json.fileExists(path), 1, "File not found!")
 
     print("Creating new template...")
 
@@ -12,8 +12,8 @@ function sm.regui.template.createTemplate(path)
         data = sm.json.open(path) ---@type ReGui.LayoutFile
     }
 
-    assert(self.data.identifier == "ReGui", "Not a ReGui Layout File!")
-    assert(self.data.version == sm.regui.version, "ReGui version mismatch!")
+    ValueAssert(self.data.identifier == "ReGui"         , 1, "Not a ReGui Layout File!")
+    ValueAssert(self.data.version    == sm.regui.version, 1, "ReGui version mismatch!")
 
     for key, value in pairs(sm.regui.template) do
         if type(value) == "function" then
@@ -26,7 +26,7 @@ end
 
 ---@param reGuiInterface ReGui.GUI
 function sm.regui.template.createTemplateFromInterface(reGuiInterface)
-    assert(type(reGuiInterface) == "table", "reGuiInterface is expected to be a table!")
+    AssertArgument(reGuiInterface, 1, {"table"}, {"ReGuiInterface"})
 
     print("Creating new template from interface...")
 
@@ -47,8 +47,8 @@ end
 ---@param self ReGui.Template
 ---@param reGuiInterface ReGui.GUI
 function sm.regui.template:applyTemplate(reGuiInterface)
-    assert(type(reGuiInterface) == "table", "Invalid ReGuiInterface!")
-    
+    AssertArgument(reGuiInterface, 1, {"table"}, {"ReGuiInterface"})
+
     local outputData = unpack({self.data})
     
     ---@param widget ReGui.LayoutFile.Widget
@@ -80,7 +80,7 @@ function sm.regui.template:applyTemplate(reGuiInterface)
         templateWidget = templateWidget
     end
 
-    assert(templateWidget, "No template widget found!")
+    ValueAssert(templateWidget, 1, "No template widget found!")
 
     local gui = sm.regui.newBlank()
     gui.data = outputData
