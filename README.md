@@ -2,9 +2,12 @@
 
 ---
 
-<h1 align="center">The First-Ever <strong>Community-Based GUI Library</strong> for Scrap Mechanic</h1>
+<h1 align="center">A Community-Based GUI Library for Scrap Mechanic</h1>
 
 `sm.regui` is a [**Scrap Mechanic**](https://store.steampowered.com/app/387990/Scrap_Mechanic/) dependency mod that allows modders to create graphical user interfaces that are normally not possible with `sm.gui`.
+
+> [!NOTE]
+> Funfact: This is the first **GUI Library** (based around with MyGui) ever in the **Scrap Mechanic Modding Community**
 
 > [!CAUTION]
 > The mod is currently *nearly* complete and is technically usable. **However**, the Fullscreen GUI feature is still unfinished. Everything else should work as expected.
