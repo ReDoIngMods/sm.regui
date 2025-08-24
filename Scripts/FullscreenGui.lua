@@ -127,11 +127,15 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
                 end,
 
                 ["HStretch"] = function ()
+                    outputX = 0
+                    
                     local size = outputWidget:getSize()
                     outputWidget:setSize({screenWidth, size.y or size[2]})
                 end,
 
                 ["VStretch"] = function ()
+                    outputY = 0
+
                     local size = outputWidget:getSize()
                     outputWidget:setSize({size.x or size[1], screenHeight})
                 end,
@@ -155,6 +159,10 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
                 ["Center"] = "HCenter VCenter"
             }
 
+            for selection in defaultAlignment:gmatch("%S+") do
+                alignmentTable[selection]()
+            end
+
             local align = conversionTbl[alignment] or alignment
             local alignmentFunctional = false
 
@@ -162,13 +170,7 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
                 local func = alignmentTable[selection]
                 if func then
                     func()
-                    alignmentFunctional = false
-                end
-            end
-
-            if not alignmentFunctional then
-                for selection in defaultAlignment:gmatch("%S+") do
-                    alignmentTable[selection]()
+                    alignmentFunctional = true
                 end
             end
 
