@@ -137,6 +137,27 @@ function getMyGuiScreenSize()
     end
 end
 
+local function tablePack(...)
+    return {
+        __n = select("#", ...),
+        ...
+    }
+end
+
+local function tableMove(src, first, last, offset, dst)
+    for i = 0, last - first do
+        dst[offset + i] = src[first + i]
+    end
+end
+
+
+local function tableRepack(...)
+    local packed = tablePack(...)
+    local result = {}
+    tableMove(packed, 1, packed.__n, 1, result)
+    return result
+end
+
 --
 -- MAIN LIBRARY
 --
@@ -205,10 +226,13 @@ function sm.regui.new(path)
 
         for key, value in pairs(widget.properties) do
             if key == "Caption" then
+                -- Dont need to repack using tableRepack
+                local repackedValue = type(value) == "table" and value or {value}
+
                 self.modifiers[name] = self.modifiers[name] or {}
                 self.modifiers[name].text = {
-                    input = type(value) == "table" and value or { value },
-                    output = self.translatorFunction(value)
+                    input = repackedValue,
+                    output = self.translatorFunction(unpack(repackedValue))
                 }
             end
         end
@@ -557,12 +581,13 @@ function sm.regui:setWidgetProperty(widgetName, index, value)
     ValueAssert(widget, 1, "Widget not found!")
 
     if index == "Caption" then
-        local translatedText = self.translatorFunction(value)
+        -- Dont need to repack using tableRepack
+        local repackedValue = type(value) == "table" and value or {value}
 
         self.modifiers[widget.instanceProperties.name] = self.modifiers[widget.instanceProperties.name] or {}
         self.modifiers[widget.instanceProperties.name].text = {
-            input = {value},
-            output = tostring(translatedText)
+            input = repackedValue,
+            output = self.translatorFunction(unpack(repackedValue))
         }
 
         widget.properties[index] = tostring(value)
@@ -839,12 +864,13 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             AssertArgument(value, 3, {"string", "number", "boolean", "table", "nil"})
 
             if index == "Caption" then
-                local translatedText = gui.translatorFunction(value)
+                -- Dont need to repack using tableRepack
+                local repackedValue = type(value) == "table" and value or {value}
 
                 gui.modifiers[widget.instanceProperties.name] = gui.modifiers[widget.instanceProperties.name] or {}
                 gui.modifiers[widget.instanceProperties.name].text = {
-                    input = {value},
-                    output = tostring(translatedText)
+                    input = repackedValue,
+                    output = gui.translatorFunction(unpack(repackedValue))
                 }
             end
 
@@ -976,19 +1002,6 @@ local function createWidgetWrapper(gui, parentWidget, widget)
                 width     = width,
                 height    = height
             }
-        end,
-
-        exists = function(self)
-            SelfAssert(self)
-
-            local tbl = parentWidget and parentWidget.children or gui.data.data
-            for _, child in ipairs(tbl) do
-                if child.instanceProperties.name == widget.instanceProperties.name then
-                    return true
-                end
-            end
-
-            return false
         end,
 
         destroy = function(self)
@@ -1196,19 +1209,23 @@ function sm.regui:setTextTranslation(translatorFunction)
     SelfAssert(self)
     AssertArgument(translatorFunction, 1, {"function", "nil"})
 
-    self.translatorFunction = translatorFunction or function(...) return ... end
+    if not translatorFunction then
+        self.translatorFunction = function(...) return ... end
+    else
+        self.translatorFunction = translatorFunction
+    end
 end
 
 ---@param self ReGui.GUI
 function sm.regui:setText(widgetName, ...)
     SelfAssert(self)
     
-    local translatedText = self.translatorFunction(...)
+    local repackedValue = tableRepack(...)
 
     self.modifiers[widgetName] = self.modifiers[widgetName] or {}
     self.modifiers[widgetName].text = {
-        input = {...},
-        output = tostring(translatedText)
+        input = repackedValue,
+        output = self.translatorFunction(unpack(repackedValue))
     }
 end
 
@@ -1231,9 +1248,8 @@ function sm.regui:rerunTranslations()
 
     for widgetName, data in pairs(self.modifiers) do
         if data.text then
-            local translatedText = self.translatorFunction(unpack(data.text.input))
-            data.text.output = tostring(translatedText)
-
+            data.text.output = self.translatorFunction(unpack(data.text.input))
+            
             if self.gui and sm.exists(self.gui) then
                 self.gui:setText(widgetName, data.text.output)
             end
