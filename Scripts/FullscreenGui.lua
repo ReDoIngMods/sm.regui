@@ -7,8 +7,6 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
     AssertArgument(hasFixedAspectRatio, 2, {"boolean"})
     AssertArgument(alignment, 3, {"string"})
 
-    local alignment = alignment:lower()
-
     ---@class ReGui.FullscreenGUI : ReGui.GUI
     local gui = sm.regui.newBlank()
     local backPanel = gui:createWidget("BackPanel", "Widget", "PanelEmpty")
@@ -30,14 +28,14 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
         getAlignment = function (self)
             SelfAssert(self)
 
-            return alignment:lower()
+            return alignment
         end,
 
         setAlignment = function (self, newAlignment)
             SelfAssert(self)
             AssertArgument(newAlignment, 1, {"string"})
 
-            alignment = newAlignment:lower()
+            alignment = newAlignment
         end,
 
         hasFixedAspectRatio = function (self)
@@ -111,31 +109,67 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
             local outputX = 0
             local outputY = 0
 
-            if alignment == "stretch" then
-                outputWidget:setSize({screenWidth, screenHeight})
-            elseif alignment == "topleft" then
-                -- Do nothing
-            elseif alignment == "topright" then
-                outputX = screenWidth - outputWidgetWidth
-            elseif alignment == "top" then
-                outputX = (screenWidth - outputWidgetWidth) / 2
-            elseif alignment == "bottomleft" then
-                outputY = screenHeight - outputWidgetHeight
-            elseif alignment == "bottomright" then
-                outputX = screenWidth - outputWidgetWidth
-                outputY = screenHeight - outputWidgetHeight
-            elseif alignment == "bottom" then
-                outputX = (screenWidth - outputWidgetWidth) / 2
-                outputY = screenHeight - outputWidgetHeight
-            elseif alignment == "right" then
-                outputX = screenWidth - outputWidgetWidth
-                outputY = (screenHeight - outputWidgetHeight) / 2
-            elseif alignment == "left" then
-                outputX = 0
-                outputY = (screenHeight - outputWidgetHeight) / 2
-            else -- Center
-                outputX = (screenWidth - outputWidgetWidth) / 2
-                outputY = (screenHeight - outputWidgetHeight) / 2
+            local alignmentTable = {
+                ["Left"] = function ()
+                    outputX = 0
+                end,
+
+                ["Right"] = function ()
+                    outputX = screenWidth - outputWidgetWidth
+                end,
+
+                ["Top"] = function ()
+                    outputY = 0
+                end,
+
+                ["Bottom"] = function ()
+                    outputY = screenHeight - outputWidgetHeight
+                end,
+
+                ["HStretch"] = function ()
+                    local size = outputWidget:getSize()
+                    outputWidget:setSize({screenWidth, size.y or size[2]})
+                end,
+
+                ["VStretch"] = function ()
+                    local size = outputWidget:getSize()
+                    outputWidget:setSize({size.x or size[1], screenHeight})
+                end,
+
+                ["HCenter"] = function ()
+                    outputX = (screenWidth - outputWidgetWidth) / 2
+                end,
+
+                ["VCenter"] = function ()
+                    outputY = (screenHeight - outputWidgetHeight) / 2
+                end
+            }
+
+            local defaultAlignment = "HCenter VCenter"
+            local conversionTbl = {
+                ["Stretch"] = "HStretch VStretch",
+
+                ["[DEFAULT]"] = defaultAlignment,
+                ["Default"] = defaultAlignment,
+
+                ["Center"] = "HCenter VCenter"
+            }
+
+            local align = conversionTbl[alignment] or alignment
+            local alignmentFunctional = false
+
+            for selection in align:gmatch("%S+") do
+                local func = alignmentTable[selection]
+                if func then
+                    func()
+                    alignmentFunctional = false
+                end
+            end
+
+            if not alignmentFunctional then
+                for selection in defaultAlignment:gmatch("%S+") do
+                    alignmentTable[selection]()
+                end
             end
 
             outputWidget:setPosition({outputX, outputY})
