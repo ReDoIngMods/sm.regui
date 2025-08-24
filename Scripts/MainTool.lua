@@ -886,8 +886,8 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
         setInstanceProperty = function(self, key, value)
             SelfAssert(self)
-            AssertArgument(index, 2, {"string"})
-            AssertArgument(value, 3, {"string", "number", "boolean"})
+            AssertArgument(key, 1, {"string"})
+            AssertArgument(value, 2, {"string", "number", "boolean", "nil"})
 
             widget.instanceProperties[key] = tostring(value)
         end,
