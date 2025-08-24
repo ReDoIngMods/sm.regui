@@ -449,7 +449,7 @@ function sm.regui:setWidgetPosition(widgetName, position)
     }
 end
 
-function sm.regui:setWidgetPositionPercentage(widgetName, position)
+function sm.regui:setWidgetPositionRealUnits(widgetName, position)
     SelfAssert(self)
     AssertArgument(widgetName, 1, {"string"})
     AssertArgument(position  , 2, {"table"})
@@ -467,7 +467,7 @@ function sm.regui:setWidgetPositionPercentage(widgetName, position)
     local width = current.width
     local height = current.height
 
-    -- Convert pixel dimensions to percentages if needed
+    -- Convert pixel dimensions to RealUnitss if needed
     if current.usePixels then
         width  = width  / 1920
         height = height / 1080
@@ -514,7 +514,7 @@ function sm.regui:setWidgetSize(widgetName, size)
     }
 end
 
-function sm.regui:setWidgetSizePercentage(widgetName, size)
+function sm.regui:setWidgetSizeRealUnits(widgetName, size)
     SelfAssert(self)
     AssertArgument(widgetName, 1, {"string"})
     AssertArgument(size, 2, {"table"})
@@ -551,7 +551,7 @@ function sm.regui:setWidgetProperty(widgetName, index, value)
     SelfAssert(self)
     AssertArgument(widgetName, 1, {"string"})
     AssertArgument(index     , 2, {"string"})
-    AssertArgument(value     , 3, {"string", "number", "boolean"})
+    AssertArgument(value     , 3, {"string", "number", "boolean", "table", "nil"})
     
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     ValueAssert(widget, 1, "Widget not found!")
@@ -594,6 +594,10 @@ function sm.regui:setWidgetProperties(widgetName, data)
 
     for key, value in pairs(data) do
         widget.properties[key] = tostring(value)
+
+        if key == "Caption" then
+            self:setText(widget, value)
+        end
     end
 end
 
@@ -615,7 +619,7 @@ function sm.regui:widgetExists(widgetName)
     return widget ~= nil
 end
 
-local function createControllerWrapper(controller, widget)
+local function createControllerWrapper(controller)
     return {
         getType = function(self)
             SelfAssert(self)
@@ -646,7 +650,7 @@ local function createControllerWrapper(controller, widget)
         setProperty = function(self, key, value)
             SelfAssert(self)
             AssertArgument(index, 2, {"string"})
-            AssertArgument(value, 3, {"string", "number", "boolean"})
+            AssertArgument(value, 3, {"string", "number", "boolean", "table", "nil"})
 
             if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
                 controller.properties[key] = value
@@ -682,14 +686,14 @@ end
 local function createWidgetWrapper(gui, parentWidget, widget)
     ---@class ReGui.Widget
     local output = {
-        setTemplateContents = function (self, state)
+        setLocationForTemplateContents = function (self, state)
             SelfAssert(self)
             AssertArgument(state, 1, {"boolean"})
             
             widget.isTemplateContents = state
         end,
 
-        isTemplateContents = function (self)
+        isLocationForTemplateContents = function (self)
             SelfAssert(self)
             
             return widget.isTemplateContents
@@ -702,17 +706,50 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
         getType = function (self)
             SelfAssert(self)
-            return widget.instanceProperties.type
+            return widget.instanceProperties.type or ""
         end,
 
         getSkin = function(self)
             SelfAssert(self)
-            return widget.instanceProperties.skin
+            return widget.instanceProperties.skin or ""
+        end,
+
+        setName = function(self, name)
+            SelfAssert(self)
+            AssertArgument(name, 1, {"string"})
+
+            widget.instanceProperties.name = name
+        end,
+
+        setType = function (self, widgetType)
+            SelfAssert(self)
+            AssertArgument(widgetType, 1, {"string"})
+            
+            widget.instanceProperties.type = widgetType
+        end,
+
+        setSkin = function(self, skin)
+            SelfAssert(self)
+            AssertArgument(skin, 1, {"string"})
+
+            widget.instanceProperties.skin = skin
         end,
 
         getParent = function(self)
             SelfAssert(self)
-            return parentWidget and createWidgetWrapper(gui, nil, parentWidget) or nil
+
+            if not parentWidget then
+                return nil
+            end
+
+            local parentWidgetName = parentWidget.instanceProperties.name
+            if not parentWidgetName then
+                return createWidgetWrapper(gui, nil, parentWidget)
+            end
+
+            local _, parentWidgetWidget = findWidgetRecursiveRaw(gui, parentWidgetName)
+
+            return createWidgetWrapper(gui, parentWidgetWidget, parentWidget)
         end,
 
         getChildren = function(self)
@@ -739,7 +776,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             end
         end,
 
-        getPositionPercentage = function (self)
+        getPositionRealUnits = function (self)
             SelfAssert(self)
 
             if widget.positionSize.usePixels then
@@ -767,7 +804,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             end
         end,
 
-        getSizePercentage = function (self)
+        getSizeRealUnits = function (self)
             SelfAssert(self)
 
             if widget.positionSize.usePixels then
@@ -799,7 +836,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         setProperty = function(self, index, value)
             SelfAssert(self)
             AssertArgument(index, 1, {"string"})
-            AssertArgument(value, 2, {"string", "number", "boolean"})
+            AssertArgument(value, 3, {"string", "number", "boolean", "table", "nil"})
 
             if index == "Caption" then
                 local translatedText = gui.translatorFunction(value)
@@ -862,7 +899,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             }
         end,
 
-        setPositionPercentage = function(self, position)
+        setPositionRealUnits = function(self, position)
             SelfAssert(self)
             AssertArgument(position  , 2, {"table"})
 
@@ -914,7 +951,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             }
         end,
 
-        setSizePercentage = function(self, size)
+        setSizeRealUnits = function(self, size)
             SelfAssert(self)
 
             AssertArgument(size, 2, {"table"})
@@ -994,12 +1031,6 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             return createWidgetWrapper(gui, widget, newWidget)
         end,
 
-        getRawWidgetContents = function (self)
-            SelfAssert(self)
-
-            return widget
-        end,
-
         createController = function (self, controllerType)
             SelfAssert(self)
             AssertArgument(controllerType, 1, {"string"})
@@ -1014,7 +1045,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             widget.controllers = widget.controllers or {}
             table.insert(widget.controllers, controller)
 
-            return createControllerWrapper(controller, widget)
+            return createControllerWrapper(controller)
         end,
 
         findController = function (self, controllerType)
@@ -1023,7 +1054,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             for _, controller in ipairs(widget.controllers or {}) do
                 if controller.type == controllerType then
-                    return createControllerWrapper(controller, widget)
+                    return createControllerWrapper(controller)
                 end
             end
 
@@ -1061,6 +1092,12 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             SelfAssert(self)
 
             return (gui.modifiers[widget.instanceProperties.name] and gui.modifiers[widget.instanceProperties.name].text) and gui.modifiers[widget.instanceProperties.name].text.output or nil
+        end,
+
+        exists = function (self)
+            SelfAssert(self)
+
+            return findWidgetRecursiveRaw(gui, self:getName())
         end
     }
 
@@ -1180,7 +1217,13 @@ function sm.regui:getText(widgetName)
     SelfAssert(self)
     AssertArgument(widgetName, 1, {"string"})
 
-    return (self.modifiers[widgetName] and self.modifiers[widgetName].text) and self.modifiers[widgetName].text.output or nil
+    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
+    ValueAssert(widget, 1, "Widget not found!")
+
+    local modiferText = (self.modifiers[widgetName] and self.modifiers[widgetName].text) and self.modifiers[widgetName].text.output or nil
+    local caption = widget.properties and widget.properties.Caption or nil
+
+    return modiferText or caption
 end
 
 function sm.regui:rerunTranslations()
@@ -1200,6 +1243,8 @@ end
 
 function sm.regui:setData(widgetName, data)
     SelfAssert(self)
+    AssertArgument(widgetName, 1, {"string"})
+    AssertArgument(data, 2, {"table"})
 
     local widget = findWidgetRecursiveRaw(self, widgetName)
     ValueAssert(widget, 1, "Widget not found!")

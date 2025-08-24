@@ -12,11 +12,11 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
     ---@class ReGui.FullscreenGUI : ReGui.GUI
     local gui = sm.regui.newBlank()
     local backPanel = gui:createWidget("BackPanel", "Widget", "PanelEmpty")
-    backPanel:setSizePercentage({scaleFactor, scaleFactor})
+    backPanel:setSizeRealUnits({scaleFactor, scaleFactor})
     
     local fullscreenWidget = backPanel:createWidget("FullscreenWidget", "Widget", "PanelEmpty")
     local outputWidget = fullscreenWidget:createWidget("OutputWidget", "Widget", "PanelEmpty")
-    outputWidget:setTemplateContents(true)
+    outputWidget:setLocationForTemplateContents(true)
 
     local outputGui = sm.regui.template.createTemplateFromInterface(gui):applyTemplate(guiInterface)
 
