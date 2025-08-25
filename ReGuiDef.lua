@@ -31,14 +31,33 @@ function sm.regui.template.createTemplateFromInterface(reGuiInterface) end
 -- Custom Font Rendering Manager
 sm.regui.font = {}
 
+---Adds a new font to the ReGui Library. This font can be used by any mod.
+---@param fontName string The name of the font
+---@param fontPath string Path to this font. Note that you cannot use $CONTENT_DATA here! (Eg: "$CONTENT_[MOD_UUID]/Gui/Fonts/MyFont")
+function sm.regui.font.addFont(fontName, fontPath) end
+
+---Gets all font names that the library has
+---@return string[] fontNames All the font names.
+function sm.regui.font.getFontNames() end
+
+---Returns true if a font exists
+---@param fontName string The name of the font to check
+---@return boolean exists If it exists or not.
+function sm.regui.font.fontExists(fontName) end
+
+---Gets the fullpath of a font from the fontName
+---@param fontName string The name of the font to get it's path
+---@return string fontPath The font path.
+function sm.regui.font.getFontPath(fontName) end
+
 ---Calculates the pixel size the given text would occupy.
 ---@param text string The text to measure.
----@param fontPath string Path to the font file (e.g., "$CONTENT_DATA/Gui/Fonts/MyFont").
+---@param fontName string The name of the font to use
 ---@param fontSize number Font size in pixels.
 ---@param rotation number Rotation to apply (in degrees).
 ---@return number width The calculated text width in pixels.
 ---@return number height The calculated text height in pixels.
-function sm.regui.font.calcCustomTextSize(text, fontPath, fontSize, rotation) end
+function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation) end
 
 ---Draws custom text onto a widget. (position being in pixels)
 ---
@@ -47,10 +66,10 @@ function sm.regui.font.calcCustomTextSize(text, fontPath, fontSize, rotation) en
 ---@param widget ReGuiInterface.Widget The widget on which to render the text
 ---@param position ReGuiCoordinate The position to draw the text
 ---@param text string The text string to display
----@param fontPath string The full path to the font file (e.g., "$CONTENT_DATA/Gui/Fonts/MyFont")
+---@param fontName string The name of the font to use
 ---@param fontSize number The size in pixels at which to render the font
 ---@param rotation number The rotation to apply to the text
-function sm.regui.font.drawCustomText(widget, position, text, fontPath, fontSize, rotation) end
+function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize, rotation) end
 
 ---Draws custom text onto a widget. (position being in real units)
 ---
@@ -59,10 +78,10 @@ function sm.regui.font.drawCustomText(widget, position, text, fontPath, fontSize
 ---@param widget ReGuiInterface.Widget The widget on which to render the text.
 ---@param position ReGuiCoordinate The position to draw the text.
 ---@param text string The text string to display.
----@param fontPath string The full path to the font file (e.g., "$CONTENT_DATA/Gui/Fonts/MyFont").
+---@param fontName string The name of the font to use
 ---@param fontSize number The size in pixels at which to render the font.
 ---@param rotation number The rotation degrees to apply to the text.
-function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontPath, fontSize, rotation) end
+function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontName, fontSize, rotation) end
 
 
 --- CLASSES --

@@ -136,16 +136,68 @@ local function hexToMyGuiColor(hex)
 end
 
 local cachedFonts = {} ---@type table<string, ReGui.Font.File>
+local fontNameToFontPath = {} ---@type table<string, string>
+
+---@param fontName string
+---@param fontPath string
+function sm.regui.font.addFont(fontName, fontPath)
+    AssertArgument(fontName, 1, {"string"})
+    AssertArgument(fontPath, 2, {"string"})
+
+    if fontPath:sub(#fontPath) == "/" then
+        fontPath = fontPath:sub(1, #fontPath - 1)
+    end
+
+    fontNameToFontPath[fontName] = fontPath
+end
+
+---@return string[]
+function sm.regui.font.getFontNames()
+    local fontNames = {}
+    for fontName, _ in pairs(fontNameToFontPath) do
+        table.insert(fontNames, fontName)
+    end
+
+    return fontNames
+end
+
+---@param fontName string
+---@return boolean
+function sm.regui.font.fontExists(fontName)
+    AssertArgument(fontName, 1, {"string"})
+
+    for name, _ in pairs(fontNameToFontPath) do
+        if name == fontName then
+            return true
+        end
+    end
+
+    return false
+end
+
+---@param fontName string
+---@return string
+function sm.regui.font.getFontPath(fontName)
+    AssertArgument(fontName, 1, {"string"})
+
+    local path = fontNameToFontPath[fontName]
+    ValueAssert(path, 1, "Font not found!")
+
+    return path
+end
 
 ---@param text string
----@param fontPath string
+---@param fontName string
 ---@param fontSize number
 ---@param rotation number
 ---@return number width, number height
-function sm.regui.font.calcCustomTextSize(text, fontPath, fontSize, rotation)
-    AssertArgument(text    , 3, {"string"})
-    AssertArgument(fontPath, 4, {"string"})
-    AssertArgument(fontSize, 5, {"number"})
+function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation)
+    AssertArgument(text    , 1, {"string"})
+    AssertArgument(fontName, 2, {"string"})
+    AssertArgument(fontSize, 3, {"number"})
+
+    local fontPath = fontNameToFontPath[fontName]
+    ValueAssert(value, 2, "Font not found!")
 
     cachedFonts[fontPath] = cachedFonts[fontPath] or sm_json_open(fontPath .. "/data.json")
     local font = cachedFonts[fontPath]
@@ -204,10 +256,10 @@ end
 ---@param widget ReGuiInterface.Widget
 ---@param position {[1]: integer?, [2]: integer?, x: integer?, y: integer?}
 ---@param text string
----@param fontPath string
+---@param fontName string
 ---@param fontSize number
 ---@param rotation number
-function sm.regui.font.drawCustomText(widget, position, text, fontPath, fontSize, rotation)
+function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize, rotation)
     AssertArgument(widget  , 1, {"table"}, {"ReguiInterface.Widget"})
     AssertArgument(position, 2, {"table"})
     
@@ -217,10 +269,13 @@ function sm.regui.font.drawCustomText(widget, position, text, fontPath, fontSize
     ValueAssert(type(y) == "number", 2, "Expected y or [2] to be a number!")
     
     AssertArgument(text    , 3, {"string"})
-    AssertArgument(fontPath, 4, {"string"})
+    AssertArgument(fontName, 4, {"string"})
     AssertArgument(fontSize, 5, {"number"})
     AssertArgument(rotation, 6, {"number"})
     
+    local fontPath = fontNameToFontPath[fontName]
+    ValueAssert(value, 2, "Font not found!")
+
     cachedFonts[fontPath] = cachedFonts[fontPath] or sm.json.open(fontPath .. "/data.json")
     local font = cachedFonts[fontPath]
 
