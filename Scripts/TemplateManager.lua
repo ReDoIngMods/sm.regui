@@ -5,8 +5,6 @@ function sm.regui.template.createTemplate(path)
     AssertArgument(path, 1, {"string"})
     ValueAssert(sm.json.fileExists(path), 1, "File not found!")
 
-    print("Creating new template...")
-
     ---@class ReGui.Template : sm.regui.template
     local self = {
         data = sm.json.open(path) ---@type ReGui.LayoutFile
@@ -28,8 +26,6 @@ end
 function sm.regui.template.createTemplateFromInterface(reGuiInterface)
     AssertArgument(reGuiInterface, 1, {"table"}, {"ReGuiInterface"})
 
-    print("Creating new template from interface...")
-
     ---@class ReGui.Template : sm.regui.template
     local self = {
         data = unpack({reGuiInterface.data})
@@ -46,7 +42,7 @@ end
 
 ---@param self ReGui.Template
 ---@param reGuiInterface ReGui.GUI
-function sm.regui.template:applyTemplate(reGuiInterface)
+function sm.regui.template:applyTemplateFromInterface(reGuiInterface)
     AssertArgument(reGuiInterface, 1, {"table"}, {"ReGuiInterface"})
 
     local outputData = unpack({self.data})
@@ -96,6 +92,12 @@ function sm.regui.template:applyTemplate(reGuiInterface)
     templateWidget.isTemplateContents = false
 
     return gui
+end
+
+---@param self ReGui.Template
+---@param path string
+function sm.regui.template:applyTemplate(path)
+    return self:applyTemplateFromInterface(sm.regui.new(path))
 end
 
 print("Loaded TemplateManager!")

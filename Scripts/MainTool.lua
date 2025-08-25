@@ -189,8 +189,6 @@ function sm.regui.new(path)
     AssertArgument(path, 1, {"string"})
     ValueAssert(sm.json.fileExists(path), 1, "File not found!")
 
-    print("Creating new gui interface...")
-
     ---@class ReGui.GUI : sm.regui
     local self = {
         gui = nil, ---@type GuiInterface?
@@ -246,8 +244,6 @@ function sm.regui.new(path)
 end
 
 function sm.regui.newBlank()
-    print("Creating new blank gui...")
-
     ---@class ReGui.GUI : sm.regui
     local self = {
         gui = nil, ---@type GuiInterface?
@@ -387,7 +383,7 @@ function sm.regui:open()
 
     self.gui = sm.gui.createGuiFromLayout(self.renderedPath, true, self.settings)
 
-    self:rerunTranslations()
+    self:refreshTranslations()
 
     for _, command in pairs(self.commands or {}) do
         self.gui[command[1]](self.gui, unpack(command[2]))
@@ -1024,8 +1020,6 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             AssertArgument(widgetType, 2, {"string", "nil"})
             AssertArgument(skin      , 3, {"string", "nil"})
             
-            print("Creating widget \"" .. widgetName .. "\" inside \"" .. (self:getName() ~= "" and self:getName() or "(unnamed)") .. "\"")
-
             local newWidget = {
                 instanceProperties = { name = widgetName, type = widgetType or "Widget", skin = skin or "PanelEmpty" },
                 positionSize = {
@@ -1047,8 +1041,6 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         createController = function (self, controllerType)
             SelfAssert(self)
             AssertArgument(controllerType, 1, {"string"})
-
-            print("Creating controller for widget \"" .. (self:getName() ~= "" and self:getName() or "(unnamed)") .. "\": " .. controllerType)
 
             local controller = {
                 type = controllerType,
@@ -1110,7 +1102,14 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         exists = function (self)
             SelfAssert(self)
 
-            return findWidgetRecursiveRaw(gui, self:getName())
+            local widget, _ = findWidgetRecursiveRaw(gui, self:getName())
+            return widget ~= nil
+        end,
+
+        hasChildren = function (self)
+            SelfAssert(self)
+
+            return #widget.children ~= 0
         end
     }
 
@@ -1160,8 +1159,6 @@ function sm.regui:createWidget(widgetName, widgetType, skin)
     AssertArgument(widgetName, 1, {"string"})
     AssertArgument(widgetType, 2, {"string", "nil"})
     AssertArgument(skin      , 3, {"string", "nil"})
-
-    print("Creating widget \"" .. widgetName .. "\"...")
 
     ---@type ReGui.LayoutFile.Widget
     local widget = {
@@ -1243,7 +1240,7 @@ function sm.regui:getText(widgetName)
     return modiferText or caption
 end
 
-function sm.regui:rerunTranslations()
+function sm.regui:refreshTranslations()
     SelfAssert(self)
 
     for widgetName, data in pairs(self.modifiers) do
@@ -1767,6 +1764,7 @@ end
 
 dofile("./TemplateManager.lua")
 dofile("./FullscreenGui.lua")
+dofile("./FontManager.lua")
 
 print("Library fully loaded!")
 

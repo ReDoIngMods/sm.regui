@@ -1,14 +1,69 @@
+-- sm.regui: Main namespace for ReDoing Graphical User Interfaces
+-- sm.regui.template: Template manager for reusing GUI layouts
+-- sm.regui.font: Utilities for rendering custom font-based text
+
+---sm.regui, ReDoing Graphical User Interfaces
 ---@diagnostic disable: missing-return
 sm.regui = {}
 
----Creates a new ReGuiInterface from a Relayout file
----@param path string The path of the relayout file
----@return ReGuiInterface reGuiInterface The created interface
+---Creates a new ReGuiInterface from a Relayout file.
+---@param path string Path to the .relayout file to load.
+---@return ReGuiInterface A new GUI interface instance.
 function sm.regui.new( path ) end
 
 ---Creates a new blank layout
----@return ReGuiInterface reGuiInterface
+---@return ReGuiInterface ReGuiInterface
 function sm.regui.newBlank() end
+
+-- Template manager
+sm.regui.template = {}
+
+---Creates a new template from a Relayout File
+---@param path string The path of the relayout file
+---@return ReGuiTemplate template The template created from the relayout file
+function sm.regui.template.createTemplate(path) end
+
+---Creates a reusable template from an existing ReGuiInterface.
+---@param reGuiInterface ReGuiInterface Source interface to generate a template from.
+---@return ReGuiTemplate A new template based on the interface.
+function sm.regui.template.createTemplateFromInterface(reGuiInterface) end
+
+-- Custom Font Rendering Manager
+sm.regui.font = {}
+
+---Calculates the pixel size the given text would occupy.
+---@param text string The text to measure.
+---@param fontPath string Path to the font file (e.g., "$CONTENT_DATA/Gui/Fonts/MyFont").
+---@param fontSize number Font size in pixels.
+---@param rotation number Rotation to apply (in degrees).
+---@return number width The calculated text width in pixels.
+---@return number height The calculated text height in pixels.
+function sm.regui.font.calcCustomTextSize(text, fontPath, fontSize, rotation) end
+
+---Draws custom text onto a widget. (position being in pixels)
+---
+-- Renders the specified text at a given position within a widget, using a custom font, size, and rotation
+---
+---@param widget ReGuiInterface.Widget The widget on which to render the text
+---@param position ReGuiCoordinate The position to draw the text
+---@param text string The text string to display
+---@param fontPath string The full path to the font file (e.g., "$CONTENT_DATA/Gui/Fonts/MyFont")
+---@param fontSize number The size in pixels at which to render the font
+---@param rotation number The rotation to apply to the text
+function sm.regui.font.drawCustomText(widget, position, text, fontPath, fontSize, rotation) end
+
+---Draws custom text onto a widget. (position being in real units)
+---
+-- Renders the specified text at a given position within a widget, using a custom font, size, and rotation.
+---
+---@param widget ReGuiInterface.Widget The widget on which to render the text.
+---@param position ReGuiCoordinate The position to draw the text.
+---@param text string The text string to display.
+---@param fontPath string The full path to the font file (e.g., "$CONTENT_DATA/Gui/Fonts/MyFont").
+---@param fontSize number The size in pixels at which to render the font.
+---@param rotation number The rotation degrees to apply to the text.
+function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontPath, fontSize, rotation) end
+
 
 --- CLASSES --
 
@@ -48,7 +103,7 @@ function ReGuiInterface:setWidgetSizeRealUnits(widgetName, size) end
 ---Sets a property of a widget
 ---@param widgetName string The name of the widget
 ---@param index string The index
----@param value any The value to set
+---@param value ReGuiPropertyValueType The value to set
 function ReGuiInterface:setWidgetProperty(widgetName, index, value) end
 
 ---Gets a property of a widget
@@ -69,21 +124,21 @@ function ReGuiInterface:getWidgetProperties(widgetName) end
 
 ---Returns true if a widget exists by their name
 ---@param widgetName string The name of the widget
----@return boolean exists Wether the widget exists or not
+---@return boolean exists Whether the widget exists or not
 function ReGuiInterface:widgetExists(widgetName) end
 
 ---Finds a widget recursively
 ---@param widgetName string The name of the widget
----@return ReguiInterface.Widget? widget The found widget. nil if not found
+---@return ReGuiInterface.Widget? widget The found widget. nil if not found
 function ReGuiInterface:findWidgetRecursive(widgetName) end
 
 ---Finds a widget
 ---@param widgetName string The name of the widget
----@return ReguiInterface.Widget? widget The found widget. nil if not found
+---@return ReGuiInterface.Widget? widget The found widget. nil if not found
 function ReGuiInterface:findWidget(widgetName) end
 
 ---Gets all widgets at the root of the GuiInterface
----@return ReguiInterface.Widget[] widgets All widgets at the root of the gui.
+---@return ReGuiInterface.Widget[] widgets All widgets at the root of the gui.
 function ReGuiInterface:getRootChildren() end
 
 ---Creates a new widget at the root of the interface. It is recommended that you NOT create a widget
@@ -92,7 +147,7 @@ function ReGuiInterface:getRootChildren() end
 ---@param widgetName string The name of the widget
 ---@param widgetType string? The type of widget to create (NOT the instance) (Defaults to "Widget")
 ---@param skin string? The skin to use for this widget. (Defaults to "PanelEmpty")
----@return ReguiInterface.Widget widget The created widget
+---@return ReGuiInterface.Widget widget The created widget
 function ReGuiInterface:createWidget(widgetName, widgetType, skin) end
 
 ---Returns the settings of the GuiInterface itself.
@@ -103,29 +158,25 @@ function ReGuiInterface:getSettings() end
 ---@param settings GuiSettings The new settings
 function ReGuiInterface:setSettings(settings) end
 
----Modifies the text translation function with a new one. This function gets used for all text-related
----widgets, great for i18n support
+---Sets the global text translation function (useful for internationalization).
 ---
----The arguments of the function can be anything (eg a string or table)
----
----See github repo for a better explaination of this function aswel as a example
----
----@param translatorFunction function The callback.
+---The function will be used by all widgets when setting or refreshing text.
+---See the GitHub documentation for advanced usage and examples.
+---@param translatorFunction fun(...: any): string The translation callback function.
 function ReGuiInterface:setTextTranslation(translatorFunction) end
 
----Sets text of a widget. Note that this has diffirent behaviour and all arguments after widgetName
----will be passed through the translator function!
+---Sets the widget's text, passing all additional arguments through the translator function.
 ---@param widgetName string The name of the widget
 ---@param ... any The arguments to set the text
 function ReGuiInterface:setText(widgetName, ...) end
 
----Gets text of a widget
----@param widgetName string The name of the widget
----@return string? text The text of the wiget. nil if not applied
+---Gets the translated text of a widget.
+---@param widgetName string Name of the widget.
+---@return string? text The translated widget text, or nil if unset.
 function ReGuiInterface:getText(widgetName) end
 
 ---Reruns all text through the translation function. Use this when the language changes.
-function ReGuiInterface:rerunTranslations() end
+function ReGuiInterface:refreshTranslations() end
 
 ---Sets data to a widget. This is the same as doing setWidgetProperties
 ---@param widgetName string The name of the widget
@@ -139,7 +190,7 @@ function ReGuiInterface:getData(widgetName) end
 
 
 ---A widget in a ReGuiInterface
----@class ReguiInterface.Widget
+---@class ReGuiInterface.Widget
 local ReGuiInterfaceWidget = {}
 
 ---Sets whether this widget is where the contents of other GuiInterfaces should go
@@ -176,18 +227,18 @@ function ReGuiInterfaceWidget:setType(widgetType) end
 function ReGuiInterfaceWidget:setSkin(skin) end
 
 ---Gets the parent of the widget.
----@return ReguiInterface.Widget? parent The parent widget or nil if none.
+---@return ReGuiInterface.Widget? parent The parent widget or nil if none.
 function ReGuiInterfaceWidget:getParent() end
 
 ---Gets all child widgets of this widget.
----@return ReguiInterface.Widget[] children A list of child widgets.
+---@return ReGuiInterface.Widget[] children A list of child widgets.
 function ReGuiInterfaceWidget:getChildren() end
 
 ---Gets the pixel position of the widget.
 ---@return table position A table with `x` and `y` keys in pixels.
 function ReGuiInterfaceWidget:getPosition() end
 
----Gets the position of the widget in real units (0-1 scale).
+---Gets the position of the widget in real units.
 ---@return table position A table with `x` and `y` keys in real units.
 function ReGuiInterfaceWidget:getPositionRealUnits() end
 
@@ -195,7 +246,7 @@ function ReGuiInterfaceWidget:getPositionRealUnits() end
 ---@return table size A table with `x` (width) and `y` (height) in pixels.
 function ReGuiInterfaceWidget:getSize() end
 
----Gets the size of the widget in real units (0-1 scale).
+---Gets the size of the widget in real units.
 ---@return table size A table with `x` and `y` in real units.
 function ReGuiInterfaceWidget:getSizeRealUnits() end
 
@@ -214,7 +265,7 @@ function ReGuiInterfaceWidget:setProperty(index, value) end
 
 ---Gets an individual widget property.
 ---@param index string The property name.
----@return any value The property value.
+---@return ReGuiPropertyValueType value The property value.
 function ReGuiInterfaceWidget:getProperty(index) end
 
 ---Sets an instance property of the widget.
@@ -224,14 +275,14 @@ function ReGuiInterfaceWidget:setInstanceProperty(key, value) end
 
 ---Gets an instance property of the widget.
 ---@param key string The instance property name.
----@return any value The property value.
+---@return ReGuiPropertyValueType value The property value.
 function ReGuiInterfaceWidget:getInstanceProperty(key) end
 
 ---Sets the pixel position of the widget.
 ---@param position table A table with `x` and `y` or index [1], [2].
 function ReGuiInterfaceWidget:setPosition(position) end
 
----Sets the real unit position of the widget (0-1 scale).
+---Sets the real unit position of the widget.
 ---@param position table A table with `x` and `y` or index [1], [2].
 function ReGuiInterfaceWidget:setPositionRealUnits(position) end
 
@@ -239,11 +290,12 @@ function ReGuiInterfaceWidget:setPositionRealUnits(position) end
 ---@param size table A table with `x` and `y` or index [1], [2].
 function ReGuiInterfaceWidget:setSize(size) end
 
----Sets the size of the widget in real units (0-1 scale).
+---Sets the size of the widget in real units.
 ---@param size table A table with `x` and `y` or index [1], [2].
 function ReGuiInterfaceWidget:setSizeRealUnits(size) end
 
 ---Checks if the widget currently exists in the GUI hierarchy.
+---This is useful to know if a widget is used or unused.
 ---@return boolean exists True if it exists, false if not.
 function ReGuiInterfaceWidget:exists() end
 
@@ -251,13 +303,17 @@ function ReGuiInterfaceWidget:exists() end
 ---@return boolean success True if it was removed, false if not found.
 function ReGuiInterfaceWidget:destroy() end
 
+---Returns true if this widget has any child widgets.
+---@return boolean hasChildren
+function ReGuiInterfaceWidget:hasChildren() end
+
 ---Creates a new widget inside of this widget It is recommended that you NOT create a widget
 ---with a name already in use of the interface! Using a already-in use name will cause issues with
 ---the game and the library!
 ---@param widgetName string The name of the widget
 ---@param widgetType string? The type of widget to create (NOT the instance) (Defaults to "Widget")
 ---@param skin string? The skin to use for this widget. (Defaults to "PanelEmpty")
----@return ReguiInterface.Widget widget The created widget
+---@return ReGuiInterface.Widget widget The created widget
 function ReGuiInterfaceWidget:createWidget(widgetName, widgetType, skin) end
 
 ---Creates a new controller for the widget. Useful for animations
@@ -314,13 +370,30 @@ function ReGuiInterfaceController:setProperties(data) end
 
 ---Sets an individual controller property.
 ---@param key string The property name.
----@param value string|number|boolean|table|nil The property value.
+---@param value ReGuiPropertyValueType The property value.
 function ReGuiInterfaceController:setProperty(key, value) end
 
 ---Gets an individual controller property.
 ---@param key string The property name.
----@return any value The value of the controller property.
+---@return ReGuiPropertyValueType value The value of the controller property.
 function ReGuiInterfaceController:getProperty(key) end
 
 ---Destroys the controller, removing it from the widget.
 function ReGuiInterfaceController:destroy() end
+
+
+---A template generated from the TemplateManager
+---@class ReGuiTemplate
+local ReGuiTemplate = {}
+
+---Loads a Relayout file from the specified path and applies this template to it.
+---Returns a **new** ReGuiInterface instance with the template applied.
+---@param path string The file path to the Relayout definition.
+---@return ReGuiInterface ReGuiInterface The resulting GUI interface with the template applied.
+function ReGuiTemplate:applyTemplate(path) end
+
+---Creates a new ReGuiInterface by applying this template to a layout file.
+---This allows consistent styling or structure across GUIs.
+---@param reGuiInterface ReGuiInterface The source GUI interface to base the new one on.
+---@return ReGuiInterface reGuiInterface A new GUI interface with the template applied.
+function ReGuiTemplate:applyTemplateFromInterface(reGuiInterface) end
