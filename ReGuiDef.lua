@@ -88,7 +88,7 @@ sm.regui.video = {}
 
 ---Creates a Player instance
 ---@param path string Path of the video.
----@param widget ReGui.Widget The ImageBox to play it on to.
+---@param widget ReGuiInterface.Widget The ImageBox to play it on to.
 ---@return ReGuiVideoPlayer videoPlayer A Video player instance
 function sm.regui.video.createPlayer(path, widget) end
 

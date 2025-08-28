@@ -2,6 +2,9 @@
 sm.regui.video = {}
 
 function sm.regui.video.createPlayer(path, widget)
+    AssertArgument(path, 1, {"string"})
+    AssertArgument(path, 2, {"table"}, {"ReGuiWidget"})
+    
     ---@class ReGui.VideoPlayer : sm.regui.video
     local self = {
         __type = "ReGuiUserdata",
