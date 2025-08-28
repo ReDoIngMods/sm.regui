@@ -1,3 +1,9 @@
 node_modules
 DevTools/FontGenerator/Output
 package-lock.json
+Devtools/VideoGenerator/CompressedFrames
+Devtools/VideoGenerator/RawFrames
+Devtools/VideoGenerator/Output
+Devtools/VideoGenerator/input.mp4
+Cache
+

@@ -37,7 +37,7 @@ function SandboxAssert(isServer)
 end
 
 function SelfAssert(self)
-    assert(type(self) == "table", "No userdata provided or unknown")
+    assert(type(self) == "table" and self.__type == "ReGuiUserdata", "No userdata provided or unknown")
 end
 
 print("Loaded ErrorHandler")

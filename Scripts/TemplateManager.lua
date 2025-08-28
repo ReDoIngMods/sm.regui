@@ -7,6 +7,8 @@ function sm.regui.template.createTemplate(path)
 
     ---@class ReGui.Template : sm.regui.template
     local self = {
+        __type = "ReGuiUserdata",
+
         data = sm.json.open(path) ---@type ReGui.LayoutFile
     }
 
@@ -28,6 +30,8 @@ function sm.regui.template.createTemplateFromInterface(reGuiInterface)
 
     ---@class ReGui.Template : sm.regui.template
     local self = {
+        __type = "ReGuiUserdata",
+        
         data = unpack({reGuiInterface.data})
     }
 

@@ -191,6 +191,8 @@ function sm.regui.new(path)
 
     ---@class ReGui.GUI : sm.regui
     local self = {
+        __type = "ReGuiUserdata",
+
         gui = nil, ---@type GuiInterface?
         renderedPath = "",
 
@@ -246,6 +248,8 @@ end
 function sm.regui.newBlank()
     ---@class ReGui.GUI : sm.regui
     local self = {
+        __type = "ReGuiUserdata",
+
         gui = nil, ---@type GuiInterface?
         renderedPath = "",
 
@@ -405,7 +409,7 @@ local function runPreviousCommand(self)
     local latestCommand = self.commands[#self.commands]
     local guiInterface = self.gui
 
-    if guiInterface and sm.exists(guiInterface) and guiInterface:isActive() then
+    if self:isActive() then
         guiInterface[latestCommand[1]](guiInterface, unpack(latestCommand[2]))
     end
 end
@@ -642,6 +646,8 @@ end
 
 local function createControllerWrapper(controller)
     return {
+        __type = "ReGuiUserdata",
+
         getType = function(self)
             SelfAssert(self)
             return controller.type
@@ -707,6 +713,26 @@ end
 local function createWidgetWrapper(gui, parentWidget, widget)
     ---@class ReGui.Widget
     local output = {
+        __type = "ReGuiUserdata",
+
+        getGui = function (self)
+            SelfAssert(self)
+
+            local a, _ = findWidgetRecursiveRaw(gui, self:getName())
+            if not a then
+                return nil -- Widget is nowhere used
+            end
+            
+            return gui
+        end,
+
+        setImage = function (self, path)
+            SelfAssert(self)
+            AssertArgument(path, 1, {"string"})
+
+            gui:setImage(widget.instanceProperties.name or "", path)
+        end,
+
         setLocationForTemplateContents = function (self, state)
             SelfAssert(self)
             AssertArgument(state, 1, {"boolean"})
@@ -1198,7 +1224,7 @@ end
 ---@param self ReGui.GUI
 function sm.regui:isActive()
     SelfAssert(self)
-    return self.gui and self.gui:isActive()
+    return self.gui and sm.exists(self.gui) and self.gui:isActive()
 end
 
 ---@param self ReGui.GUI
@@ -1765,6 +1791,7 @@ end
 dofile("./TemplateManager.lua")
 dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")
+dofile("./VideoPlayer.lua")
 
 print("Library fully loaded!")
 

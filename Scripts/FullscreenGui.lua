@@ -19,6 +19,8 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
     local outputGui = sm.regui.template.createTemplateFromInterface(gui):applyTemplate(guiInterface)
 
     return {
+        __type = "ReGuiUserdata",
+        
         getGui = function (self)
             SelfAssert(self)
 

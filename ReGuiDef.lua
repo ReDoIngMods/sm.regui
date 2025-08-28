@@ -83,6 +83,14 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
 ---@param rotation number The rotation degrees to apply to the text.
 function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontName, fontSize, rotation) end
 
+---Video player utility
+sm.regui.video = {}
+
+---Creates a Player instance
+---@param path string Path of the video.
+---@param widget ReGui.Widget The ImageBox to play it on to.
+---@return ReGuiVideoPlayer videoPlayer A Video player instance
+function sm.regui.video.createPlayer(path, widget) end
 
 --- CLASSES --
 
@@ -211,6 +219,14 @@ function ReGuiInterface:getData(widgetName) end
 ---A widget in a ReGuiInterface
 ---@class ReGuiInterface.Widget
 local ReGuiInterfaceWidget = {}
+
+---Gets the GUI that contains this widget. Nil if it isnt assigned to one
+---@return ReGuiInterface? reGuiInterface The interface
+function ReGuiInterfaceWidget:getGui() end
+
+---Sets the image of this widget
+---@param path string The image to set it to. ($CONTENT_DATA wont work here)
+function ReGuiInterfaceWidget:setImage(path) end
 
 ---Sets whether this widget is where the contents of other GuiInterfaces should go
 ---when using a TemplateManager.
@@ -416,3 +432,41 @@ function ReGuiTemplate:applyTemplate(path) end
 ---@param reGuiInterface ReGuiInterface The source GUI interface to base the new one on.
 ---@return ReGuiInterface reGuiInterface A new GUI interface with the template applied.
 function ReGuiTemplate:applyTemplateFromInterface(reGuiInterface) end
+
+
+--- A video player instance that plays videos onto an ImageBox.
+---@class ReGuiVideoPlayer
+local ReGuiVideoPlayer = {}
+
+---Runs a frame of the video.
+---This must be called every tick inside `client_onFixedUpdate` to update the video frame properly.
+function ReGuiVideoPlayer:runFrame() end
+
+---Starts or resumes video playback.
+function ReGuiVideoPlayer:play() end
+
+---Stops video playback and resets to the beginning.
+function ReGuiVideoPlayer:stop() end
+
+---Pauses video playback at the current frame.
+function ReGuiVideoPlayer:pause() end
+
+---Returns whether the video is set to loop.
+---@return boolean looping True if the video is looping, false otherwise.
+function ReGuiVideoPlayer:isLooping() end
+
+---Enables or disables looping for the video.
+---@param looping boolean Whether the video should loop when it reaches the end.
+function ReGuiVideoPlayer:setLooping(looping) end
+
+---Returns whether the video is currently playing.
+---@return boolean playing True if the video is playing, false if it is paused or stopped.
+function ReGuiVideoPlayer:isPlaying() end
+
+---Gets the current frame counter of the video.
+---@return integer frame The current frame index being displayed.
+function ReGuiVideoPlayer:getFrameCounter() end
+
+---Sets the current frame counter of the video.
+---@param frame integer The frame index to jump to.
+function ReGuiVideoPlayer:setFrameCounter(frame) end
