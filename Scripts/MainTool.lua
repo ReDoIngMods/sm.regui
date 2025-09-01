@@ -1792,6 +1792,7 @@ dofile("./TemplateManager.lua")
 dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")
 dofile("./VideoPlayer.lua")
+dofile("./FlexableWidet.lua")
 
 print("Library fully loaded!")
 
