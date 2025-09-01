@@ -52,5 +52,8 @@ end
 
 ---@param self ReGui.FlexableWidget
 function sm.regui.flex:update()
-    
+    -- TODO:    Implement this shit when im not at fucking school.
+    --
+    --          I need to figure out some way of tracking sizes, Probably easy to do.
+    --          I might just borrow code from the FullscreenGUI shit.
 end

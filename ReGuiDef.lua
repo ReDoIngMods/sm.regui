@@ -92,6 +92,14 @@ sm.regui.video = {}
 ---@return ReGuiVideoPlayer videoPlayer A Video player instance
 function sm.regui.video.createPlayer(path, widget) end
 
+---Flexable widget utility (You can center a div with this one easly)
+sm.regui.flex = {}
+
+---Creates a flexable widget
+---@param widget ReGuiInterface.Widget The widget to place the flexable widget on.
+---@param alignment string The alignment
+function sm.regui.flex.createFlexWidget(widget, alignment) end
+
 --- CLASSES --
 
 ---A Coordinate class used by ReGui, you can ether define x and y or use [1] and [2]
@@ -434,7 +442,7 @@ function ReGuiTemplate:applyTemplate(path) end
 function ReGuiTemplate:applyTemplateFromInterface(reGuiInterface) end
 
 
---- A video player instance that plays videos onto an ImageBox.
+---A video player instance that plays videos onto an ImageBox.
 ---@class ReGuiVideoPlayer
 local ReGuiVideoPlayer = {}
 
@@ -470,3 +478,27 @@ function ReGuiVideoPlayer:getFrameCounter() end
 ---Sets the current frame counter of the video.
 ---@param frame integer The frame index to jump to.
 function ReGuiVideoPlayer:setFrameCounter(frame) end
+
+
+---A flexable widget which lets you put aligned widgets, just like how the flex property works in CSS for websites!
+---@class ReGuiFlexableWidget
+local ReGuiFlexableWidget = {}
+
+---Gets the alignment of the flexable widget
+---@return string aligment The currently set alignment of the flexable widget.
+function ReGuiFlexableWidget:getAlignment() end
+
+---Sets the alignment of the flexable widget
+---@param alignment string The new alignment to set it to
+function ReGuiFlexableWidget:setAlignment(alignment) end
+
+---Pushes a widget to the Flexable Widget.
+---@param widget ReGuiInterface.Widget The widget to push
+function ReGuiFlexableWidget:pushWidget(widget) end
+
+---Pops a widget from the flexable Widget.
+---@param widget ReGuiInterface.Widget The widget to pop off
+function ReGuiFlexableWidget:popWidget(widget) end
+
+---Updates the flexable widget for new sizes and positions.
+function ReGuiFlexableWidget:update() end
