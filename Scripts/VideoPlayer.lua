@@ -15,7 +15,11 @@ function sm.regui.video.createPlayer(path, widget)
         widget = widget, ---@type ReGui.Widget
 
         playing = false,
-        looping = false
+        looping = false,
+
+        -- SM-CustomAudioExtension only
+        audioName = "NONE",
+        audioEffect = nil ---@type Effect?
     }
 
     for key, value in pairs(sm.regui.video) do
@@ -51,10 +55,10 @@ function sm.regui.video:runFrame()
     local img = self.playbackData[currentFrame]
     if not img then
         if self.looping then
-            self.frameCounter = 1
-            self:runFrame()
+            self:stop()
+            self:play()
         else
-            self.playing = false
+            self:stop()
         end
 
         return
@@ -65,21 +69,43 @@ function sm.regui.video:runFrame()
     self.frameCounter = self.frameCounter + 1
 end
 
+---@param self ReGui.VideoPlayer
 function sm.regui.video:play()
     SelfAssert(self)
+    assert(not self.playing, "Already playing!")
+    
+    if sm.exists(self.audioEffect) then
+        self.audioEffect:destroy()
+    end
+
+    if self.audioName ~= "NONE" then
+        self.audioEffect = sm.effect.createEffect(self.audioName)
+        self.audioEffect:start()
+    end
 
     self.playing = true
 end
 
+---@param self ReGui.VideoPlayer
 function sm.regui.video:stop()
     SelfAssert(self)
+    if not self.playing then return end
+
+    if sm.exists(self.audioEffect) then
+        self.audioEffect:destroy()
+    end
 
     self.playing = false
     self.frameCounter = 1
 end
 
+---@param self ReGui.VideoPlayer
 function sm.regui.video:pause()
     SelfAssert(self)
+
+    if sm.exists(self.audioEffect) then
+        self.audioEffect:destroy()
+    end
 
     self.playing = false
 end
@@ -114,4 +140,18 @@ function sm.regui.video:setFrameCounter(frameCounter)
     AssertArgument(frameCounter, 1, {"integer"})
 
     self.frameCounter = sm.util.clamp(frameCounter, 1, #self.playbackData)
+end
+
+function sm.regui.video:getAudioName()
+    SelfAssert(self)
+
+    return self.audioName
+end
+
+function sm.regui.video:setAudioName(audioName)
+    SelfAssert(self)
+    AssertArgument(audioName, 1, {"string"})
+    ValueAssert(sm.cae_injected == true, 1, "Audio support is not enabled! (SM-CustomAudioExtension not injected)")
+
+    self.audioName = audioName
 end
