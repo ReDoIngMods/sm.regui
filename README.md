@@ -10,7 +10,7 @@
 > Funfact: This is the first **GUI Library** (based around with MyGui) ever in the **Scrap Mechanic Modding Community**
 
 > [!CAUTION]
-> The mod is currently *nearly* complete and is technically usable. **However**, the Fullscreen GUI feature is still unfinished. Everything else should work as expected.
+> This mot is not yet finished! Currently FlexableWidgets needs to be done (probably last one to implement) but everything else should work fine!
 
 With `sm.regui`, you can:
 - **Create, destroy, and fully control widgets**
