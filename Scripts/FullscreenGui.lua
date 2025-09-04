@@ -166,13 +166,11 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
             end
 
             local align = conversionTbl[alignment] or alignment
-            local alignmentFunctional = false
 
             for selection in align:gmatch("%S+") do
                 local func = alignmentTable[selection]
                 if func then
                     func()
-                    alignmentFunctional = true
                 end
             end
 

@@ -95,10 +95,15 @@ function sm.regui.video.createPlayer(path, widget) end
 ---Flexable widget utility (You can center a div with this one easly)
 sm.regui.flex = {}
 
+---@alias ReGuiFlexableWidget.JustifyContent "Start"|"Left"|"FlexStart"|"End"|"Right"|"FlexEnd"|"Center"|"SpaceBetween"|"SpacerAround"|"SpaceEvenly"|"Stretch"
+---@alias ReGuiFlexableWidget.FlexDirection "Horizontal"|"Vertical"
+
 ---Creates a flexable widget
 ---@param widget ReGuiInterface.Widget The widget to place the flexable widget on.
----@param alignment string The alignment
-function sm.regui.flex.createFlexWidget(widget, alignment) end
+---@param justifyContent ReGuiFlexableWidget.JustifyContent The content alignment
+---@param flexDirection ReGuiFlexableWidget.FlexDirection The direction of the flex widget
+---@return ReGuiFlexableWidget flexWidget The created flex widget
+function sm.regui.flex.createFlexWidget(widget, justifyContent, flexDirection) end
 
 --- CLASSES --
 
@@ -272,6 +277,10 @@ function ReGuiInterfaceWidget:setSkin(skin) end
 ---Gets the parent of the widget.
 ---@return ReGuiInterface.Widget? parent The parent widget or nil if none.
 function ReGuiInterfaceWidget:getParent() end
+
+---Sets the parent of the widget.
+---@param parent ReGuiInterface.Widget? The new parent widget or nil to set it to the root
+function ReGuiInterfaceWidget:setParent(parent) end
 
 ---Gets all child widgets of this widget.
 ---@return ReGuiInterface.Widget[] children A list of child widgets.
@@ -480,25 +489,41 @@ function ReGuiVideoPlayer:getFrameCounter() end
 function ReGuiVideoPlayer:setFrameCounter(frame) end
 
 
----A flexable widget which lets you put aligned widgets, just like how the flex property works in CSS for websites!
+--- A flexible widget which lets you put aligned widgets, 
 ---@class ReGuiFlexableWidget
 local ReGuiFlexableWidget = {}
 
----Gets the alignment of the flexable widget
----@return string aligment The currently set alignment of the flexable widget.
-function ReGuiFlexableWidget:getAlignment() end
+---Gets the current justification setting for how child widgets are aligned.
+---@return ReGuiFlexableWidget.JustifyContent justifyContent The current justification setting.
+function ReGuiFlexableWidget:getJustifyContent() end
 
----Sets the alignment of the flexable widget
----@param alignment string The new alignment to set it to
-function ReGuiFlexableWidget:setAlignment(alignment) end
+---Sets the justification of how child widgets are aligned within the flexible widget.
+---@param justifyContent ReGuiFlexableWidget.JustifyContent The justification setting to apply.
+function ReGuiFlexableWidget:setJustifyContent(justifyContent) end
 
----Pushes a widget to the Flexable Widget.
----@param widget ReGuiInterface.Widget The widget to push
+---Gets the current flex direction (e.g. row or column) of the widget.
+---@return ReGuiFlexableWidget.FlexDirection flexDirection The current flex direction.
+function ReGuiFlexableWidget:getFlexDirection() end
+
+---Sets the direction in which child widgets are laid out (e.g. row or column).
+---@param flexDirection ReGuiFlexableWidget.FlexDirection The flex direction to set.
+function ReGuiFlexableWidget:setFlexDirection(flexDirection) end
+
+---Pushes a widget to the flexible widget's layout stack.
+--- 
+---NOTE: The widget's parent will be set to the FlexibleWidget!
+---
+---Note: This method **does** change the widget's parent internally.
+---@param widget ReGuiInterface.Widget The widget to push into the flexible layout.
 function ReGuiFlexableWidget:pushWidget(widget) end
 
----Pops a widget from the flexable Widget.
----@param widget ReGuiInterface.Widget The widget to pop off
+---Removes a widget from the flexible widget's layout stack.
+---
+---NOTE: Will not revert to the original parent from when you pushed it, instead it stays in the internal widget of the FlexibleWidget but not affected.
+---      You will have to update its parent!
+---
+---@param widget ReGuiInterface.Widget The widget to remove from the layout.
 function ReGuiFlexableWidget:popWidget(widget) end
 
----Updates the flexable widget for new sizes and positions.
+---Updates the flexible widget, recalculating layout and positions of child widgets.
 function ReGuiFlexableWidget:update() end

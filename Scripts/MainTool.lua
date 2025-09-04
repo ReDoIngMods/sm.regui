@@ -576,7 +576,7 @@ function sm.regui:setWidgetProperty(widgetName, index, value)
     AssertArgument(widgetName, 1, {"string"})
     AssertArgument(index     , 2, {"string"})
     AssertArgument(value     , 3, {"string", "number", "boolean", "table", "nil"})
-    
+
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     ValueAssert(widget, 1, "Widget not found!")
 
@@ -711,9 +711,22 @@ end
 ---@param widget ReGui.LayoutFile.Widget
 ---@return ReGui.Widget
 local function createWidgetWrapper(gui, parentWidget, widget)
+    local function getEffectiveParentSize(self)
+        if parentWidget then
+            return self:getParent():getSize()
+        else
+            local sw, sh = getMyGuiScreenSize()
+            return { x = sw, y = sh }
+        end
+    end
+
     ---@class ReGui.Widget
     local output = {
         __type = "ReGuiUserdata",
+        __getRawWidget = function (self)
+            SelfAssert(self)
+            return widget
+        end,
 
         getGui = function (self)
             SelfAssert(self)
@@ -722,7 +735,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             if not a then
                 return nil -- Widget is nowhere used
             end
-            
+
             return gui
         end,
 
@@ -736,13 +749,13 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         setLocationForTemplateContents = function (self, state)
             SelfAssert(self)
             AssertArgument(state, 1, {"boolean"})
-            
+
             widget.isTemplateContents = state
         end,
 
         isLocationForTemplateContents = function (self)
             SelfAssert(self)
-            
+
             return widget.isTemplateContents
         end,
 
@@ -771,7 +784,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         setType = function (self, widgetType)
             SelfAssert(self)
             AssertArgument(widgetType, 1, {"string"})
-            
+
             widget.instanceProperties.type = widgetType
         end,
 
@@ -799,6 +812,32 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             return createWidgetWrapper(gui, parentWidgetWidget, parentWidget)
         end,
 
+        ---@param newParent ReGui.Widget
+        setParent = function(self, newParent)
+            SelfAssert(self)
+
+            if newParent ~= nil then
+                AssertArgument(newParent, 1, {"table"})
+            end
+
+            local currentParent = parentWidget
+            local childrenList = currentParent and currentParent.children or gui.data.data
+
+            for i, child in pairs(childrenList) do
+                if child == widget then
+                    table.remove(childrenList, i)
+                    break
+                end
+            end
+
+            if newParent then
+                local newParentWidget = newParent:__getRawWidget()
+                table.insert(newParentWidget.children, widget)
+            else
+                table.insert(gui.data.data, widget)
+            end
+        end,
+
         getChildren = function(self)
             SelfAssert(self)
 
@@ -815,10 +854,10 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             if widget.positionSize.usePixels then
                 return { x = widget.positionSize.x, y = widget.positionSize.y }
             else
-                local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
+                local parentSize = getEffectiveParentSize(self)
                 return {
-                    x = widget.positionSize.x * myguiScreenWidth,
-                    y = widget.positionSize.y * myguiScreenHeight
+                    x = widget.positionSize.x * parentSize.x,
+                    y = widget.positionSize.y * parentSize.y
                 }
             end
         end,
@@ -826,11 +865,12 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         getPositionRealUnits = function (self)
             SelfAssert(self)
 
+            local parentSize = getEffectiveParentSize(self)
+
             if widget.positionSize.usePixels then
-                local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
                 return {
-                    x = widget.positionSize.x / myguiScreenWidth,
-                    y = widget.positionSize.y / myguiScreenHeight
+                    x = widget.positionSize.x / parentSize.x,
+                    y = widget.positionSize.y / parentSize.y
                 }
             else
                 return { x = widget.positionSize.x, y = widget.positionSize.y }
@@ -843,10 +883,10 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             if widget.positionSize.usePixels then
                 return { x = widget.positionSize.width, y = widget.positionSize.height }
             else
-                local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
+                local parentSize = getEffectiveParentSize(self)
                 return {
-                    x = widget.positionSize.width * myguiScreenWidth,
-                    y = widget.positionSize.height * myguiScreenHeight
+                    x = widget.positionSize.width * parentSize.x,
+                    y = widget.positionSize.height * parentSize.y
                 }
             end
         end,
@@ -854,11 +894,12 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         getSizeRealUnits = function (self)
             SelfAssert(self)
 
+            local parentSize = getEffectiveParentSize(self)
+
             if widget.positionSize.usePixels then
-                local myguiScreenWidth, myguiScreenHeight = getMyGuiScreenSize()
                 return {
-                    x = widget.positionSize.width / myguiScreenWidth,
-                    y = widget.positionSize.height / myguiScreenHeight
+                    x = widget.positionSize.width / parentSize.x,
+                    y = widget.positionSize.height / parentSize.y
                 }
             else
                 return { x = widget.positionSize.width, y = widget.positionSize.height }
@@ -868,7 +909,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         setProperties = function (self, data)
             SelfAssert(self)
             AssertArgument(data, 1, {"table"})
-            
+
             for key, value in pairs(data) do
                 self:setProperty(key, value)
             end
@@ -1045,7 +1086,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             AssertArgument(widgetName, 1, {"string"})
             AssertArgument(widgetType, 2, {"string", "nil"})
             AssertArgument(skin      , 3, {"string", "nil"})
-            
+
             local newWidget = {
                 instanceProperties = { name = widgetName, type = widgetType or "Widget", skin = skin or "PanelEmpty" },
                 positionSize = {
@@ -1242,7 +1283,7 @@ end
 ---@param self ReGui.GUI
 function sm.regui:setText(widgetName, ...)
     SelfAssert(self)
-    
+
     local repackedValue = tableRepack(...)
 
     self.modifiers[widgetName] = self.modifiers[widgetName] or {}
@@ -1272,9 +1313,9 @@ function sm.regui:refreshTranslations()
     for widgetName, data in pairs(self.modifiers) do
         if data.text then
             data.text.output = self.translatorFunction(unpack(data.text.input))
-            
+
             if self.gui and sm.exists(self.gui) then
-                self.gui:setText(widgetName, data.text.output)
+                self.gui:setText(widgetName, tostring(data.text.output))
             end
         end
     end
@@ -1792,7 +1833,7 @@ dofile("./TemplateManager.lua")
 dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")
 dofile("./VideoPlayer.lua")
-dofile("./FlexableWidet.lua")
+dofile("./FlexibleWidget.lua")
 
 print("Library fully loaded!")
 
