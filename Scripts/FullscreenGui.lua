@@ -16,7 +16,7 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
     local outputWidget = fullscreenWidget:createWidget("OutputWidget", "Widget", "PanelEmpty")
     outputWidget:setLocationForTemplateContents(true)
 
-    local outputGui = sm.regui.template.createTemplateFromInterface(gui):applyTemplate(guiInterface)
+    local outputGui = sm.regui.template.createTemplateFromInterface(gui):applyTemplateFromInterface(guiInterface)
 
     return {
         __type = "ReGuiUserdata",
