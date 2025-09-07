@@ -15,6 +15,47 @@ function sm.regui.new( path ) end
 ---@return ReGuiInterface ReGuiInterface
 function sm.regui.newBlank() end
 
+-- Fullscreen manager
+sm.regui.fullscreen = {}
+
+---A MyGUI Alignment.
+---@alias ReGuiInterface.Alignment
+---| "Left"
+---| "Left VStretch"
+---| "Left VCenter"
+---| "Right"
+---| "Right VStretch"
+---| "Right VCenter"
+---| "Top"
+---| "Top HStretch"
+---| "Top HCenter"
+---| "Bottom"
+---| "Bottom HStretch"
+---| "Bottom HCenter"
+---| "VCenter"
+---| "HCenter"
+---| "VStretch"
+---| "HStretch"
+---| "VCenter HCenter"
+---| "VCenter HStretch"
+---| "VStretch HCenter"
+---| "VStretch HStretch"
+---| "Top Left"
+---| "Top Right"
+---| "Bottom Left"
+---| "Bottom Right"
+---| "Stretch"
+---| "[DEFAULT]"
+---| "Default"
+---| "Center"
+
+---Creates a new FullscreenGUI instance
+---@param guiInterface ReGuiInterface The gui interface to apply it to
+---@param hasFixedAspectRatio boolean Wether to fix the aspect ratio of the fullscreen gui to 16:9 or not
+---@param alignment ReGuiInterface.Alignment The alignment to use.
+---@return ReGuiFullscreenGUI fullscreenGui A Fullscreen gui instance
+function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasFixedAspectRatio, alignment) end
+
 -- Template manager
 sm.regui.template = {}
 
@@ -432,6 +473,34 @@ function ReGuiInterfaceController:getProperty(key) end
 
 ---Destroys the controller, removing it from the widget.
 function ReGuiInterfaceController:destroy() end
+
+
+---A Fullscreen GUI Instance
+---@class ReGuiFullscreenGUI
+local ReGuiFullscreenGUI = {}
+
+---Gets the gui interface that FullscreenGUI uses
+---@return ReGuiInterface guiInterface The guiInterface
+function ReGuiFullscreenGUI:getGui() end
+
+---Gets the alignment of the fullscreengui
+---@return ReGuiInterface.Alignment alignment The currently applied alignment
+function ReGuiFullscreenGUI:getAlignment() end
+
+---Gets if it has fixed aspect ratio or not.
+---@return boolean hasFixedAspectRatio If it has fixed aspect ratio or not
+function ReGuiFullscreenGUI:hasFixedAspectRatio() end
+
+---Sets the alignment of the FullscreenGUI
+---@param alignment ReGuiInterface.Alignment The alignment to apply
+function ReGuiFullscreenGUI:setAlignment(alignment) end
+
+---Sets whether the FullscreenGUI should maintain a fixed aspect ratio
+---@param hasFixedAspectRatio boolean Whether to enforce a fixed aspect ratio
+function ReGuiFullscreenGUI:setFixedAspectRatio(hasFixedAspectRatio) end
+
+---Updates the position and size of the FullscreenGUI.
+function ReGuiFullscreenGUI:update() end
 
 
 ---A template generated from the TemplateManager
