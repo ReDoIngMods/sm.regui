@@ -19,7 +19,8 @@ function sm.regui.video.createPlayer(path, widget)
 
         -- SM-CustomAudioExtension only
         audioName = "NONE",
-        audioEffect = nil ---@type Effect?
+        audioEffect = nil, ---@type Effect?
+        audioParameters = {}
     }
 
     for key, value in pairs(sm.regui.video) do
@@ -64,6 +65,11 @@ function sm.regui.video:runFrame()
         return
     end
 
+    if currentFrame % 40 == 0 and sm.exists(self.audioEffect) then
+        -- Sync audio
+        self.audioEffect:setParameter("CAE_Position", currentFrame * 40) -- TODO: Check if we need to offset it a bit
+    end
+
     self.widget:setImage(self.path .. "/" .. img .. ".webp")
     
     self.frameCounter = self.frameCounter + 1
@@ -80,6 +86,13 @@ function sm.regui.video:play()
 
     if self.audioName ~= "NONE" then
         self.audioEffect = sm.effect.createEffect(self.audioName)
+        for key, value in pairs(self.audioParameters) do
+            self.audioEffect:setParameter("CAE_" .. key, value)
+        end
+
+        local currentFrame = 1 + math.floor(self.frameCounter / 2)
+        self.audioEffect:setParameter("CAE_Position", currentFrame * 40) -- TODO: Check if we need to offset it a bit
+
         self.audioEffect:start()
     end
 
@@ -144,6 +157,7 @@ end
 
 function sm.regui.video:getAudioName()
     SelfAssert(self)
+    ValueAssert(sm.cae_injected == true, 1, "Audio support is not enabled! (SM-CustomAudioExtension not injected)")
 
     return self.audioName
 end
@@ -154,4 +168,33 @@ function sm.regui.video:setAudioName(audioName)
     ValueAssert(sm.cae_injected == true, 1, "Audio support is not enabled! (SM-CustomAudioExtension not injected)")
 
     self.audioName = audioName
+end
+
+function sm.regui.video:setAudioParameter(index, value)
+    SelfAssert(self)
+    AssertArgument(index, 1, {"string"})
+    AssertArgument(value, 2, {"number"})
+    ValueAssert(sm.cae_injected == true, 1, "Audio support is not enabled! (SM-CustomAudioExtension not injected)")
+
+    self.audioParameters[index] = value
+
+    if sm.exists(self.audioEffect) then
+        self.audioEffect:setParameter("CAE_" .. index, value)
+    end
+end
+
+function sm.regui.video:getAudioParameter(index)
+    SelfAssert(self)
+    AssertArgument(index, 1, {"string"})
+    ValueAssert(sm.cae_injected == true, 1, "Audio support is not enabled! (SM-CustomAudioExtension not injected)")
+
+    return self.audioParameters[index]
+end
+
+
+function sm.regui.video:getAllAudioParameters()
+    SelfAssert(self)
+    ValueAssert(sm.cae_injected == true, 1, "Audio support is not enabled! (SM-CustomAudioExtension not injected)")
+
+    return unpack({self.audioParameters})
 end

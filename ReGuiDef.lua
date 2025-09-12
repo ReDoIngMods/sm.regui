@@ -557,6 +557,32 @@ function ReGuiVideoPlayer:getFrameCounter() end
 ---@param frame integer The frame index to jump to.
 function ReGuiVideoPlayer:setFrameCounter(frame) end
 
+---**NOTE: SM-CustomAudioExtension Only!**
+---Gets the current audio name that it would play
+---@return string name The name of the audio
+function ReGuiVideoPlayer:getAudioName() end
+
+---**NOTE: SM-CustomAudioExtension Only!**
+---Sets the current audio name that it would play
+---@param name string The name of the audio to set
+function ReGuiVideoPlayer:setAudioName(name) end
+
+---**NOTE: SM-CustomAudioExtension Only!**
+---Sets a parameter for the audio
+---@param index string The name of the parameter
+---@param value any The value to set for the parameter
+function ReGuiVideoPlayer:setAudioParameter(index, value) end
+
+---**NOTE: SM-CustomAudioExtension Only!**
+---Gets a parameter value for the audio
+---@param index string The name of the parameter
+---@return any value The value of the parameter
+function ReGuiVideoPlayer:getAudioParameter(index) end
+
+---**NOTE: SM-CustomAudioExtension Only!**
+---Gets all audio parameters
+---@return table parameters A table of all audio parameters
+function ReGuiVideoPlayer:getAllAudioParameters() end
 
 --- A flexible widget which lets you put aligned widgets, 
 ---@class ReGuiFlexableWidget
