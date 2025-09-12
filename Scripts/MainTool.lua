@@ -218,13 +218,13 @@ function sm.regui.new(path)
 
     ---@param widget ReGui.LayoutFile.Widget
     local function iterator(widget)
-        local name = widget.instanceProperties.name
+        local name = widget.instanceProperties and widget.instanceProperties.name or nil
         if not name then
             warn("Widget without name found, skipping: " .. (widget.instanceProperties.id or "Unnamed"))
             return
         end
 
-        for key, value in pairs(widget.properties) do
+        for key, value in pairs(widget.properties or {}) do
             if key == "Caption" then
                 -- Dont need to repack using tableRepack
                 local repackedValue = type(value) == "table" and value or {value}
@@ -1834,8 +1834,28 @@ dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")
 dofile("./VideoPlayer.lua")
 dofile("./FlexibleWidget.lua")
+dofile("./ModConfig.lua")
 
 print("Library fully loaded!")
 
 ---@class MainToolClass : ToolClass
 MainToolClass = class()
+
+if not sm.regui.__getToolInstance then
+    sm.regui.__getToolInstance = function ()
+        return nil
+    end
+end
+
+MainToolClass.cl_config_hook_command = sm.regui.modconfig.cl_config_hook_command
+
+---@param args any
+function MainToolClass:sv_config_hook_command(args)
+    self.network:sendToClient(self.tool:getOwner(), "cl_config_hook_command", args)
+end
+
+function MainToolClass:client_onCreate()
+    sm.regui.__getToolInstance = function ()
+        return self
+    end
+end

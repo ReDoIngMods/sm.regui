@@ -1,0 +1,337 @@
+{
+    "identifier": "ReGui",
+    "version": 1,
+    "data": [
+        {
+            "instanceProperties": {
+                "name": "BackPanel",
+                "type": "Widget",
+                "skin": "PanelEmpty"
+            },
+            "positionSize": {
+                "usePixels": false,
+                "x": 0.040625,
+                "y": 0.11574074074074074,
+                "width": 0.9161458333333333,
+                "height": 0.7398148148148148
+            },
+            "isTemplateContents": false,
+            "children": [
+                {
+                    "instanceProperties": {
+                        "name": "Unnamed",
+                        "type": "Widget",
+                        "skin": "BackgroundDarkRoundedUpperRight"
+                    },
+                    "positionSize": {
+                        "usePixels": false,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 1.0,
+                        "height": 0.1902377972465582
+                    },
+                    "isTemplateContents": false,
+                    "children": [
+                        {
+                            "instanceProperties": {
+                                "name": "Unnamed",
+                                "type": "TextBox",
+                                "skin": "TextBox"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.05685048322910745,
+                                "y": 0.03289473684210526,
+                                "width": 0.42637862421830586,
+                                "height": 0.6644736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "MOD CONFIGURATIONS",
+                                "FontName": "SM_HeaderLarge_Wide",
+                                "TextAlign": "Left VCenter"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Unnamed",
+                                "type": "ImageBox",
+                                "skin": "ImageBox"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.027288231949971573,
+                                "y": 0.2631578947368421,
+                                "width": 0.017055144968732235,
+                                "height": 0.20394736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "ImageTexture": "gui_mainmenu_icon_options.png",
+                                "Colour": "1 0.780392 0.227451"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab1",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.028425241614553724,
+                                "y": 0.7236842105263158,
+                                "width": 0.14781125639567935,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 1",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab2",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.1876065946560546,
+                                "y": 0.7236842105263158,
+                                "width": 0.14781125639567935,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 2",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab3",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.34678794769755544,
+                                "y": 0.7236842105263158,
+                                "width": 0.14781125639567935,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 3",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab4",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.5059693007390563,
+                                "y": 0.7236842105263158,
+                                "width": 0.14837976122797045,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 4",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab5",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.6651506537805572,
+                                "y": 0.7236842105263158,
+                                "width": 0.14837976122797045,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 5",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab6",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.824332006822058,
+                                "y": 0.7236842105263158,
+                                "width": 0.14837976122797045,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 6",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Apply",
+                                "type": "Button",
+                                "skin": "SecondaryButton"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.7851051733939739,
+                                "y": 0.23026315789473684,
+                                "width": 0.09096077316657192,
+                                "height": 0.25
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "#{MENU_OPTION_APPLY}",
+                                "FontName": "SM_ButtonSmall",
+                                "TextAlign": "Center",
+                                "Enabled": false
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Default",
+                                "type": "Button",
+                                "skin": "SecondaryButton"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.8840250142126208,
+                                "y": 0.23026315789473684,
+                                "width": 0.09096077316657192,
+                                "height": 0.25
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "#{MENU_OPTION_DEFAULT}",
+                                "FontName": "SM_ButtonSmall",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Unnamed",
+                                "type": "TextBox",
+                                "skin": "SecondaryButton"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.5400795906765208,
+                                "y": 0.23026315789473684,
+                                "width": 0.21034678794769757,
+                                "height": 0.25
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "TextAlign": "Center",
+                                "FontName": "SM_Label",
+                                "Caption": "Hello World!"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Unnamed",
+                                "type": "Button",
+                                "skin": "DressbotArrowRight"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.7532689027856737,
+                                "y": 0.23026315789473684,
+                                "width": 0.02274019329164298,
+                                "height": 0.2631578947368421
+                            },
+                            "isTemplateContents": false
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Unnamed",
+                                "type": "Button",
+                                "skin": "DressbotArrowLeft"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.5144968732234224,
+                                "y": 0.23026315789473684,
+                                "width": 0.02274019329164298,
+                                "height": 0.2631578947368421
+                            },
+                            "isTemplateContents": false
+                        }
+                    ]
+                },
+                {
+                    "instanceProperties": {
+                        "name": "OptionsHostPanel",
+                        "type": "Widget",
+                        "skin": "BackgroundLightRoundedLowerLeft"
+                    },
+                    "positionSize": {
+                        "usePixels": false,
+                        "x": 0.0,
+                        "y": 0.1902377972465582,
+                        "width": 1.0,
+                        "height": 0.8097622027534418
+                    },
+                    "isTemplateContents": false,
+                    "children": [
+                        {
+                            "instanceProperties": {
+                                "name": "Left",
+                                "type": "Widget",
+                                "skin": "PanelEmpty"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.030699260943718023,
+                                "y": 0.03863987635239567,
+                                "width": 0.4548038658328596,
+                                "height": 0.8887171561051005
+                            },
+                            "isTemplateContents": false
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Right",
+                                "type": "Widget",
+                                "skin": "PanelEmpty"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.5144968732234224,
+                                "y": 0.03863987635239567,
+                                "width": 0.4548038658328596,
+                                "height": 0.8887171561051005
+                            },
+                            "isTemplateContents": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
