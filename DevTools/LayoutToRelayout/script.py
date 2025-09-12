@@ -56,7 +56,7 @@ def parse_widget(element):
 
     name = element.attrib.get("name", "Unnamed")
     widget_type = element.attrib.get("type", "Unknown")
-    skin = element.attrib.get("skin", "")
+    skin = element.attrib.get("skin", "PanelEmpty")
 
     widget_obj = {
         "instanceProperties": {
@@ -68,22 +68,30 @@ def parse_widget(element):
         "isTemplateContents": False,
         "properties": parse_properties(element),
         "controllers": [],
-        "children": {}
+        "children": []
     }
-
+    
     # Recursively process child widgets
     for child in element:
         if child.tag == "Widget":
             child_parsed = parse_widget(child)
             if child_parsed:
-                child_name = child_parsed["instanceProperties"]["name"]
-                widget_obj["children"][child_name] = child_parsed
+                widget_obj["children"].append(child_parsed)
         elif child.tag == "Controller":
             controller = {
                 "type": child.attrib.get("type", "Unknown"),
                 "properties": parse_properties(child)
             }
             widget_obj["controllers"].append(controller)
+
+    if not widget_obj["controllers"]:
+        del widget_obj["controllers"]
+
+    if not widget_obj["children"]:
+        del widget_obj["children"]
+    
+    if not widget_obj["properties"]:
+        del widget_obj["properties"]
 
     return widget_obj
 
