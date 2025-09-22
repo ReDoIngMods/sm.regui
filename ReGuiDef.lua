@@ -161,25 +161,9 @@ function sm.regui.flex.createFlexWidget(widget, justifyContent, flexDirection) e
 ---@class ReGuiInterface : GuiInterface
 local ReGuiInterface = {}
 
----Sets the position of a widget (using pixels)
----@param widgetName string The name of the widget
----@param position ReGuiCoordinate The position
-function ReGuiInterface:setWidgetPosition(widgetName, position) end
-
----Sets the position of a widget (using real units)
----@param widgetName string The name of the widget
----@param position ReGuiCoordinate The position
-function ReGuiInterface:setWidgetPositionRealUnits(widgetName, position) end
-
----Sets the size of a widget (using pixels)
----@param widgetName string The name of the widget
----@param size ReGuiCoordinate The size
-function ReGuiInterface:setWidgetSize(widgetName, size) end
-
----Sets the size of a widget (using real units)
----@param widgetName string The name of the widget
----@param size ReGuiCoordinate The size
-function ReGuiInterface:setWidgetSizeRealUnits(widgetName, size) end
+---Clones a ReGuiInterface
+---@return ReGuiInterface clone The cloned interface
+function ReGuiInterface:clone() end
 
 ---Sets a property of a widget
 ---@param widgetName string The name of the widget
@@ -343,6 +327,14 @@ function ReGuiInterfaceWidget:getSize() end
 ---@return table size A table with `x` and `y` in real units.
 function ReGuiInterfaceWidget:getSizeRealUnits() end
 
+---Gets the size of a widget (using real units), It is the expected absolute real unit value
+---@return table size A table with `x` and `y` in real units.
+function ReGuiInterfaceWidget:getSizeRealUnitsExpectedRendering() end
+
+---Gets the position of a widget (using real units), It is the expected absolute real unit value
+---@return table position A table with `x` and `y` in real units.
+function ReGuiInterfaceWidget:getPositionRealUnitsExpectedRendering() end
+
 ---Sets the properties of the widget in bulk.
 ---@param data table A key-value table of properties to set.
 function ReGuiInterfaceWidget:setProperties(data) end
@@ -399,6 +391,16 @@ function ReGuiInterfaceWidget:destroy() end
 ---Returns true if this widget has any child widgets.
 ---@return boolean hasChildren
 function ReGuiInterfaceWidget:hasChildren() end
+
+---Finds a direct child widget by name (non-recursive).
+---@param widgetName string The name of the widget to search for.
+---@return ReGuiInterface.Widget? widget The found widget, or nil if not found.
+function ReGuiInterfaceWidget:findWidget(widgetName) end
+
+---Recursively searches for a widget by name in the entire widget hierarchy.
+---@param widgetName string The name of the widget to search for.
+---@return ReGuiInterface.Widget? widget The found widget, or nil if not found.
+function ReGuiInterfaceWidget:findWidgetRecursive(widgetName) end
 
 ---Creates a new widget inside of this widget It is recommended that you NOT create a widget
 ---with a name already in use of the interface! Using a already-in use name will cause issues with
@@ -622,3 +624,19 @@ function ReGuiFlexableWidget:popWidget(widget) end
 
 ---Updates the flexible widget, recalculating layout and positions of child widgets.
 function ReGuiFlexableWidget:update() end
+
+---Gets the current gap size between child widgets in pixels.
+---@return number gapPixels The current gap size in pixels.
+function ReGuiFlexableWidget:getGapPixels() end
+
+---Gets the current gap size between child widgets in real units.
+---@return number gapRealUnits The current gap size in real units.
+function ReGuiFlexableWidget:getGapRealUnits() end
+
+---Sets the gap size between child widgets in pixels.
+---@param value number The gap size in pixels to set.
+function ReGuiFlexableWidget:setGapPixels(value) end
+
+---Sets the gap size between child widgets in real units.
+---@param value number The gap size in real units to set.
+function ReGuiFlexableWidget:setGapRealUnits(value) end
