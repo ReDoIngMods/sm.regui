@@ -11,33 +11,43 @@
                 <Property key="ImageTexture" value="gui_mainmenu_icon_options.png"/>
                 <Property key="Colour" value="1 0.780392 0.227451"/>
             </Widget>
-            <Widget type="Button" skin="InventoryTab" position_real="0.028425241614553724 0.72368421052631582 0.14781125639567935 0.28947368421052633" name="Tab1">
-                <Property key="Caption" value="TAB 1"/>
+            <Widget type="Button" skin="InventoryTab" position_real="0.38942581011938604 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab4">
                 <Property key="FontName" value="SM_Tab"/>
                 <Property key="TextAlign" value="Center"/>
+                <Property key="Caption" value="TAB 6"/>
             </Widget>
-            <Widget type="Button" skin="InventoryTab" position_real="0.18760659465605459 0.72368421052631582 0.14781125639567935 0.28947368421052633" name="Tab2">
-                <Property key="Caption" value="TAB 2"/>
-                <Property key="FontName" value="SM_Tab"/>
-                <Property key="TextAlign" value="Center"/>
-            </Widget>
-            <Widget type="Button" skin="InventoryTab" position_real="0.34678794769755544 0.72368421052631582 0.14781125639567935 0.28947368421052633" name="Tab3">
+            <Widget type="Button" skin="InventoryTab" position_real="0.27856736782262648 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab3">
                 <Property key="Caption" value="TAB 3"/>
                 <Property key="FontName" value="SM_Tab"/>
                 <Property key="TextAlign" value="Center"/>
             </Widget>
-            <Widget type="Button" skin="InventoryTab" position_real="0.50596930073905633 0.72368421052631582 0.14837976122797045 0.28947368421052633" name="Tab4">
-                <Property key="Caption" value="TAB 4"/>
+            <Widget type="Button" skin="InventoryTab" position_real="0.16770892552586697 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab2">
+                <Property key="Caption" value="TAB 2"/>
                 <Property key="FontName" value="SM_Tab"/>
                 <Property key="TextAlign" value="Center"/>
             </Widget>
-            <Widget type="Button" skin="InventoryTab" position_real="0.66515065378055716 0.72368421052631582 0.14837976122797045 0.28947368421052633" name="Tab5">
+            <Widget type="Button" skin="InventoryTab" position_real="0.056850483229107449 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab1">
+                <Property key="FontName" value="SM_Tab"/>
+                <Property key="TextAlign" value="Center"/>
+                <Property key="Caption" value="TAB 1"/>
+            </Widget>
+            <Widget type="Button" skin="InventoryTab" position_real="0.72484366117111998 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab7">
+                <Property key="Caption" value="TAB 7"/>
+                <Property key="FontName" value="SM_Tab"/>
+                <Property key="TextAlign" value="Center"/>
+            </Widget>
+            <Widget type="Button" skin="InventoryTab" position_real="0.61398521887436042 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab6">
+                <Property key="Caption" value="TAB 6"/>
+                <Property key="FontName" value="SM_Tab"/>
+                <Property key="TextAlign" value="Center"/>
+            </Widget>
+            <Widget type="Button" skin="InventoryTab" position_real="0.50312677657760096 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab5">
                 <Property key="Caption" value="TAB 5"/>
                 <Property key="FontName" value="SM_Tab"/>
                 <Property key="TextAlign" value="Center"/>
             </Widget>
-            <Widget type="Button" skin="InventoryTab" position_real="0.82433200682205798 0.72368421052631582 0.14837976122797045 0.28947368421052633" name="Tab6">
-                <Property key="Caption" value="TAB 6"/>
+            <Widget type="Button" skin="InventoryTab" position_real="0.83570210346787943 0.72368421052631582 0.10801591813530415 0.28947368421052633" name="Tab8">
+                <Property key="Caption" value="TAB 8"/>
                 <Property key="FontName" value="SM_Tab"/>
                 <Property key="TextAlign" value="Center"/>
             </Widget>
@@ -52,13 +62,15 @@
                 <Property key="FontName" value="SM_ButtonSmall"/>
                 <Property key="TextAlign" value="Center"/>
             </Widget>
-            <Widget type="TextBox" skin="SecondaryButton" position_real="0.54007959067652078 0.23026315789473684 0.21034678794769757 0.25">
+            <Widget type="TextBox" skin="SecondaryButton" position_real="0.54007959067652078 0.23026315789473684 0.21034678794769757 0.25" name="SelectedModName">
                 <Property key="TextAlign" value="Center"/>
                 <Property key="FontName" value="SM_Label"/>
                 <Property key="Caption" value="Hello World!"/>
             </Widget>
-            <Widget type="Button" skin="DressbotArrowRight" position_real="0.75326890278567371 0.23026315789473684 0.022740193291642979 0.26315789473684209"/>
-            <Widget type="Button" skin="DressbotArrowLeft" position_real="0.51449687322342241 0.23026315789473684 0.022740193291642979 0.26315789473684209"/>
+            <Widget type="Button" skin="DressbotArrowRight" position_real="0.75326890278567371 0.23026315789473684 0.022740193291642979 0.26315789473684209" name="ModRightBtn"/>
+            <Widget type="Button" skin="DressbotArrowLeft" position_real="0.51449687322342241 0.23026315789473684 0.022740193291642979 0.26315789473684209" name="ModLeftBtn"/>
+            <Widget type="Button" skin="DressbotArrowRight" position_real="0.94656054576463899 0.72368421052631582 0.022740193291642979 0.26315789473684209" name="TabRightBtn"/>
+            <Widget type="Button" skin="DressbotArrowLeft" position_real="0.030699260943718023 0.72368421052631582 0.022740193291642979 0.26315789473684209" name="TabLeftBtn"/>
         </Widget>
         <Widget type="Widget" skin="BackgroundLightRoundedLowerLeft" position_real="0 0.1902377972465582 1 0.8097622027534418" name="OptionsHostPanel">
             <Widget type="Widget" skin="PanelEmpty" position_real="0.030699260943718023 0.038639876352395672 0.45480386583285959 0.88871715610510049" name="Left"/>

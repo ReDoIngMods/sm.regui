@@ -73,20 +73,40 @@
                         },
                         {
                             "instanceProperties": {
-                                "name": "Tab1",
+                                "name": "Tab4",
                                 "type": "Button",
                                 "skin": "InventoryTab"
                             },
                             "positionSize": {
                                 "usePixels": false,
-                                "x": 0.028425241614553724,
+                                "x": 0.38942581011938604,
                                 "y": 0.7236842105263158,
-                                "width": 0.14781125639567935,
+                                "width": 0.10801591813530415,
                                 "height": 0.2894736842105263
                             },
                             "isTemplateContents": false,
                             "properties": {
-                                "Caption": "TAB 1",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center",
+                                "Caption": "TAB 6"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab3",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.2785673678226265,
+                                "y": 0.7236842105263158,
+                                "width": 0.10801591813530415,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 3",
                                 "FontName": "SM_Tab",
                                 "TextAlign": "Center"
                             }
@@ -99,9 +119,9 @@
                             },
                             "positionSize": {
                                 "usePixels": false,
-                                "x": 0.1876065946560546,
+                                "x": 0.16770892552586697,
                                 "y": 0.7236842105263158,
-                                "width": 0.14781125639567935,
+                                "width": 0.10801591813530415,
                                 "height": 0.2894736842105263
                             },
                             "isTemplateContents": false,
@@ -113,60 +133,40 @@
                         },
                         {
                             "instanceProperties": {
-                                "name": "Tab3",
+                                "name": "Tab1",
                                 "type": "Button",
                                 "skin": "InventoryTab"
                             },
                             "positionSize": {
                                 "usePixels": false,
-                                "x": 0.34678794769755544,
+                                "x": 0.05685048322910745,
                                 "y": 0.7236842105263158,
-                                "width": 0.14781125639567935,
+                                "width": 0.10801591813530415,
                                 "height": 0.2894736842105263
                             },
                             "isTemplateContents": false,
                             "properties": {
-                                "Caption": "TAB 3",
                                 "FontName": "SM_Tab",
-                                "TextAlign": "Center"
+                                "TextAlign": "Center",
+                                "Caption": "TAB 1"
                             }
                         },
                         {
                             "instanceProperties": {
-                                "name": "Tab4",
+                                "name": "Tab7",
                                 "type": "Button",
                                 "skin": "InventoryTab"
                             },
                             "positionSize": {
                                 "usePixels": false,
-                                "x": 0.5059693007390563,
+                                "x": 0.72484366117112,
                                 "y": 0.7236842105263158,
-                                "width": 0.14837976122797045,
+                                "width": 0.10801591813530415,
                                 "height": 0.2894736842105263
                             },
                             "isTemplateContents": false,
                             "properties": {
-                                "Caption": "TAB 4",
-                                "FontName": "SM_Tab",
-                                "TextAlign": "Center"
-                            }
-                        },
-                        {
-                            "instanceProperties": {
-                                "name": "Tab5",
-                                "type": "Button",
-                                "skin": "InventoryTab"
-                            },
-                            "positionSize": {
-                                "usePixels": false,
-                                "x": 0.6651506537805572,
-                                "y": 0.7236842105263158,
-                                "width": 0.14837976122797045,
-                                "height": 0.2894736842105263
-                            },
-                            "isTemplateContents": false,
-                            "properties": {
-                                "Caption": "TAB 5",
+                                "Caption": "TAB 7",
                                 "FontName": "SM_Tab",
                                 "TextAlign": "Center"
                             }
@@ -179,14 +179,54 @@
                             },
                             "positionSize": {
                                 "usePixels": false,
-                                "x": 0.824332006822058,
+                                "x": 0.6139852188743604,
                                 "y": 0.7236842105263158,
-                                "width": 0.14837976122797045,
+                                "width": 0.10801591813530415,
                                 "height": 0.2894736842105263
                             },
                             "isTemplateContents": false,
                             "properties": {
                                 "Caption": "TAB 6",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab5",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.503126776577601,
+                                "y": 0.7236842105263158,
+                                "width": 0.10801591813530415,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 5",
+                                "FontName": "SM_Tab",
+                                "TextAlign": "Center"
+                            }
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "Tab8",
+                                "type": "Button",
+                                "skin": "InventoryTab"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.8357021034678794,
+                                "y": 0.7236842105263158,
+                                "width": 0.10801591813530415,
+                                "height": 0.2894736842105263
+                            },
+                            "isTemplateContents": false,
+                            "properties": {
+                                "Caption": "TAB 8",
                                 "FontName": "SM_Tab",
                                 "TextAlign": "Center"
                             }
@@ -234,7 +274,7 @@
                         },
                         {
                             "instanceProperties": {
-                                "name": "Unnamed",
+                                "name": "SelectedModName",
                                 "type": "TextBox",
                                 "skin": "SecondaryButton"
                             },
@@ -254,7 +294,7 @@
                         },
                         {
                             "instanceProperties": {
-                                "name": "Unnamed",
+                                "name": "ModRightBtn",
                                 "type": "Button",
                                 "skin": "DressbotArrowRight"
                             },
@@ -269,7 +309,7 @@
                         },
                         {
                             "instanceProperties": {
-                                "name": "Unnamed",
+                                "name": "ModLeftBtn",
                                 "type": "Button",
                                 "skin": "DressbotArrowLeft"
                             },
@@ -277,6 +317,36 @@
                                 "usePixels": false,
                                 "x": 0.5144968732234224,
                                 "y": 0.23026315789473684,
+                                "width": 0.02274019329164298,
+                                "height": 0.2631578947368421
+                            },
+                            "isTemplateContents": false
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "TabRightBtn",
+                                "type": "Button",
+                                "skin": "DressbotArrowRight"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.946560545764639,
+                                "y": 0.7236842105263158,
+                                "width": 0.02274019329164298,
+                                "height": 0.2631578947368421
+                            },
+                            "isTemplateContents": false
+                        },
+                        {
+                            "instanceProperties": {
+                                "name": "TabLeftBtn",
+                                "type": "Button",
+                                "skin": "DressbotArrowLeft"
+                            },
+                            "positionSize": {
+                                "usePixels": false,
+                                "x": 0.030699260943718023,
+                                "y": 0.7236842105263158,
                                 "width": 0.02274019329164298,
                                 "height": 0.2631578947368421
                             },
