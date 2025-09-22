@@ -5,6 +5,12 @@
 			"showInInventory": false,
 			"autoTool": true,
 			"script": { "class": "MainToolClass", "file": "$CONTENT_DATA/Scripts/MainTool.lua" }
+		},
+        {
+			"uuid": "027f9a0f-3504-402e-9377-d245accb9248",
+			"showInInventory": false,
+			"autoTool": true,
+			"script": { "class": "ModConfigToolClass", "file": "$CONTENT_DATA/Scripts/ModConfig/Tool.lua" }
 		}
 	]
 }

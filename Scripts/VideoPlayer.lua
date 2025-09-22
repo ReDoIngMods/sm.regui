@@ -196,5 +196,5 @@ function sm.regui.video:getAllAudioParameters()
     SelfAssert(self)
     ValueAssert(sm.cae_injected == true, 1, "Audio support is not enabled! (SM-CustomAudioExtension not injected)")
 
-    return unpack({self.audioParameters})
+    return CloneTable(self.audioParameters)
 end

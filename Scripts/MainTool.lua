@@ -224,7 +224,11 @@ function sm.regui.new(path)
             return
         end
 
-        for key, value in pairs(widget.properties or {}) do
+        if not widget.properties then
+            return
+        end
+
+        for key, value in pairs(widget.properties) do
             if key == "Caption" then
                 -- Dont need to repack using tableRepack
                 local repackedValue = type(value) == "table" and value or {value}
@@ -275,6 +279,20 @@ function sm.regui.newBlank()
 end
 
 ---@param self ReGui.GUI
+function sm.regui:clone()
+    SelfAssert(self)
+
+    local gui = sm.regui.newBlank()
+    gui.data = CloneTable(self.data)
+    gui.settings = CloneTable(self.settings)
+    gui.modifiers = CloneTable(self.modifiers)
+    gui.commands = CloneTable(self.commands)
+    gui.translatorFunction = self.translatorFunction
+
+    return gui
+end
+
+---@param self ReGui.GUI
 function sm.regui:render()
     SelfAssert(self)
 
@@ -304,7 +322,7 @@ function sm.regui:render()
         end
 
         local output = "<Widget"
-        local instanceProperties = widget.instanceProperties and unpack({widget.instanceProperties}) or {}
+        local instanceProperties = widget.instanceProperties and CloneTable(widget.instanceProperties) or {}
         if widget.positionSize then
             local posSize = widget.positionSize
             instanceProperties[posSize.usePixels and "position" or "position_real"] = tostring(posSize.x     ) .. " " ..
@@ -328,8 +346,8 @@ function sm.regui:render()
         output = output .. ">"
 
         -- Property handling
-        do
-            for key, value in predictablePairs(widget.properties or {}) do
+        if widget.properties then
+            for key, value in predictablePairs(widget.properties) do
                 local outputValue = tostring(value)
 
                 if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
@@ -341,25 +359,27 @@ function sm.regui:render()
         end
 
         -- Children handling
-        do
-            for _, child in pairs(widget.children or {}) do
+        if widget.children then
+            for _, child in pairs(widget.children) do
                 output = output .. renderWidget(child)
             end
         end
 
         -- Controller handling
-        do
-            for _, controller in pairs(widget.controllers or {}) do
+        if widget.controllers then
+            for _, controller in pairs(widget.controllers) do
                 output = output .. "<Controller type=\"" .. controller.type .. "\">"
 
-                for key, value in predictablePairs(controller.properties or {}) do
-                    local outputValue = tostring(value)
+                if controller.properties then
+                    for key, value in predictablePairs(controller.properties) do
+                        local outputValue = tostring(value)
 
-                    if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
-                        outputValue = tostring(value[1] or value.x) .. " " .. tostring(value[2] or value.y)
+                        if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
+                            outputValue = tostring(value[1] or value.x) .. " " .. tostring(value[2] or value.y)
+                        end
+
+                        output = output .. "<Property key=\"" .. key .. "\" value=\"" .. escapeXMLString(outputValue) .. "\"/>"
                     end
-
-                    output = output .. "<Property key=\"" .. key .. "\" value=\"" .. escapeXMLString(outputValue) .. "\"/>"
                 end
 
                 output = output .. "</Controller>"
@@ -389,7 +409,7 @@ function sm.regui:open()
 
     self:refreshTranslations()
 
-    for _, command in pairs(self.commands or {}) do
+    for _, command in pairs(self.commands) do
         self.gui[command[1]](self.gui, unpack(command[2]))
     end
 
@@ -418,10 +438,16 @@ end
 ---@return ReGui.LayoutFile.Widget?
 ---@return ReGui.LayoutFile.Widget?
 local function findWidgetRecursiveRaw(gui, widgetName)
+    if not gui then return end
+
     ---@param widget ReGui.LayoutFile.Widget
     local function iterator(widget)
         if widget.instanceProperties.name and widget.instanceProperties.name == widgetName then
             return widget
+        end
+
+        if not widget.children then
+            return nil, nil
         end
 
         for _, child in pairs(widget.children) do
@@ -438,136 +464,6 @@ local function findWidgetRecursiveRaw(gui, widgetName)
             return widget, nil
         end
     end
-end
-
-function sm.regui:setWidgetPosition(widgetName, position)
-    SelfAssert(self)
-
-    AssertArgument(widgetName, 1, {"string"})
-    AssertArgument(position  , 2, {"table"})
-
-    local x = position.x ~= nil and position.x or position[1]
-    local y = position.y ~= nil and position.y or position[2]
-    ValueAssert(type(x) == "number", 2, "Expected x or [1] to be a number!")
-    ValueAssert(type(y) == "number", 2, "Expected y or [2] to be a number!")
-
-    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    ValueAssert(widget, 1, "Widget not found!")
-
-    local current = widget.positionSize
-
-    local width = current.width
-    local height = current.height
-
-    if not current.usePixels then
-        width  = 1920 / width
-        height = 1080 / height
-    end
-
-    widget.positionSize = {
-        usePixels = true,
-        x         = math.floor(x),
-        y         = math.floor(y),
-        width     = math.floor(width ),
-        height    = math.floor(height)
-    }
-end
-
-function sm.regui:setWidgetPositionRealUnits(widgetName, position)
-    SelfAssert(self)
-    AssertArgument(widgetName, 1, {"string"})
-    AssertArgument(position  , 2, {"table"})
-
-    local x = position.x ~= nil and position.x or position[1]
-    local y = position.y ~= nil and position.y or position[2]
-    ValueAssert(type(x) == "number", 2, "Expected x or [1] to be a number!")
-    ValueAssert(type(y) == "number", 2, "Expected y or [2] to be a number!")
-
-    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    ValueAssert(widget, 1, "Widget not found!")
-
-    local current = widget.positionSize
-
-    local width = current.width
-    local height = current.height
-
-    -- Convert pixel dimensions to RealUnitss if needed
-    if current.usePixels then
-        width  = width  / 1920
-        height = height / 1080
-    end
-
-    widget.positionSize = {
-        usePixels = false,
-        x         = x,
-        y         = y,
-        width     = width,
-        height    = height
-    }
-end
-
-function sm.regui:setWidgetSize(widgetName, size)
-    SelfAssert(self)
-    AssertArgument(widgetName, 1, {"string"})
-    AssertArgument(size, 2, {"table"})
-
-    local width = size.x ~= nil and size.x or size[1]
-    local height = size.y ~= nil and size.y or size[2]
-    ValueAssert(type(width ) == "number", 2, "Expected x or [1] to be a number!")
-    ValueAssert(type(height) == "number", 2, "Expected y or [2] to be a number!")
-
-    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    ValueAssert(widget, 1, "Widget not found!")
-
-    local current = widget.positionSize
-
-    local x = current.x
-    local y = current.y
-
-    if not current.usePixels then
-        x = 1920 * x
-        y = 1080 * y
-    end
-
-    widget.positionSize = {
-        usePixels = true,
-        x         = math.floor(x),
-        y         = math.floor(y),
-        width     = math.floor(width ),
-        height    = math.floor(height)
-    }
-end
-
-function sm.regui:setWidgetSizeRealUnits(widgetName, size)
-    SelfAssert(self)
-    AssertArgument(widgetName, 1, {"string"})
-    AssertArgument(size, 2, {"table"})
-
-    local width = size.x ~= nil and size.x or size[1]
-    local height = size.y ~= nil and size.y or size[2]
-    ValueAssert(type(width ) == "number", 2, "Expected x or [1] to be a number!")
-    ValueAssert(type(height) == "number", 2, "Expected y or [2] to be a number!")
-
-    local widget, _ = findWidgetRecursiveRaw(self, widgetName)
-    ValueAssert(widget, 1, "Widget not found!")
-
-    local current = widget.positionSize
-
-    local x = current.x
-    local y = current.y
-
-    if current.usePixels then
-        x = x / 1920
-        y = y / 1080
-    end
-
-    widget.positionSize = {
-        usePixels = false,
-        x         = x,
-        y         = y,
-        width     = width,
-        height    = height
-    }
 end
 
 ---@param self ReGui.GUI
@@ -633,7 +529,7 @@ function sm.regui:getWidgetProperties(widgetName)
     local widget, _ = findWidgetRecursiveRaw(self, widgetName)
     ValueAssert(widget, 1, "Widget not found!")
 
-    return unpack({widget.properties})
+    return CloneTable(widget.properties)
 end
 
 function sm.regui:widgetExists(widgetName)
@@ -662,7 +558,7 @@ local function createControllerWrapper(controller)
 
         getProperties = function(self)
             SelfAssert(self)
-            return unpack({controller.properties})
+            return CloneTable(controller.properties)
         end,
 
         setProperties = function (self, data)
@@ -696,12 +592,18 @@ local function createControllerWrapper(controller)
         destroy = function (self)
             SelfAssert(self)
 
-            for i, ctrl in ipairs(gui.controllers or {}) do
+            if not gui.controllers then
+                return false
+            end
+
+            for i, ctrl in ipairs(gui.controllers) do
                 if ctrl == controller then
                     table.remove(gui.controllers, i)
-                    break
+                    return true
                 end
             end
+
+            return false
         end
     }
 end
@@ -712,13 +614,15 @@ end
 ---@return ReGui.Widget
 local function createWidgetWrapper(gui, parentWidget, widget)
     local function getEffectiveParentSize(self)
-        if parentWidget then
-            return self:getParent():getSize()
+        local parent = self:getParent()
+        if parent and parent:exists() then
+            return parent:getSize()
         else
             local sw, sh = getMyGuiScreenSize()
             return { x = sw, y = sh }
         end
     end
+
 
     ---@class ReGui.Widget
     local output = {
@@ -742,8 +646,12 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         setImage = function (self, path)
             SelfAssert(self)
             AssertArgument(path, 1, {"string"})
+            ValueAssert(widget.instanceProperties.name, nil, "Widget has no name property, cannot set image!")
 
-            gui:setImage(widget.instanceProperties.name or "", path)
+            gui.modifiers[widget.instanceProperties.name] = gui.modifiers[widget.instanceProperties.name] or {}
+            gui.modifiers[widget.instanceProperties.name].image = path
+
+            gui:setImage(widget.instanceProperties.name, path)
         end,
 
         setLocationForTemplateContents = function (self, state)
@@ -761,17 +669,17 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
         getName = function(self)
             SelfAssert(self)
-            return widget.instanceProperties.name or ""
+            return widget.instanceProperties.name
         end,
 
         getType = function (self)
             SelfAssert(self)
-            return widget.instanceProperties.type or ""
+            return widget.instanceProperties.type
         end,
 
         getSkin = function(self)
             SelfAssert(self)
-            return widget.instanceProperties.skin or ""
+            return widget.instanceProperties.skin
         end,
 
         setName = function(self, name)
@@ -831,6 +739,17 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             end
 
             if newParent then
+                local modifiers = CloneTable(gui.modifiers[widget.instanceProperties.name])
+                gui = newParent:getGui()
+
+                if modifiers then
+                    if modifiers.image then
+                        gui:setImage(widget.instanceProperties.name, modifiers.image)
+                    end
+                
+                    gui.modifiers[widget.instanceProperties.name] = modifiers
+                end
+
                 local newParentWidget = newParent:__getRawWidget()
                 table.insert(newParentWidget.children, widget)
             else
@@ -865,15 +784,14 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         getPositionRealUnits = function (self)
             SelfAssert(self)
 
-            local parentSize = getEffectiveParentSize(self)
-
             if widget.positionSize.usePixels then
-                return {
-                    x = widget.positionSize.x / parentSize.x,
-                    y = widget.positionSize.y / parentSize.y
-                }
+                return { x = widget.positionSize.width, y = widget.positionSize.height }
             else
-                return { x = widget.positionSize.x, y = widget.positionSize.y }
+                local parentSize = self:getSizeRealUnits()
+                return {
+                    x = widget.positionSize.width * parentSize.x,
+                    y = widget.positionSize.height * parentSize.y
+                }
             end
         end,
 
@@ -892,11 +810,8 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         end,
 
         getSizeRealUnits = function (self)
-            SelfAssert(self)
-
-            local parentSize = getEffectiveParentSize(self)
-
             if widget.positionSize.usePixels then
+                local parentSize = getEffectiveParentSize(self)
                 return {
                     x = widget.positionSize.width / parentSize.x,
                     y = widget.positionSize.height / parentSize.y
@@ -904,6 +819,54 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             else
                 return { x = widget.positionSize.width, y = widget.positionSize.height }
             end
+        end,
+
+        getSizeRealUnitsExpectedRendering = function(self)
+            SelfAssert(self)
+            assert(not widget.positionSize.usePixels, "getSizeRealUnitsExpectedRendering can only be used on real-units sized widgets!")
+
+            local function computeAbsoluteSize(widget)
+                local parent = widget:getParent()
+                local relSize = widget:getSizeRealUnits() -- always returns relative size if not using pixels
+
+                if parent and parent:exists() then
+                    local parentAbsSize = parent:getSizeRealUnitsExpectedRendering()
+                    return {
+                        x = relSize.x * parentAbsSize.x,
+                        y = relSize.y * parentAbsSize.y
+                    }
+                else
+                    -- Top-level widget: assume it provides real-unit size
+                    return relSize
+                end
+            end
+
+            return computeAbsoluteSize(self)
+        end,
+
+        getPositionRealUnitsExpectedRendering = function(self)
+            SelfAssert(self)
+            assert(not widget.positionSize.usePixels, "getPositionRealUnitsExpectedRendering can only be used on real-units sized widgets!")
+
+            local function computeAbsolutePosition(widget)
+                local parent = widget:getParent()
+                local relPos = widget:getPositionRealUnits()
+
+                if parent and parent:exists() then
+                    local parentAbsSize = parent:getSizeRealUnitsExpectedRendering()
+                    local parentAbsPos = parent:getPositionRealUnitsExpectedRendering()
+
+                    return {
+                        x = parentAbsPos.x + (relPos.x * parentAbsSize.x),
+                        y = parentAbsPos.y + (relPos.y * parentAbsSize.y)
+                    }
+                else
+                    -- Top-level widget
+                    return relPos
+                end
+            end
+
+            return computeAbsolutePosition(self)
         end,
 
         setProperties = function (self, data)
@@ -918,7 +881,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         getProperties = function(self)
             SelfAssert(self)
 
-            return unpack({widget.properties})
+            return CloneTable(widget.properties)
         end,
 
         setProperty = function(self, index, value)
@@ -975,8 +938,9 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             local height = widget.positionSize.height
 
             if not widget.positionSize.usePixels then
-                width  = 1080 / width
-                height = 1920 / height
+                local pixelSize = self:getSize()
+                width  = pixelSize.x
+                height = pixelSize.y
             end
 
             widget.positionSize = {
@@ -1001,8 +965,9 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             local height = widget.positionSize.height
 
             if widget.positionSize.usePixels then
-                width  = width  / 1920
-                height = height / 1080
+                local realSize = self:getSizeRealUnits()
+                width  = realSize.x
+                height = realSize.y
             end
 
             widget.positionSize = {
@@ -1027,8 +992,9 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             local y = widget.positionSize.y
 
             if not widget.positionSize.usePixels then
-                x = 1080 * x
-                y = 1920 * y
+                local pixelPos = self:getPosition()
+                x = pixelPos.x
+                y = pixelPos.y
             end
 
             widget.positionSize = {
@@ -1054,8 +1020,9 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             local y = widget.positionSize.y
 
             if widget.positionSize.usePixels then
-                x = x / 1920
-                y = y / 1080
+                local realPos = self:getPositionRealUnits()
+                x = realPos.x
+                y = realPos.y
             end
 
             widget.positionSize = {
@@ -1100,6 +1067,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
                 children = {}
             }
 
+            widget.children = widget.children or {}
             table.insert(widget.children, newWidget)
 
             return createWidgetWrapper(gui, widget, newWidget)
@@ -1124,20 +1092,26 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             SelfAssert(self)
             AssertArgument(controllerType, 1, {"string"})
 
-            for _, controller in ipairs(widget.controllers or {}) do
+            if not widget.controllers then
+                return
+            end
+
+            for _, controller in ipairs(widget.controllers) do
                 if controller.type == controllerType then
                     return createControllerWrapper(controller)
                 end
             end
-
-            return nil
         end,
 
         destroyController = function (self, controllerType)
             SelfAssert(self)
             AssertArgument(controllerType, 1, {"string"})
 
-            for i, controller in ipairs(widget.controllers or {}) do
+            if not widget.controllers then
+                return false
+            end
+
+            for i, controller in ipairs(widget.controllers) do
                 if controller.type == controllerType then
                     table.remove(widget.controllers, i)
                     return true
@@ -1156,6 +1130,13 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
         setText = function (self, ...)
             SelfAssert(self)
+            ValueAssert(widget.instanceProperties.name, nil, "Widget has no name property, cannot set text!")
+
+            gui.modifiers[widget.instanceProperties.name] = gui.modifiers[widget.instanceProperties.name] or {}
+            gui.modifiers[widget.instanceProperties.name].text = {
+                input = tableRepack(...),
+                output = gui.translatorFunction(...)
+            }
 
             gui:setText(widget.instanceProperties.name, ...)
         end,
@@ -1163,20 +1144,66 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         getText = function (self)
             SelfAssert(self)
 
-            return (gui.modifiers[widget.instanceProperties.name] and gui.modifiers[widget.instanceProperties.name].text) and gui.modifiers[widget.instanceProperties.name].text.output or nil
+            ValueAssert(widget.instanceProperties.name, nil, "Widget has no name property, cannot get text!")
+            if not gui.modifiers[widget.instanceProperties.name] or not gui.modifiers[widget.instanceProperties.name].text then
+                return widget.properties and widget.properties.Caption or nil
+            end
+
+            return gui.modifiers[widget.instanceProperties.name].text.output
         end,
 
         exists = function (self)
             SelfAssert(self)
 
-            local widget, _ = findWidgetRecursiveRaw(gui, self:getName())
-            return widget ~= nil
+            local foundWidget, _ = findWidgetRecursiveRaw(gui, self:getName())
+            if not foundWidget then
+                return false
+            end
+
+            return tostring(widget) == tostring(foundWidget)
         end,
 
         hasChildren = function (self)
             SelfAssert(self)
 
             return #widget.children ~= 0
+        end,
+
+        findWidget = function (self, widgetName)
+            SelfAssert(self)
+            AssertArgument(widgetName, 1, {"string"})
+
+            if widget.children then
+                for _, child in pairs(widget.children) do
+                    if child.instanceProperties and child.instanceProperties.name == widgetName then
+                        return createWidgetWrapper(gui, widget, child)
+                    end
+                end
+            end
+        end,
+
+        findWidgetRecursive = function (self, widgetName)
+            SelfAssert(self)
+            AssertArgument(widgetName, 1, {"string"})
+
+            local function searchChildren(widget)
+                if not widget.children then
+                    return nil
+                end
+
+                for _, child in pairs(widget.children) do
+                    if child.instanceProperties and child.instanceProperties.name == widgetName then
+                        return createWidgetWrapper(gui, widget, child)
+                    end
+
+                    local result = searchChildren(child)
+                    if result then
+                        return result
+                    end
+                end
+            end
+
+            return searchChildren(self)
         end
     }
 
@@ -1193,7 +1220,7 @@ function sm.regui:findWidgetRecursive(widgetName)
         return nil
     end
 
-    return createWidgetWrapper(gui, parentChild, widget)
+    return createWidgetWrapper(self, parentChild, widget)
 end
 
 ---@param self ReGui.GUI
@@ -1251,7 +1278,7 @@ end
 ---@param self ReGui.GUI
 function sm.regui:getSettings()
     SelfAssert(self)
-    return unpack({self.settings})
+    return CloneTable(self.settings)
 end
 
 ---@param self ReGui.GUI
@@ -1345,7 +1372,7 @@ function sm.regui:getData(widgetName)
     local widget = findWidgetRecursiveRaw(self, widgetName)
     ValueAssert(widget, 1, "Widget not found!")
 
-    return unpack({widget.properties})
+    return CloneTable(widget.properties)
 end
 
 print("Loaded custom functions! Now adding all GuiInterface functions...")
@@ -1829,12 +1856,13 @@ end
 
 -- Load additional libaries
 
+dofile("./Helpers.lua")
 dofile("./TemplateManager.lua")
 dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")
 dofile("./VideoPlayer.lua")
 dofile("./FlexibleWidget.lua")
-dofile("./ModConfig.lua")
+dofile("./ModConfig/Hook.lua")
 
 print("Library fully loaded!")
 
@@ -1847,7 +1875,7 @@ if not sm.regui.__getToolInstance then
     end
 end
 
-MainToolClass.cl_config_hook_command = sm.regui.modconfig.cl_config_hook_command
+MainToolClass.cl_config_hook_command = sm.regui.modconfig.backend.cl_config_hook_command
 
 ---@param args any
 function MainToolClass:sv_config_hook_command(args)
@@ -1858,4 +1886,12 @@ function MainToolClass:client_onCreate()
     sm.regui.__getToolInstance = function ()
         return self
     end
+end
+
+function MainToolClass:server_onCreate()
+
+end
+
+function MainToolClass:server_onRefresh()
+    self:server_onCreate()
 end
