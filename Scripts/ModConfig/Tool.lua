@@ -181,7 +181,7 @@ function ModConfigToolClass:cl_changeMod(isLeft)
     local modName = nil
 
     local modNameIteratorIndex = 0
-    for modNameIterator, _ in predictablePairs(self.cl.data.configurations) do
+    for modNameIterator, _ in PredictablePairs(self.cl.data.configurations) do
         modNameIteratorIndex = modNameIteratorIndex + 1
 
         if modNameIteratorIndex == index then
@@ -208,7 +208,7 @@ end
 
 function ModConfigToolClass:cl_getCurrentTab()
     local indexToName = {}
-    for key, _ in predictablePairs(self:cl_getCurrentMod().tabs) do
+    for key, _ in PredictablePairs(self:cl_getCurrentMod().tabs) do
         table.insert(indexToName, key)
     end
 
@@ -246,7 +246,7 @@ function ModConfigToolClass:cl_refreshTabs()
     local translatorFunction = self:cl_getTranslatorFunc()
 
     local indexToName = {}
-    for key, _ in predictablePairs(currentMod.tabs) do
+    for key, _ in PredictablePairs(currentMod.tabs) do
         table.insert(indexToName, key)
     end
 

@@ -66,7 +66,7 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
             local fsWidgetWidth  = screenWidth
             local fsWidgetHeight = screenHeight
 
-            local myGuiScreenWidth, myGuiScreenHeight = getMyGuiScreenSize()
+            local myGuiScreenWidth, myGuiScreenHeight = GetMyGuiScreenSize()
 
             -- 1440p = 86
             -- 1080p = 64

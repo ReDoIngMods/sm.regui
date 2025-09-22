@@ -22,33 +22,6 @@
 ---@field type string
 ---@field properties table<string, string>
 
-
-
---
--- HELPERS
---
-
-function predictablePairs(tbl)
-    local keys = {}
-    for k in pairs(tbl) do
-        table.insert(keys, k)
-    end
-
-    table.sort(keys, function(a, b)
-        return tostring(a) < tostring(b)
-    end)
-
-    local i = 0
-    return function()
-        i = i + 1
-        local key = keys[i]
-        if key ~= nil then
-            return key, tbl[key]
-        end
-    end
-end
-
-
 local function parseLayoutToValidJsonXML(xmlString)
     xmlString = xmlString:gsub("'", "&apos;") --Escape ' with &apos;, as we have to replace " with ' to make the Json serializer not escape them
     xmlString = xmlString:gsub('"', "'") --Replace remaining " with ', to make the Json serializer not escape them, keeping it valid XML
@@ -119,43 +92,6 @@ local function createHashFromGuiInstance(instance)
     local hi = (h1[2] + h2[2] + carry) % 2^32
 
     return toHex64({ lo, hi })
-end
-
-function getMyGuiScreenSize()
-    local screenWidth, screenHeight = sm.gui.getScreenSize()
-
-    -- 720p, 1080p, 1440p, 4k
-
-    if screenWidth >= 3840 and screenHeight >= 2160 then
-        return 3840, 2160 -- 4K
-    elseif screenWidth >= 2560 and screenHeight >= 1440 then
-        return 2560, 1440 -- 1440p
-    elseif screenWidth >= 1920 and screenHeight >= 1080 then
-        return 1920, 1080 -- 1080p
-    else
-        return 1280, 720 -- 720p
-    end
-end
-
-local function tablePack(...)
-    return {
-        __n = select("#", ...),
-        ...
-    }
-end
-
-local function tableMove(src, first, last, offset, dst)
-    for i = 0, last - first do
-        dst[offset + i] = src[first + i]
-    end
-end
-
-
-local function tableRepack(...)
-    local packed = tablePack(...)
-    local result = {}
-    tableMove(packed, 1, packed.__n, 1, result)
-    return result
 end
 
 --
@@ -230,7 +166,7 @@ function sm.regui.new(path)
 
         for key, value in pairs(widget.properties) do
             if key == "Caption" then
-                -- Dont need to repack using tableRepack
+                -- Dont need to repack using TableRepack
                 local repackedValue = type(value) == "table" and value or {value}
 
                 self.modifiers[name] = self.modifiers[name] or {}
@@ -334,7 +270,7 @@ function sm.regui:render()
         -- Instance Properties handling
         do
             local instanceProperties2 = {}
-            for key, value in predictablePairs(instanceProperties) do
+            for key, value in PredictablePairs(instanceProperties) do
                 table.insert(instanceProperties2, key .. "=\"" .. escapeXMLString(tostring(value)) .. "\"")
             end
 
@@ -347,7 +283,7 @@ function sm.regui:render()
 
         -- Property handling
         if widget.properties then
-            for key, value in predictablePairs(widget.properties) do
+            for key, value in PredictablePairs(widget.properties) do
                 local outputValue = tostring(value)
 
                 if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
@@ -371,7 +307,7 @@ function sm.regui:render()
                 output = output .. "<Controller type=\"" .. controller.type .. "\">"
 
                 if controller.properties then
-                    for key, value in predictablePairs(controller.properties) do
+                    for key, value in PredictablePairs(controller.properties) do
                         local outputValue = tostring(value)
 
                         if type(value) == "table" and (value[1] or value.x) and (value[2] or value.y) then
@@ -477,7 +413,7 @@ function sm.regui:setWidgetProperty(widgetName, index, value)
     ValueAssert(widget, 1, "Widget not found!")
 
     if index == "Caption" then
-        -- Dont need to repack using tableRepack
+        -- Dont need to repack using TableRepack
         local repackedValue = type(value) == "table" and value or {value}
 
         self.modifiers[widget.instanceProperties.name] = self.modifiers[widget.instanceProperties.name] or {}
@@ -618,7 +554,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         if parent and parent:exists() then
             return parent:getSize()
         else
-            local sw, sh = getMyGuiScreenSize()
+            local sw, sh = GetMyGuiScreenSize()
             return { x = sw, y = sh }
         end
     end
@@ -746,7 +682,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
                     if modifiers.image then
                         gui:setImage(widget.instanceProperties.name, modifiers.image)
                     end
-                
+
                     gui.modifiers[widget.instanceProperties.name] = modifiers
                 end
 
@@ -890,7 +826,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             AssertArgument(value, 3, {"string", "number", "boolean", "table", "nil"})
 
             if index == "Caption" then
-                -- Dont need to repack using tableRepack
+                -- Dont need to repack using TableRepack
                 local repackedValue = type(value) == "table" and value or {value}
 
                 gui.modifiers[widget.instanceProperties.name] = gui.modifiers[widget.instanceProperties.name] or {}
@@ -1134,7 +1070,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
 
             gui.modifiers[widget.instanceProperties.name] = gui.modifiers[widget.instanceProperties.name] or {}
             gui.modifiers[widget.instanceProperties.name].text = {
-                input = tableRepack(...),
+                input = TableRepack(...),
                 output = gui.translatorFunction(...)
             }
 
@@ -1311,7 +1247,7 @@ end
 function sm.regui:setText(widgetName, ...)
     SelfAssert(self)
 
-    local repackedValue = tableRepack(...)
+    local repackedValue = TableRepack(...)
 
     self.modifiers[widgetName] = self.modifiers[widgetName] or {}
     self.modifiers[widgetName].text = {
