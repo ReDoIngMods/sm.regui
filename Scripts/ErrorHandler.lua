@@ -32,6 +32,26 @@ function AssertArgument(value, argumentIndex, allowedTypes, nameOverwrites)
     error(string.format("%sExpected %s, got %s instead!", badArgument, allowedTypesMessage, valueType))
 end
 
+function AssertArgumentCustomErrMsg(value, argumentIndex, allowedTypes, errMsg)
+    local valueType = (value ~= value) and "NaN" or type(value)
+    local valueHasCorrectType = false
+
+    for _, allowedType in pairs(allowedTypes) do
+        local allowedTypeIsInteger = allowedType == "integer"
+        if valueType == (allowedTypeIsInteger and "number" or allowedType) then
+            if not allowedTypeIsInteger or math.floor(value) == value then
+                valueHasCorrectType = true
+                break
+            end
+        end
+    end
+
+    if valueHasCorrectType then return end
+
+    local badArgument = argumentIndex and ("Bad argument #" .. tostring(argumentIndex) .. "! ") or ""
+    error(badArgument .. errMsg)
+end
+
 function SandboxAssert(isServer)
     assert(sm.isServerMode() == isServer, string.format("Attempted to run a %s-side only function as %s!", isServer and "server" or "client", isServer and "client" or "server"))
 end
