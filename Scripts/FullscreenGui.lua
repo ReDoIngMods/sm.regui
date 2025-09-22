@@ -7,16 +7,19 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
     AssertArgument(hasFixedAspectRatio, 2, {"boolean"})
     AssertArgument(alignment, 3, {"string"})
 
-    ---@class ReGui.FullscreenGUI : ReGui.GUI
     local gui = sm.regui.newBlank()
     local backPanel = gui:createWidget("BackPanel", "Widget", "PanelEmpty")
     backPanel:setSizeRealUnits({scaleFactor, scaleFactor})
     
-    local fullscreenWidget = backPanel:createWidget("FullscreenWidget", "Widget", "PanelEmpty")
-    local outputWidget = fullscreenWidget:createWidget("OutputWidget", "Widget", "PanelEmpty")
-    outputWidget:setLocationForTemplateContents(true)
+    -- Yes ugly af, idc
+    backPanel:createWidget("FullscreenWidget", "Widget", "PanelEmpty")
+        :createWidget("OutputWidget", "Widget", "PanelEmpty")
+            :setLocationForTemplateContents(true)
 
     local outputGui = sm.regui.template.createTemplateFromInterface(gui):applyTemplateFromInterface(guiInterface)
+
+    local fullscreenWidget = outputGui:findWidgetRecursive("FullscreenWidget")
+    local outputWidget     = fullscreenWidget:findWidget("OutputWidget")
 
     return {
         __type = "ReGuiUserdata",
