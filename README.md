@@ -4,25 +4,26 @@
 
 <h1 align="center">A Community-Based GUI Library for Scrap Mechanic</h1>
 
-`sm.regui` is a [**Scrap Mechanic**](https://store.steampowered.com/app/387990/Scrap_Mechanic/) dependency mod that allows modders to create graphical user interfaces that are normally not possible with `sm.gui`.
+`sm.regui` is a [**Scrap Mechanic**](https://store.steampowered.com/app/387990/Scrap_Mechanic/) library mod that allows modders to create graphical user interfaces that are normally not possible with `sm.gui`.
 
 > [!NOTE]
-> Funfact: This is the first **GUI Library** (based around with MyGui) ever in the **Scrap Mechanic Modding Community**
-
-> [!CAUTION]
-> This mot is not yet finished! Currently FlexableWidgets needs to be done (probably last one to implement) but everything else should work fine!
+> This is the first **GUI Library** (based around with MyGui) ever in the **Scrap Mechanic Modding Community**!
 
 With `sm.regui`, you can:
 - **Create, destroy, and fully control widgets**
 - Use a flexible template system
 - Support fullscreen GUIs (allowing widgets to be placed anywhere on the screen and adapt to all in-game resolutions)
-- Reimplement several unimplemented functions (e.g., `GuiInterface:setData`)
+- Use functions that are now implemented! (e.g., `GuiInterface:setData`)
 - Easily translate text with a built-in translation system
+- Draw any font you desire in any rotation*
+- Create lists with the flexible widgets API.
+- Play high-quality compressed 720p video.
 
 For examples, check out the [Examples](/Examples/) directory!  
-For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file.
+For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file or inside the [Scrap Mechanic Tools](https://example.com) website!
 
 ---
+<h3>
 
 > [!IMPORTANT]
 > This GUI library uses a GUI exploit that allows modders to create MyGui Layout Files! As a result, the library may break in future game updates.
