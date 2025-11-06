@@ -32,13 +32,7 @@ function sm.regui.template.createTemplateFromInterface(reGuiInterface)
     local self = {
         __type = "ReGuiUserdata",
         
-        data = CloneTable(reGuiInterface.data),
-
-        settings = CloneTable(reGuiInterface.settings),
-        modifiers = CloneTable(reGuiInterface.modifiers),
-        commands = CloneTable(reGuiInterface.commands),
-
-        translatorFunction = reGuiInterface.translatorFunction
+        interface = reGuiInterface:clone()
     }
 
     for key, value in pairs(sm.regui.template) do
@@ -55,74 +49,41 @@ end
 function sm.regui.template:applyTemplateFromInterface(reGuiInterface)
     AssertArgument(reGuiInterface, 1, {"table"}, {"ReGuiInterface"})
 
-    local outputData = CloneTable(self.data) ---@type ReGui.LayoutFile
-    
-    ---@param widget ReGui.LayoutFile.Widget
-    ---@return ReGui.LayoutFile.Widget?
+    local clonedInterface = self.interface:clone()
+
+    ---@param widget ReGui.Widget
     local function iterator(widget)
-        if widget.isTemplateContents then
+        if widget:isLocationForTemplateContents() then
             return widget
         end
 
-        if not widget.children then
-            return nil
-        end
-
-        for _, child in pairs(widget.children) do
-            local result = iterator(child)
-            if result then
-                return result
+        local templateWidget = nil
+        for _, child in pairs(widget:getChildren()) do
+            local found = iterator(child)
+            if found then
+                return found
             end
         end
     end
 
-    local templateWidget = nil
-
-    for _, widget in pairs(outputData.data) do
-        templateWidget = iterator(widget)
-        if templateWidget then break end
-    end
-
-    
-    if false then
-        --- Stupid VSCode Hack
-        ---@type ReGui.LayoutFile.Widget
-        templateWidget = templateWidget
-    end
-
-    ValueAssert(templateWidget, 1, "No template widget found!")
-
-    templateWidget.children = templateWidget.children or {}
-    templateWidget.isTemplateContents = false
-
-    for _, widget in pairs(reGuiInterface.data.data) do
-        table.insert(templateWidget.children, CloneTable(widget))
-    end
-
-    local gui = sm.regui.newBlank()
-    gui.data      = CloneTable(outputData)
-    gui.settings  = CloneTable(self.settings)
-    gui.modifiers = CloneTable(self.modifiers)
-    gui.commands  = CloneTable(self.commands)
-    gui.translatorFunction = reGuiInterface.translatorFunction or self.translatorFunction
-
-    for key, value in pairs(reGuiInterface.settings) do
-        gui.settings[key] = value
-    end
-
-    for _, value in pairs(reGuiInterface.commands) do
-        table.insert(gui.commands, value)
-    end
-
-    for key, value in pairs(reGuiInterface.modifiers) do
-        gui.modifiers[key] = gui.modifiers[key] or {}
-
-        for key2, value2 in pairs(value) do
-            gui.modifiers[key][key2] = value2
+    local templateWidget = nil ---@type ReGui.Widget?
+    for _, child in pairs(clonedInterface:getRootChildren()) do
+        local found = iterator(child)
+        if found then
+            templateWidget = found
+            break
         end
     end
 
-    return gui
+    assert(type(templateWidget) ~= "nil", "Template widget not found")
+    templateWidget:setLocationForTemplateContents(false)
+
+    local duplicateReGuiInterface = reGuiInterface:clone()
+    for _, widget in pairs(duplicateReGuiInterface:getRootChildren()) do
+        widget:setParent(templateWidget)
+    end
+
+    return clonedInterface
 end
 
 ---@param self ReGui.Template

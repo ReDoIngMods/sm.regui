@@ -24,7 +24,7 @@ function sm.regui.flex.createFlexWidget(widget, justifyContent, flexDirection)
         widgets = {}, ---@type ReGui.Widget[]
         widgetAddrToIndex = {},
 
-        mainWidget = widget:createWidget(widget:getName() .. "_REGUI_FLEXWIDGET", "Widget", "Widget"),
+        mainWidget = widget:createWidget(widget:getName() .. "_REGUI_FLEXWIDGET", "Widget", "PanelEmpty"),
         properties = {
             gap = {
                 inPixels = true,

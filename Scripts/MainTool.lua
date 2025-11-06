@@ -244,6 +244,17 @@ function sm.regui:render()
     local hash = createHashFromGuiInstance(self)
     self.renderedPath = loadSettings().cacheDirectory .. "Layout_" .. hash .. ".layout"
 
+    if #self.data.data == 2 then
+        local message = [[Warning on the following file: %s
+    You have multiple widgets inside the root of the GUI. Normally no one does this because you usually put BackPanel here and that's it.
+    If you didn't intend on creating multiple widgets, make sure you didn't do one of these so you don't get a brain tumor.
+        - Tried creating a widget by doing this, because it will just create it on the root: FullscreenGUI:getGui():createWidget
+]]
+
+        warn(string.format(message, self.renderedPath))
+    end
+
+
     if sm.json.fileExists(self.renderedPath) then
         return -- Already rendered, no need to re-render it
     end
@@ -548,7 +559,7 @@ end
 ---@param parentWidget ReGui.LayoutFile.Widget?
 ---@param widget ReGui.LayoutFile.Widget
 ---@return ReGui.Widget
-local function createWidgetWrapper(gui, parentWidget, widget)
+local function createWidgetWrapper(gui, parentWidget, widget, parentWidgetWrapper)
     local function getEffectiveParentSize(self)
         local parent = self:getParent()
         if parent and parent:exists() then
@@ -642,18 +653,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
         getParent = function(self)
             SelfAssert(self)
 
-            if not parentWidget then
-                return nil
-            end
-
-            local parentWidgetName = parentWidget.instanceProperties.name
-            if not parentWidgetName then
-                return createWidgetWrapper(gui, nil, parentWidget)
-            end
-
-            local _, parentWidgetWidget = findWidgetRecursiveRaw(gui, parentWidgetName)
-
-            return createWidgetWrapper(gui, parentWidgetWidget, parentWidget)
+            return parentWidgetWrapper
         end,
 
         ---@param newParent ReGui.Widget
@@ -664,8 +664,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
                 AssertArgument(newParent, 1, {"table"})
             end
 
-            local currentParent = parentWidget
-            local childrenList = currentParent and currentParent.children or gui.data.data
+            local childrenList = parentWidget and parentWidget.children or gui.data.data
 
             for i, child in pairs(childrenList) do
                 if child == widget then
@@ -691,15 +690,23 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             else
                 table.insert(gui.data.data, widget)
             end
+
+            parentWidget = newParent
         end,
 
+        ---@return ReGui.Widget[]
         getChildren = function(self)
             SelfAssert(self)
 
+            if not widget.children then
+                return {}
+            end
+            
             local children = {}
             for _, child in pairs(widget.children) do
-                table.insert(children, createWidgetWrapper(gui, widget, child))
+                table.insert(children, createWidgetWrapper(gui, widget, child, self))
             end
+
             return children
         end,
 
@@ -1006,7 +1013,7 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             widget.children = widget.children or {}
             table.insert(widget.children, newWidget)
 
-            return createWidgetWrapper(gui, widget, newWidget)
+            return createWidgetWrapper(gui, widget, newWidget, self)
         end,
 
         createController = function (self, controllerType)
@@ -1109,11 +1116,9 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             SelfAssert(self)
             AssertArgument(widgetName, 1, {"string"})
 
-            if widget.children then
-                for _, child in pairs(widget.children) do
-                    if child.instanceProperties and child.instanceProperties.name == widgetName then
-                        return createWidgetWrapper(gui, widget, child)
-                    end
+            for _, child in pairs(self:getChildren()) do
+                if child:getName() == widgetName then
+                    return child
                 end
             end
         end,
@@ -1122,24 +1127,21 @@ local function createWidgetWrapper(gui, parentWidget, widget)
             SelfAssert(self)
             AssertArgument(widgetName, 1, {"string"})
 
-            local function searchChildren(widget)
-                if not widget.children then
-                    return nil
-                end
-
-                for _, child in pairs(widget.children) do
-                    if child.instanceProperties and child.instanceProperties.name == widgetName then
-                        return createWidgetWrapper(gui, widget, child)
+            ---@param widget ReGui.Widget
+            local function iterator(widget)
+                for _, child in pairs(widget:getChildren()) do
+                    if child:getName() == widgetName then
+                        return child
                     end
 
-                    local result = searchChildren(child)
-                    if result then
-                        return result
+                    local found = iterator(child)
+                    if found then
+                        return found
                     end
                 end
             end
 
-            return searchChildren(self)
+            return iterator(self)
         end
     }
 
@@ -1254,6 +1256,11 @@ function sm.regui:setText(widgetName, ...)
         input = repackedValue,
         output = self.translatorFunction(unpack(repackedValue))
     }
+
+    
+    if self:isActive() then
+        self.gui:setText(widgetName, self.modifiers[widgetName].text.output)
+    end
 end
 
 ---@param self ReGui.GUI
@@ -1580,6 +1587,12 @@ function sm.regui:setImage(imageBox, image)
     AssertArgument(imageBox, 1, {"string"})
     AssertArgument(image, 2, {"string"})
 
+    local widget, _ = findWidgetRecursiveRaw(self, imageBox)
+    ValueAssert(widget, 1, "Widget not found!")
+    
+    self.gui.modifiers[widget.instanceProperties.name] = self.gui.modifiers[widget.instanceProperties.name] or {}
+    self.gui.modifiers[widget.instanceProperties.name].image = path
+    
     table.insert(self.commands, {"setImage", {imageBox, image}})
     runPreviousCommand(self)
 end

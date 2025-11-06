@@ -17,7 +17,6 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
             :setLocationForTemplateContents(true)
 
     local outputGui = sm.regui.template.createTemplateFromInterface(gui):applyTemplateFromInterface(guiInterface)
-
     local fullscreenWidget = outputGui:findWidgetRecursive("FullscreenWidget")
     local outputWidget     = fullscreenWidget:findWidget("OutputWidget")
 
@@ -96,7 +95,7 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
             local outputWidgetWidth  = screenWidth
             local outputWidgetHeight = screenHeight
 
-            if hasFixedAspectRatio and alignment ~= "stretch" then
+            if hasFixedAspectRatio and alignment ~= "Stretch" then
                 local ratio = 16 / 9
                 local screenRatio = screenWidth / screenHeight
 
