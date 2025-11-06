@@ -1,7 +1,3 @@
--- sm.regui: Main namespace for ReDoing Graphical User Interfaces
--- sm.regui.template: Template manager for reusing GUI layouts
--- sm.regui.font: Utilities for rendering custom font-based text
-
 ---sm.regui, ReDoing Graphical User Interfaces
 ---@diagnostic disable: missing-return
 sm.regui = {}
