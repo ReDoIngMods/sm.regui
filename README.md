@@ -23,7 +23,7 @@ For examples, check out the [Examples](/Examples/) directory!
 For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file or inside the [Scrap Mechanic Tools](https://example.com) website!
 
 ---
-<h3>
+<h3 align="center">Notes about this library:</h3>
 
 > [!IMPORTANT]
 > This GUI library uses a GUI exploit that allows modders to create MyGui Layout Files! As a result, the library may break in future game updates.
