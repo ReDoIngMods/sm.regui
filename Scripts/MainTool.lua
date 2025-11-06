@@ -1813,6 +1813,8 @@ dofile("./VideoPlayer.lua")
 dofile("./FlexibleWidget.lua")
 dofile("./ModConfig/Hook.lua")
 
+dofile("./Debug.lua")
+
 print("Library fully loaded!")
 
 ---@class MainToolClass : ToolClass

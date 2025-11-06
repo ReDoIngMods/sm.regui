@@ -73,7 +73,9 @@
             <Widget type="Button" skin="DressbotArrowLeft" position_real="0.030699260943718023 0.72368421052631582 0.022740193291642979 0.26315789473684209" name="TabLeftBtn"/>
         </Widget>
         <Widget type="Widget" skin="BackgroundLightRoundedLowerLeft" position_real="0 0.1902377972465582 1 0.8097622027534418" name="OptionsHostPanel">
-            <Widget type="Widget" skin="PanelEmpty" position="45 5 1665 594" name="Contents"/>
+            <Widget type="Widget" skin="PanelEmpty" position_real="0.02785673678226265 0.0077279752704791345 0.31040363843092666 0.91962905718701704" name="Left"/>
+            <Widget type="Widget" skin="PanelEmpty" position_real="0.34394542353610008 0.0077279752704791345 0.30983513359863557 0.91962905718701704" name="Center"/>
+            <Widget type="Widget" skin="PanelEmpty" position_real="0.65946560545764643 0.0077279752704791345 0.3115406480955088 0.91962905718701704" name="Right"/>
         </Widget>
     </Widget>
     <CodeGeneratorSettings/>

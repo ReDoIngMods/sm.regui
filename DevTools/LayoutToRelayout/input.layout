@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <MyGUI type="Layout" version="3.2.0">
-    <Widget type="TextBox" skin="TextBox" name="Name" position_real="0 0 0.986842 1">
+    <Widget type="TextBox" skin="TextBox" name="Name" position_real="0 0 0.350877 1">
         <Property key="Caption" value="LABEL" />
-        <Property key="FontName" value="SM_Header" />
+        <Property key="FontName" value="SM_TextLabel" />
         <Property key="TextAlign" value="Left VCenter" />
-        <Property key="Alpha" value="0.5" />
         <Property key="NeedMouse" value="false" />
+    </Widget>
+    <Widget type="Button" skin="SettingsButton" name="On" position_real="0.368421 0.05 0.118421 0.85">
+        <Property key="Caption" value="#{ON_CAPS}" />
+        <Property key="FontName" value="SM_ButtonSmall" />
+        <Property key="TextAlign" value="Center" />
+    </Widget>
+    <Widget type="Widget" skin="WhiteSkin" name="Line" position_real="0 1 0.991228 0.025">
+        <Property key="Alpha" value="0.05" />
+        <Property key="NeedKey" value="false" />
+        <Property key="NeedMouse" value="false" />
+    </Widget>
+    <Widget type="Button" skin="SettingsButton" name="Off" position_real="0.486842 0.05 0.118421 0.85">
+        <Property key="Caption" value="#{OFF_CAPS}" />
+        <Property key="FontName" value="SM_ButtonSmall" />
+        <Property key="TextAlign" value="Center" />
     </Widget>
     <CodeGeneratorSettings />
 </MyGUI>

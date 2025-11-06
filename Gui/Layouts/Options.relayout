@@ -371,31 +371,16 @@
                     "children": [
                         {
                             "instanceProperties": {
-                                "name": "Left",
+                                "name": "Contents",
                                 "type": "Widget",
                                 "skin": "PanelEmpty"
                             },
                             "positionSize": {
-                                "usePixels": false,
-                                "x": 0.030699260943718023,
-                                "y": 0.03863987635239567,
-                                "width": 0.4548038658328596,
-                                "height": 0.8887171561051005
-                            },
-                            "isTemplateContents": false
-                        },
-                        {
-                            "instanceProperties": {
-                                "name": "Right",
-                                "type": "Widget",
-                                "skin": "PanelEmpty"
-                            },
-                            "positionSize": {
-                                "usePixels": false,
-                                "x": 0.5144968732234224,
-                                "y": 0.03863987635239567,
-                                "width": 0.4548038658328596,
-                                "height": 0.8887171561051005
+                                "usePixels": true,
+                                "x": 45,
+                                "y": 5,
+                                "width": 1665,
+                                "height": 594
                             },
                             "isTemplateContents": false
                         }

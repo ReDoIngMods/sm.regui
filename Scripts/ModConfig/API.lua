@@ -30,20 +30,21 @@ sm.regui.modconfig = sm.regui.modconfig or {}
 local backend = sm.regui.modconfig.backend or {}
 sm.regui.modconfig.backend = backend
 
-backend.configurations = backend.configurations or {}
-backend.configurationsData = backend.configurationsData or {} ---@type table<string, boolean|number|string>
-
-backend.modNameToTranslatorFunc = backend.modNameToTranslatorFunc or {}
+backend.configurations = backend.configurations or {} ---@type {structure: ReGui.ModConfig, updatedData: table<string, string|number|boolean>, onConfigChangeCallback: function}[]
+backend.modNameToTranslatorFunc = backend.modNameToTranslatorFunc or {} ---@type table<string, function>
+backend.syncNeeded = false
 
 ---@param name string
 ---@param configInfo ReGui.ModConfig
 ---@param currentSettings table<string, boolean|number|integer|string>
-function sm.regui.modconfig.createModConfiguration(name, configInfo, currentSettings)
+---@param configChangeCallback function
+function sm.regui.modconfig.createModConfiguration(name, configInfo, currentSettings, configChangeCallback)
     SandboxAssert(true)
 
     AssertArgument(name, 1, {"string"})
     AssertArgument(configInfo, 2, {"table"}, {"ReGuiModConfig"})
     AssertArgument(currentSettings, 3, {"table"}, {"table<string, boolean|number|integer|string>"})
+    AssertArgument(configChangeCallback, 4, {"function"})
 
     ValueAssert(backend.configurations[name] == nil, 1, "Mod configuration already exists!")
 
@@ -90,7 +91,7 @@ function sm.regui.modconfig.createModConfiguration(name, configInfo, currentSett
                 ValueAssert(config.description == nil, 2, ctx .. ".description cannot be defined!")
             end
             AssertArgumentCustomErrMsg(config.side, 2, {"string"}, ctx .. ".side must be a string, got " .. type(config.side))
-            ValueAssert(config.side == "Left" or config.side == "Right", 2, ctx .. ".side must be either \"Left\" or \"Right\", got " .. tostring(config.side))
+            ValueAssert(config.side == "Left" or config.side == "Right" or config.side == "Center", 2, ctx .. ".side must be either \"Left\" or \"Right\", got " .. tostring(config.side))
 
             AssertArgumentCustomErrMsg(config.type, 2, {"string"}, ctx .. ".type must be a string, got " .. type(config.type))
 
@@ -152,8 +153,13 @@ function sm.regui.modconfig.createModConfiguration(name, configInfo, currentSett
         ValueAssert(valType == "string" or valType == "number" or valType == "boolean", 3, "currentSettings[\"" .. key .. "\"] must be string, number, or boolean, got " .. valType)
     end
 
-    backend.configurations[name] = configInfo
-    backend.configurationsData[name] = currentSettings
+    backend.configurations[name] = {
+        structure = configInfo,
+        updatedData = currentSettings,
+        onConfigChangeCallback = configChangeCallback,
+    }
+
+    backend.syncNeeded = true
 end
 
 function sm.regui.modconfig.setTranslationFunction(name, func)
