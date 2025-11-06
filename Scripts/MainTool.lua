@@ -1811,36 +1811,8 @@ dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")
 dofile("./VideoPlayer.lua")
 dofile("./FlexibleWidget.lua")
-dofile("./ModConfig/Hook.lua")
 
 print("Library fully loaded!")
 
 ---@class MainToolClass : ToolClass
 MainToolClass = class()
-
-if not sm.regui.__getToolInstance then
-    sm.regui.__getToolInstance = function ()
-        return nil
-    end
-end
-
-MainToolClass.cl_config_hook_command = sm.regui.modconfig.backend.cl_config_hook_command
-
----@param args any
-function MainToolClass:sv_config_hook_command(args)
-    self.network:sendToClient(self.tool:getOwner(), "cl_config_hook_command", args)
-end
-
-function MainToolClass:client_onCreate()
-    sm.regui.__getToolInstance = function ()
-        return self
-    end
-end
-
-function MainToolClass:server_onCreate()
-
-end
-
-function MainToolClass:server_onRefresh()
-    self:server_onCreate()
-end
