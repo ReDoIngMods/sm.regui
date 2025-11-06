@@ -41,6 +41,9 @@ For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file or
 > [!WARNING]
 > **Not Supported in MyGui LayoutEditor**
 > 
-> `sm.regui` uses a custom layout file structure that is not only incompatible with the LayoutEditor, but it's also written in JSON!
+> `sm.regui` uses a custom layout file structure (called relayout with the .relayout extension) that wont work with the **MyGui Layout** editor at all!
 > 
-> To create layout files, you must either write them manually or use an editor like ~~[MyGui.net For SM](https://github.com/ReDoIngMods/MyGui.net-For-SM)~~ *(Note: MyGui.net For SM does **not** support this yet, but support is planned.)*
+> If you want to create `relayout` files, you only got a few choices:
+> -  Use a editor like ~~[MyGui.net For SM](https://github.com/ReDoIngMods/MyGui.net-For-SM)~~ *(Note: MyGui.net For SM does **not** support this yet, but support is planned.)*
+> - Write the relayout file manually.
+> - Use a `.layout` to `.relayout` converter. (One provided in DevTools/LayoutToRelayout/)
