@@ -80,12 +80,19 @@ function TableMove(src, first, last, offset, dst)
     end
 end
 
-
 function TableRepack(...)
     local packed = TablePack(...)
     local result = {}
     TableMove(packed, 1, packed.__n, 1, result)
     return result
+end
+
+function ParseLayoutToValidJsonXML(xmlString)
+    xmlString = xmlString:gsub("'", "&apos;") --Escape ' with &apos;, as we have to replace " with ' to make the Json serializer not escape them
+    xmlString = xmlString:gsub('"', "'") --Replace remaining " with ', to make the Json serializer not escape them, keeping it valid XML
+    xmlString = "\""..xmlString --Deal with the first ", making it valid but ignored
+    xmlString = xmlString.."<!--" --Deal with the last ", commenting it out
+    return xmlString
 end
 
 print("Loaded Helpers!")

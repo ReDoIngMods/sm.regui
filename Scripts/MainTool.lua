@@ -22,82 +22,6 @@
 ---@field type string
 ---@field properties table<string, string>
 
-local function parseLayoutToValidJsonXML(xmlString)
-    xmlString = xmlString:gsub("'", "&apos;") --Escape ' with &apos;, as we have to replace " with ' to make the Json serializer not escape them
-    xmlString = xmlString:gsub('"', "'") --Replace remaining " with ', to make the Json serializer not escape them, keeping it valid XML
-    xmlString = "\""..xmlString --Deal with the first ", making it valid but ignored
-    xmlString = xmlString.."<!--" --Deal with the last ", commenting it out
-    return xmlString
-end
-
----@param instance ReGui.GUI
----@return string
-local function createHashFromGuiInstance(instance)
-    local function serialize(tbl)
-        local keys, str = {}, "{"
-        for k in pairs(tbl) do
-            table.insert(keys, k)
-        end
-
-        table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
-
-        for _, k in ipairs(keys) do
-            local v = tbl[k]
-            local function valToStr(val)
-                if type(val) == "table" then
-                    return serialize(val)
-                elseif type(val) == "string" then
-                    return string.format("%q", val)
-                else
-                    return tostring(val)
-                end
-            end
-
-            str = str .. "[" .. valToStr(k) .. "]=" .. valToStr(v) .. ","
-        end
-        return str .. "}"
-    end
-
-    local function fnv1a64(str)
-        local hash = { 0x84222325, 0xcbf29ce4 }
-        for i = 1, #str do
-            local byte = string.byte(str, i)
-            hash = { bit.bxor(hash[1], byte), hash[2] }
-
-            local a_lo, a_hi = hash[1], hash[2]
-            local b_lo, b_hi = 0x1b3, 0x100
-            local lo_lo = bit.band(a_lo * b_lo, 0xFFFFFFFF)
-            local hi_lo = bit.band(a_hi * b_lo + a_lo * b_hi, 0xFFFFFFFF)
-            local hi_hi = bit.band(a_hi * b_hi, 0xFFFFFFFF)
-            local mid = bit.rshift(a_lo * b_lo, 32) + bit.band(hi_lo, 0xFFFFFFFF)
-
-            hash = {
-                bit.band(lo_lo, 0xFFFFFFFF),
-                bit.band(mid + hi_hi, 0xFFFFFFFF)
-            }
-        end
-
-        return hash
-    end
-
-    local function toHex64(v)
-        return string.format("%08x%08x", v[2], v[1])
-    end
-
-    local h1 = fnv1a64(serialize(instance.data))
-    local h2 = fnv1a64(serialize(instance.modifiers))
-
-    local lo = (h1[1] + h2[1]) % 2^32
-    local carry = math.floor((h1[1] + h2[1]) / 2^32)
-    local hi = (h1[2] + h2[2] + carry) % 2^32
-
-    return toHex64({ lo, hi })
-end
-
---
--- MAIN LIBRARY
---
-
 sm.log.info("[SM ReGui] ----- Scrap Mechanic ReGui - The new way of making advanced user interfaces -----")
 
 ---@class sm.regui
@@ -241,7 +165,7 @@ function sm.regui:render()
         return xmlString
     end
 
-    local hash = createHashFromGuiInstance(self)
+    local hash = CreateHashFromGuiInstance(self)
     self.renderedPath = loadSettings().cacheDirectory .. "Layout_" .. hash .. ".layout"
 
     if #self.data.data == 2 then
@@ -341,7 +265,7 @@ function sm.regui:render()
         output = output .. renderWidget(value)
     end
 
-    local renderedData = parseLayoutToValidJsonXML('<MyGUI type="Layout" version="3.2.0">' .. output .. '</MyGUI>')
+    local renderedData = ParseLayoutToValidJsonXML('<MyGUI type="Layout" version="3.2.0">' .. output .. '</MyGUI>')
     sm.json.save(renderedData, self.renderedPath)
 end
 
@@ -1806,6 +1730,7 @@ end
 -- Load additional libaries
 
 dofile("./Helpers.lua")
+dofile("./TableHash.lua")
 dofile("./TemplateManager.lua")
 dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")

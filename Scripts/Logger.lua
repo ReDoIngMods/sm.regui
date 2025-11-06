@@ -1,7 +1,7 @@
 function print(...)
-    sm.log.info("[SM ReGui]", ...)
+    sm.log.info("[sm.regui]", ...)
 end
 
 function warn(...)
-    sm.log.warning("[SM ReGui]", ...)
+    sm.log.warning("[sm.regui]", ...)
 end
