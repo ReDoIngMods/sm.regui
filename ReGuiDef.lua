@@ -94,7 +94,8 @@ function sm.regui.font.getFontPath(fontName) end
 ---@param rotation number Rotation to apply (in degrees).
 ---@return number width The calculated text width in pixels.
 ---@return number height The calculated text height in pixels.
-function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation) end
+---@param forcedFontSpacing number? Forces a font-spacing to the text, default is the spacing provided from the font.
+function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation, forcedFontSpacing) end
 
 ---Draws custom text onto a widget. (position being in pixels)
 ---
@@ -106,7 +107,8 @@ function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation) en
 ---@param fontName string The name of the font to use
 ---@param fontSize number The size in pixels at which to render the font
 ---@param rotation number The rotation to apply to the text
-function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize, rotation) end
+---@param forcedFontSpacing number? Forces a font-spacing to the text, default is the spacing provided from the font.
+function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize, rotation, forcedFontSpacing) end
 
 ---Draws custom text onto a widget. (position being in real units)
 ---
@@ -118,7 +120,8 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
 ---@param fontName string The name of the font to use
 ---@param fontSize number The size in pixels at which to render the font.
 ---@param rotation number The rotation degrees to apply to the text.
-function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontName, fontSize, rotation) end
+---@param forcedFontSpacing number? Forces a font-spacing to the text, default is the spacing provided from the font.
+function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontName, fontSize, rotation, forcedFontSpacing) end
 
 ---Video player utility
 sm.regui.video = {}

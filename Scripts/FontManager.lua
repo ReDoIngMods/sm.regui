@@ -192,7 +192,7 @@ end
 ---@param fontSize number
 ---@param rotation number
 ---@return number width, number height
-function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation)
+function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation, forcedFontSpacing)
     AssertArgument(text    , 1, {"string"})
     AssertArgument(fontName, 2, {"string"})
     AssertArgument(fontSize, 3, {"number"})
@@ -200,6 +200,8 @@ function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation)
     local fontPath = fontNameToFontPath[fontName]
     ValueAssert(value, 2, "Font not found!")
 
+    AssertArgument(forcedFontSpacing, 7, {"number", "nil"})
+    
     cachedFonts[fontPath] = cachedFonts[fontPath] or sm_json_open(fontPath .. "/data.json")
     local font = cachedFonts[fontPath]
 
@@ -213,6 +215,8 @@ function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation)
 
     local parsedText = select(1, parseTextForColoring(text)) -- Strip color codes
 
+    local fontSpacing = forcedFontSpacing or (font.metadata.fontSpacing == 0 and 1 or font.metadata.fontSpacing)
+
     local index = 1
     while index <= #parsedText do
         local char = getUTF8Character(parsedText, index)
@@ -222,13 +226,13 @@ function sm.regui.font.calcCustomTextSize(text, fontName, fontSize, rotation)
             currentLineWidth = 0
             totalHeight = totalHeight + lineHeight
         elseif char == "\t" then
-            currentLineWidth = currentLineWidth + tabSize
+            currentLineWidth = currentLineWidth + (tabSize * fontSpacing)
         else
             local glyph = font.glyphs[char] or font.glyphs['\xFF\xFD']
             if glyph then
-                currentLineWidth = currentLineWidth + (glyph.advanceWidth * scale)
+                currentLineWidth = currentLineWidth + (glyph.advanceWidth * fontSpacing * scale)
             else
-                currentLineWidth = currentLineWidth + (fontSize * scale)
+                currentLineWidth = currentLineWidth + (fontSize * fontSpacing * scale)
             end
         end
 
@@ -273,7 +277,7 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
     AssertArgument(fontName, 4, {"string"})
     AssertArgument(fontSize, 5, {"number"})
     AssertArgument(rotation, 6, {"number"})
-    
+
     AssertArgument(forcedFontSpacing, 7, {"number", "nil"})
     
     local fontPath = fontNameToFontPath[fontName]
@@ -358,7 +362,7 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
     end
 end
 
-function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontPath, fontSize, rotation)
+function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontPath, fontSize, rotation, forcedFontSpacing)
     AssertArgument(widget  , 1, {"table"}, {"ReguiInterface.Widget"})
     AssertArgument(position, 2, {"table"})
     
@@ -372,7 +376,9 @@ function sm.regui.font.drawCustomTextRealUnits(widget, position, text, fontPath,
     AssertArgument(fontSize, 5, {"number"})
     AssertArgument(rotation, 6, {"number"})
 
-    sm.regui.font.drawCustomText(widget, {x * 1920, y * 1920}, text, fontPath, fontSize, rotation)
+    AssertArgument(forcedFontSpacing, 7, {"number", "nil"})
+    
+    sm.regui.font.drawCustomText(widget, {x * 1920, y * 1920}, text, fontPath, fontSize, rotation, forcedFontSpacing)
 end
 
 print("Loaded FontManager")
