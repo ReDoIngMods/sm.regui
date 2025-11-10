@@ -260,7 +260,7 @@ end
 ---@param fontName string
 ---@param fontSize number
 ---@param rotation number
-function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize, rotation)
+function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize, rotation, forcedFontSpacing)
     AssertArgument(widget  , 1, {"table"}, {"ReguiInterface.Widget"})
     AssertArgument(position, 2, {"table"})
     
@@ -273,6 +273,8 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
     AssertArgument(fontName, 4, {"string"})
     AssertArgument(fontSize, 5, {"number"})
     AssertArgument(rotation, 6, {"number"})
+    
+    AssertArgument(forcedFontSpacing, 7, {"number", "nil"})
     
     local fontPath = fontNameToFontPath[fontName]
     ValueAssert(value, 2, "Font not found!")
@@ -305,7 +307,7 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
 
     local currentColor = "1 1 1 1"
     
-    local fontSpacing = font.metadata.fontSpacing == 0 and 1 or font.metadata.fontSpacing
+    local fontSpacing = forcedFontSpacing or (font.metadata.fontSpacing == 0 and 1 or font.metadata.fontSpacing)
 
     local index = 1
     while index <= #parsedText do
