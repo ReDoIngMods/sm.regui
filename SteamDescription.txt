@@ -1,6 +1,11 @@
 [h1]A Community-Based GUI Library for Scrap Mechanic[/h1]
 sm.regui is a [b]Scrap Mechanic library mod[/b] that allows modders to [b]create advanced graphical user interfaces[/b] that are normally not possible with sm.gui.
 
+[quote]
+    [h2]This GUI library was possible thanks to [b]The Red Builder[/b][/h2]
+    Thanks to [b]The Red Builder[/b], I have been able to create this GUI library for all modders out there! Without him, this library wouldn’t even exist and none of this would've been possible.
+[/quote]
+
 With sm.regui, you can:
 [list]
     [*] [b]Create, destroy, and fully control widgets[/b]
