@@ -20,7 +20,7 @@ With `sm.regui`, you can:
 - Play high-quality compressed 720p video.
 
 For examples, check out the [Examples](/Examples/) directory!  
-For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file ~~or inside the [Scrap Mechanic Tools](https://example.com) website!~~ (That's a todo at the time of writing this)
+For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file!
 
 ---
 <h3 align="center">Notes about this library:</h3>
