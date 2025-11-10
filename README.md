@@ -7,7 +7,7 @@
 `sm.regui` is a [**Scrap Mechanic**](https://store.steampowered.com/app/387990/Scrap_Mechanic/) library mod that allows modders to create graphical user interfaces that are normally not possible with `sm.gui`.
 
 > [!NOTE]
-> This is the first **GUI Library** (based around with MyGui) ever in the **Scrap Mechanic Modding Community**!
+> This is the first **GUI Library** (built around MyGui) ever in the **Scrap Mechanic Modding Community**!
 
 With `sm.regui`, you can:
 - **Create, destroy, and fully control widgets**
@@ -44,6 +44,6 @@ For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file!
 > `sm.regui` uses a custom layout file structure (called relayout with the .relayout extension) that wont work with the **MyGui Layout** editor at all!
 > 
 > If you want to create `relayout` files, you only got a few choices:
-> -  Use a editor like ~~[MyGui.net For SM](https://github.com/ReDoIngMods/MyGui.net-For-SM)~~ *(Note: MyGui.net For SM does **not** support this yet, but support is planned.)*
+> -  Use a editor like ~~[MyGui.NET For SM](https://github.com/ReDoIngMods/MyGui.net-For-SM)~~ *(Note: MyGui.NET For SM does **not** support this yet, but support is planned.)*
 > - Write the relayout file manually.
 > - Use a `.layout` to `.relayout` converter. (One provided in DevTools/LayoutToRelayout/)
