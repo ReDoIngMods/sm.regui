@@ -21,6 +21,7 @@ With sm.regui, you can:
 For examples, check out the [url=https://github.com/ReDoIngMods/sm.regui/blob/main/Examples]Examples[/url] directory!
 For documentation, refer to the [url=https://github.com/ReDoIngMods/sm.regui/blob/main/ReGuiDef.lua]ReGuiDef[/url] definition file!
 Github repository can be found [url=https://github.com/ReDoIngMods/sm.regui]here[/url].
+If you want to ask help, ask us [url=https://discord.gg/DyUxeyAJRz]here[/url]!
 
 [hr][/hr]
 [h1]Notes about this library:[/h1]
