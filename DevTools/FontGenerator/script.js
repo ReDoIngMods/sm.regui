@@ -4,6 +4,7 @@ const { createCanvas } = require('canvas');
 const opentype = require('opentype.js');
 
 const fontSize = 121;
+const fontSpacing = 0;
 const fontPath = './font.ttf';
 
 // Define all characters to process here
@@ -137,7 +138,8 @@ opentype.load(fontPath, (err, font) => {
         fontSize,
         rotations,
         cellSize,
-        lineHeight: (font.ascender * scale) + (-font.descender * scale)
+        lineHeight: (font.ascender * scale) + (-font.descender * scale),
+        fontSpacing: fontSpacing
     };
 
     const jsonPath = path.join(outputDir, 'data.json');

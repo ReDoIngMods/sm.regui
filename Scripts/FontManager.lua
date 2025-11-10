@@ -7,6 +7,7 @@
 ---@field rotations number[]
 ---@field cellSize number
 ---@field lineHeight number
+---@field fontSpacing number
 
 ---@class ReGui.Font.File.Glyph
 ---@field advanceWidth number
@@ -304,6 +305,8 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
 
     local currentColor = "1 1 1 1"
     
+    local fontSpacing = font.metadata.fontSpacing == 0 and 1 or font.metadata.fontSpacing
+
     local index = 1
     while index <= #parsedText do
         currentColor = colorIndexes[index] or currentColor
@@ -321,9 +324,9 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
                     cursorX = x
                     cursorY = cursorY + (font.metadata.lineHeight * scale)
                 elseif char == "\t" then
-                    cursorX = cursorX + (fontSize * 4 * scale)
+                    cursorX = cursorX + (fontSize * fontSpacing * 4 * scale)
                 else
-                    cursorX = cursorX + (fontSize * scale)
+                    cursorX = cursorX + (fontSize * fontSpacing * scale)
                 end
 
                 goto continue
@@ -331,7 +334,7 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
         end
 
         if char == " " then
-            cursorX = cursorX + (glyph.advanceWidth * scale)
+            cursorX = cursorX + (glyph.advanceWidth * fontSpacing * scale)
             goto continue
         end
         
@@ -345,7 +348,7 @@ function sm.regui.font.drawCustomText(widget, position, text, fontName, fontSize
             charWidget:setProperty("ImageTexture", fontPath .. "/" .. string_byte(char) .. ".png")
             charWidget:setProperty("ImageCoord", textureOffset[1] .. " " .. textureOffset[2] .. " " .. cellSizeStr .. " " .. cellSizeStr )
             
-            cursorX = cursorX + (glyph.advanceWidth * scale)
+            cursorX = cursorX + (glyph.advanceWidth * fontSpacing * scale)
         end
         
         ::continue::
