@@ -1,5 +1,6 @@
 node_modules
 DevTools/FontGenerator/Output
+DevTools/FontGenerator/Fonts/*
 package-lock.json
 Devtools/VideoGenerator/CompressedFrames
 Devtools/VideoGenerator/RawFrames
