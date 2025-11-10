@@ -26,12 +26,12 @@ For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file!
 <h3 align="center">Notes about this library:</h3>
 
 > [!IMPORTANT]
-> This GUI library uses a GUI exploit that allows modders to create MyGui Layout Files! As a result, the library may break in future game updates.
+> This GUI library uses a JSON exploit that allows modders to create MyGui Layout Files! As a result, the library may break in future game updates.
 
 > [!CAUTION]
 > **Consider optimization if you're using `sm.regui` for animations, etc.**
 >   
-> The GUI exploit being used may result in bloated files that **cannot be deleted without user assistance**.  
+> The GUI exploit being used will result in bloated files that **cannot be deleted without user assistance**.  
 > 
 > For example, Anything related for positioning and resizing (as a animation) should be done with controllers to reduce bloat.
 
