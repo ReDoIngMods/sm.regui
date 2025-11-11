@@ -1,10 +1,112 @@
+local function findIf(tbl, func)
+    for index, value in ipairs(tbl) do
+        if func(index, value) then
+            return index, value
+        end
+    end
+end
+
+---@alias GuiInterfaceWrap.CommandsTbl table<string, table>[]
+function generateEraser(matchesEnabled)
+    return function(tbl, name, arguments)
+        local function iterator(_, value)
+            local valueName = value[1]
+            if valueName ~= name then
+                return false
+            end
+
+            local valueArguments = value[2]
+            for index = 1, math.min(#valueArguments, #matchesEnabled) do
+                if matchesEnabled[index] and arguments[index] ~= valueArguments[index] then
+                    return false
+                end
+            end
+
+            return true
+        end
+        
+        local hasChanges = false
+        while true do
+            local key = findIf(tbl, iterator)
+            if key then
+                table.remove(tbl, key)
+                hasChanges = true
+            else
+                break
+            end
+        end
+
+        return hasChanges
+    end
+end
+
+local eraserTable = {
+    -- When setting a grid item, previous calls for the same grid and index become obsolete.
+    ["setGridItem"] = generateEraser({true, true, false}),
+
+    -- Setting grid size replaces previous sizes for the same grid.
+    ["setGridSize"] = generateEraser({true, false}),
+
+    -- Changing color or visibility overrides earlier commands on the same widget.
+    ["setColor"] = generateEraser({true, false}),
+    ["setVisible"] = generateEraser({true, false}),
+
+    -- Replacing container(s) invalidates earlier container assignments.
+    ["setContainer"] = generateEraser({true, false}),
+    ["setContainers"] = generateEraser({true, false}),
+
+    -- Reassigning a callback replaces earlier ones on the same widget/list/etc.
+    ["setButtonCallback"] = generateEraser({true, false}),
+    ["setGridButtonCallback"] = generateEraser({true, false}),
+    ["setListSelectionCallback"] = generateEraser({true, false}),
+    ["setSliderCallback"] = generateEraser({true, false}),
+    ["setTextAcceptedCallback"] = generateEraser({true, false}),
+    ["setTextChangedCallback"] = generateEraser({true, false}),
+    ["setGridItemChangedCallback"] = generateEraser({true, false}),
+    ["setGridMouseFocusCallback"] = generateEraser({true, false, false}),
+
+    -- Sliders overwrite older range/position/value commands for the same slider.
+    ["setSliderData"] = generateEraser({true, true, true}),
+    ["setSliderRange"] = generateEraser({true, true}),
+    ["setSliderRangeLimit"] = generateEraser({true, true}),
+    ["setSliderPosition"] = generateEraser({true, true}),
+
+    -- Dropdown item selection overrides previous ones on the same dropdown.
+    ["setSelectedDropDownItem"] = generateEraser({true, false}),
+    ["setSelectedListItem"] = generateEraser({true, false}),
+
+    -- Setting icon/image replaces older calls for the same widget.
+    ["setIconImage"] = generateEraser({true, false}),
+    ["setImage"] = generateEraser({true, false}),
+    ["setItemIcon"] = generateEraser({true, false, false, false}),
+
+    -- Setting focus, host, or mesh preview should replace prior ones.
+    ["setFocus"] = generateEraser({true, false}),
+    ["setHost"] = generateEraser({true, false, false}),
+    ["setMeshPreview"] = generateEraser({true, false}),
+
+    -- Setting quest tracking or untracking cancels prior commands with same quest.
+    ["trackQuest"] = generateEraser({true, false, false, false}),
+    ["untrackQuest"] = generateEraser({true, false}),
+
+    -- Grid/list clearing should remove previous additions before it.
+    ["clearGrid"] = generateEraser({true}),
+    ["clearList"] = generateEraser({true}),
+}
+
 ---@param self ReGui.GUI
-local function runPreviousCommand(self)
+local function onCommandRan(self)
     local latestCommand = self.commands[#self.commands]
-    local guiInterface = self.gui
+    local name = latestCommand[1]
+    local args = latestCommand[2]
+
+   local func = eraserTable[name]
+    if func then
+        func(self.commands, name, args)
+    end
 
     if self:isActive() then
-        guiInterface[latestCommand[1]](guiInterface, unpack(latestCommand[2]))
+        self.gui[name](self.gui, unpack(args))
     end
 end
 
@@ -15,7 +117,7 @@ function sm.regui:addGridItem(widgetName, item)
     AssertArgument(item, 2, "table")
 
     table.insert(self.commands, {"addGridItem", {widgetName, item}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 ---@param self ReGui.GUI
@@ -26,7 +128,7 @@ function sm.regui:addGridItemsFromFile(gridName, jsonPath, additionalData)
     AssertArgument(additionalData, 3, {"table"})
 
     table.insert(self.commands, {"addGridItemsFromFile", {gridName, jsonPath, additionalData}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 ---@param self ReGui.GUI
@@ -37,7 +139,7 @@ function sm.regui:addListItem(listName, itemName, data)
     AssertArgument(data, 3, {"table"})
 
     table.insert(self.commands, {"addListItem", {listName, itemName, data}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 ---@param self ReGui.GUI
@@ -46,7 +148,7 @@ function sm.regui:clearGrid(gridName)
     AssertArgument(gridName, 1, {"string"})
 
     table.insert(self.commands, {"clearGrid", {gridName}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 ---@param self ReGui.GUI
@@ -55,7 +157,7 @@ function sm.regui:clearList(listName)
     AssertArgument(listName, 1, {"string"})
 
     table.insert(self.commands, {"clearList", {listName}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:createDropDown(widgetName, functionName, options)
@@ -65,7 +167,7 @@ function sm.regui:createDropDown(widgetName, functionName, options)
     AssertArgument(options, 3, {"table"})
 
     table.insert(self.commands, {"createDropDown", {widgetName, functionName, options}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:createGridFromJson(gridName, data)
@@ -80,9 +182,8 @@ function sm.regui:createGridFromJson(gridName, data)
     ValueAssert(type(data.itemCount ) == "number", 2, "data.itemCount is expected to be a number")
 
     table.insert(self.commands, {"createGridFromJson", {gridName, data}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
-
 
 function sm.regui:createHorizontalSlider(widgetName, range, value, callback, enableNumbers)
     SelfAssert(self)
@@ -97,7 +198,7 @@ function sm.regui:createHorizontalSlider(widgetName, range, value, callback, ena
     end
 
     table.insert(self.commands, {"createHorizontalSlider", {widgetName, range, value, callback, enableNumbers}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:createVerticalSlider(widgetName, range, value, callback)
@@ -108,7 +209,7 @@ function sm.regui:createVerticalSlider(widgetName, range, value, callback)
     AssertArgument(callback, 4, {"string"})
 
     table.insert(self.commands, {"createVerticalSlider", {widgetName, range, value, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:destroy()
@@ -123,7 +224,7 @@ function sm.regui:playEffect(widget, effect, restart)
     AssertArgument(restart, 3, {"boolean"})
 
     table.insert(self.commands, {"playEffect", {widget, effect, restart}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:playGridEffect(gridName, index, effectName, restart)
@@ -134,7 +235,7 @@ function sm.regui:playGridEffect(gridName, index, effectName, restart)
     AssertArgument(restart, 4, {"boolean"})
 
     table.insert(self.commands, {"playGridEffect", {gridName, index, effectName, restart}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setButtonCallback(button, callback)
@@ -143,7 +244,7 @@ function sm.regui:setButtonCallback(button, callback)
     AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setButtonCallback", {button, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setButtonState(button, state)
@@ -152,7 +253,7 @@ function sm.regui:setButtonState(button, state)
     AssertArgument(state, 2, {"boolean"})
 
     table.insert(self.commands, {"setButtonState", {button, state}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setColor(widget, color)
@@ -161,7 +262,7 @@ function sm.regui:setColor(widget, color)
     AssertArgument(color, 2, {"Color"})
 
     table.insert(self.commands, {"setColor", {widget, color}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setContainer(gridName, container)
@@ -170,7 +271,7 @@ function sm.regui:setContainer(gridName, container)
     AssertArgument(container, 2, {"Container"})
 
     table.insert(self.commands, {"setContainer", {gridName, container}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setContainers(gridName, containers)
@@ -183,7 +284,7 @@ function sm.regui:setContainers(gridName, containers)
     end
 
     table.insert(self.commands, {"setContainers", {gridName, containers}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setFadeRange(range)
@@ -191,7 +292,7 @@ function sm.regui:setFadeRange(range)
     AssertArgument(range, 1, {"number"})
 
     table.insert(self.commands, {"setFadeRange", {range}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setFocus(widget)
@@ -199,7 +300,7 @@ function sm.regui:setFocus(widget)
     AssertArgument(widget, 1, {"string"})
 
     table.insert(self.commands, {"setFocus", {widget}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setGridButtonCallback(buttonName, callback)
@@ -208,7 +309,7 @@ function sm.regui:setGridButtonCallback(buttonName, callback)
     AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setGridButtonCallback", {buttonName, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setGridItem(gridName, index, item)
@@ -218,7 +319,7 @@ function sm.regui:setGridItem(gridName, index, item)
     AssertArgument(item, 3, {"table"})
 
     table.insert(self.commands, {"setGridItem", {gridName, index, item}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setGridItemChangedCallback(gridName, callback)
@@ -227,7 +328,7 @@ function sm.regui:setGridItemChangedCallback(gridName, callback)
     AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setGridItemChangedCallback", {gridName, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setGridMouseFocusCallback(widgetName, callbackName, gridName)
@@ -237,7 +338,7 @@ function sm.regui:setGridMouseFocusCallback(widgetName, callbackName, gridName)
     AssertArgument(gridName, 3, {"string"})
 
     table.insert(self.commands, {"setGridMouseFocusCallback", {widgetName, callbackName, gridName}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setGridSize(gridName, size)
@@ -246,7 +347,7 @@ function sm.regui:setGridSize(gridName, size)
     AssertArgument(size, 2, {"number"})
 
     table.insert(self.commands, {"setGridSize", {gridName, size}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setHost(widget, host, joint)
@@ -256,7 +357,7 @@ function sm.regui:setHost(widget, host, joint)
     AssertArgument(joint, 3, {"string", "nil"})  -- optional
 
     table.insert(self.commands, {"setHost", {widget, host, joint}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setIconImage(itemBox, uuid)
@@ -265,7 +366,7 @@ function sm.regui:setIconImage(itemBox, uuid)
     AssertArgument(uuid, 2, {"Uuid"})
 
     table.insert(self.commands, {"setIconImage", {itemBox, uuid}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setImage(imageBox, image)
@@ -280,7 +381,7 @@ function sm.regui:setImage(imageBox, image)
     self.gui.modifiers[widget.instanceProperties.name].image = path
     
     table.insert(self.commands, {"setImage", {imageBox, image}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setItemIcon(imageBox, itemResource, itemGroup, itemName)
@@ -291,7 +392,7 @@ function sm.regui:setItemIcon(imageBox, itemResource, itemGroup, itemName)
     AssertArgument(itemName, 4, {"string"})
 
     table.insert(self.commands, {"setItemIcon", {imageBox, itemResource, itemGroup, itemName}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setListSelectionCallback(listName, callback)
@@ -300,7 +401,7 @@ function sm.regui:setListSelectionCallback(listName, callback)
     AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setListSelectionCallback", {listName, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setMaxRenderDistance(distance)
@@ -308,7 +409,7 @@ function sm.regui:setMaxRenderDistance(distance)
     AssertArgument(distance, 1, {"number"})
 
     table.insert(self.commands, {"setMaxRenderDistance", {distance}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setMeshPreview(widgetName, uuid)
@@ -317,7 +418,7 @@ function sm.regui:setMeshPreview(widgetName, uuid)
     AssertArgument(uuid, 2, {"Uuid"})
 
     table.insert(self.commands, {"setMeshPreview", {widgetName, uuid}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setOnCloseCallback(callback)
@@ -325,7 +426,7 @@ function sm.regui:setOnCloseCallback(callback)
     AssertArgument(callback, 1, {"string"})
 
     table.insert(self.commands, {"setOnCloseCallback", {callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setRequireLineOfSight(state)
@@ -333,7 +434,7 @@ function sm.regui:setRequireLineOfSight(state)
     AssertArgument(state, 1, {"boolean"})
 
     table.insert(self.commands, {"setRequireLineOfSight", {state}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setSelectedDropDownItem(dropDownName, itemName)
@@ -342,7 +443,7 @@ function sm.regui:setSelectedDropDownItem(dropDownName, itemName)
     AssertArgument(itemName, 2, {"string"})
 
     table.insert(self.commands, {"setSelectedDropDownItem", {dropDownName, itemName}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setSelectedListItem(listName, itemName)
@@ -351,7 +452,7 @@ function sm.regui:setSelectedListItem(listName, itemName)
     AssertArgument(itemName, 2, {"string"})
 
     table.insert(self.commands, {"setSelectedListItem", {listName, itemName}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setSliderCallback(sliderName, callback)
@@ -360,7 +461,7 @@ function sm.regui:setSliderCallback(sliderName, callback)
     AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setSliderCallback", {sliderName, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setSliderData(sliderName, range, position)
@@ -370,7 +471,7 @@ function sm.regui:setSliderData(sliderName, range, position)
     AssertArgument(position, 3, {"number"})
 
     table.insert(self.commands, {"setSliderData", {sliderName, range, position}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setSliderPosition(sliderName, position)
@@ -379,7 +480,7 @@ function sm.regui:setSliderPosition(sliderName, position)
     AssertArgument(position, 2, {"number"})
 
     table.insert(self.commands, {"setSliderPosition", {sliderName, position}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setSliderRange(sliderName, range)
@@ -388,7 +489,7 @@ function sm.regui:setSliderRange(sliderName, range)
     AssertArgument(range, 2, {"number"})
 
     table.insert(self.commands, {"setSliderRange", {sliderName, range}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setSliderRangeLimit(sliderName, limit)
@@ -397,7 +498,7 @@ function sm.regui:setSliderRangeLimit(sliderName, limit)
     AssertArgument(limit, 2, {"number"})
 
     table.insert(self.commands, {"setSliderRangeLimit", {sliderName, limit}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setTextAcceptedCallback(editboxName, callback)
@@ -406,7 +507,7 @@ function sm.regui:setTextAcceptedCallback(editboxName, callback)
     AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setTextAcceptedCallback", {editboxName, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setTextChangedCallback(editboxName, callback)
@@ -415,7 +516,7 @@ function sm.regui:setTextChangedCallback(editboxName, callback)
     AssertArgument(callback, 2, {"string"})
 
     table.insert(self.commands, {"setTextChangedCallback", {editboxName, callback}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setVisible(widget, state)
@@ -424,7 +525,7 @@ function sm.regui:setVisible(widget, state)
     AssertArgument(state, 2, {"boolean"})
 
     table.insert(self.commands, {"setVisible", {widget, state}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:setWorldPosition(pos, world)
@@ -433,7 +534,7 @@ function sm.regui:setWorldPosition(pos, world)
     AssertArgument(world, 2, {"World"})
 
     table.insert(self.commands, {"setWorldPosition", {pos, world}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:stopEffect(widget, effect, immediate)
@@ -443,7 +544,7 @@ function sm.regui:stopEffect(widget, effect, immediate)
     AssertArgument(immediate, 3, {"boolean"})
 
     table.insert(self.commands, {"stopEffect", {widget, effect, immediate}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:stopGridEffect(gridName, index, effectName)
@@ -453,7 +554,7 @@ function sm.regui:stopGridEffect(gridName, index, effectName)
     AssertArgument(effectName, 3, {"string"})
 
     table.insert(self.commands, {"stopGridEffect", {gridName, index, effectName}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:trackQuest(name, title, mainQuest, questTasks)
@@ -478,7 +579,7 @@ function sm.regui:trackQuest(name, title, mainQuest, questTasks)
     AssertArgument(questTasks.complete, 4, {"boolean"})
 
     table.insert(self.commands, {"trackQuest", {name, title, mainQuest, questTasks}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 function sm.regui:untrackQuest(name)
@@ -486,7 +587,7 @@ function sm.regui:untrackQuest(name)
     AssertArgument(name, 1, {"string"})
 
     table.insert(self.commands, {"untrackQuest", {name}})
-    runPreviousCommand(self)
+    onCommandRan(self)
 end
 
 print("Added GuiInterface wrapper!")
