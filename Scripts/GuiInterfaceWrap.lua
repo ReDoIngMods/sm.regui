@@ -1,4 +1,14 @@
 ---@param self ReGui.GUI
+local function runPreviousCommand(self)
+    local latestCommand = self.commands[#self.commands]
+    local guiInterface = self.gui
+
+    if self:isActive() then
+        guiInterface[latestCommand[1]](guiInterface, unpack(latestCommand[2]))
+    end
+end
+
+---@param self ReGui.GUI
 function sm.regui:addGridItem(widgetName, item)
     SelfAssert(self)
     AssertArgument(widgetName, 1, {"string"})
