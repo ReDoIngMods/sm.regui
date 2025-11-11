@@ -1,0 +1,188 @@
+{
+	"identifier": "ReGui",
+	"version": 1,
+	"data": [
+		{
+			"instanceProperties": {
+				"name": "Icon",
+				"type": "ImageBox",
+				"skin": "ImageBox"
+			},
+			"positionSize": {
+				"usePixels": false,
+				"x": 0.0,
+				"y": 0.0,
+				"width": 0.0,
+				"height": 0.0
+			},
+			"isTemplateContents": false,
+			"properties": {
+				"Visible": false
+			}
+		},
+		{
+			"instanceProperties": {
+				"name": "ProcessPanel",
+				"type": "Widget",
+				"skin": "PanelEmpty"
+			},
+			"positionSize": {
+				"usePixels": false,
+				"x": 0.0,
+				"y": 0.0,
+				"width": 1.0,
+				"height": 1.0
+			},
+			"isTemplateContents": false,
+			"children": [
+				{
+					"instanceProperties": {
+						"name": "Time",
+						"type": "TextBox",
+						"skin": "TextBox"
+					},
+					"positionSize": {
+						"usePixels": false,
+						"x": 0.0,
+						"y": 0.0,
+						"width": 0.0,
+						"height": 0.0
+					},
+					"isTemplateContents": false,
+					"properties": {
+						"Visible": false
+					}
+				},
+				{
+					"instanceProperties": {
+						"name": "Progress",
+						"type": "ProgressBar",
+						"skin": "CraftbotProgressBar"
+					},
+					"positionSize": {
+						"usePixels": false,
+						"x": 0.0,
+						"y": 0.0,
+						"width": 1.0,
+						"height": 1.0
+					},
+					"isTemplateContents": false,
+					"properties": {
+						"Range": "100",
+						"RangePosition": "50"
+					}
+				}
+			]
+		},
+		{
+			"instanceProperties": {
+				"name": "Repeat",
+				"type": "Button",
+				"skin": "Button"
+			},
+			"positionSize": {
+				"usePixels": false,
+				"x": 0.0,
+				"y": 0.0,
+				"width": 0.0,
+				"height": 0.0
+			},
+			"isTemplateContents": false,
+			"properties": {
+				"Visible": false
+			}
+		},
+		{
+			"instanceProperties": {
+				"name": "Lock",
+				"type": "ImageBox",
+				"skin": "ImageBox"
+			},
+			"positionSize": {
+				"usePixels": false,
+				"x": 0.0,
+				"y": 0.0,
+				"width": 0.0,
+				"height": 0.0
+			},
+			"isTemplateContents": false,
+			"properties": {
+				"Visible": false
+			}
+		},
+		{
+			"instanceProperties": {
+				"name": "Collect",
+				"type": "Button",
+				"skin": "Button"
+			},
+			"positionSize": {
+				"usePixels": false,
+				"x": 0.0,
+				"y": 0.0,
+				"width": 0.0,
+				"height": 0.0
+			},
+			"isTemplateContents": false,
+			"properties": {
+				"Visible": false
+			}
+		},
+		{
+			"instanceProperties": {
+				"name": "UnlockPanel",
+				"type": "Widget",
+				"skin": "PanelEmpty"
+			},
+			"positionSize": {
+				"usePixels": false,
+				"x": 0.0,
+				"y": 0.0,
+				"width": 1.0,
+				"height": 1.0
+			},
+			"isTemplateContents": false,
+			"properties": {
+				"Visible": false
+			},
+			"children": [
+				{
+					"instanceProperties": {
+						"name": "Unnamed",
+						"type": "TextBox",
+						"skin": "TextBox"
+					},
+					"positionSize": {
+						"usePixels": false,
+						"x": 0.0,
+						"y": 0.0,
+						"width": 0.0,
+						"height": 0.0
+					},
+					"isTemplateContents": false,
+					"properties": {
+						"Visible": false
+					}
+				},
+				{
+					"instanceProperties": {
+						"name": "UnlockLevel",
+						"type": "TextBox",
+						"skin": "TextBox"
+					},
+					"positionSize": {
+						"usePixels": false,
+						"x": 0.0,
+						"y": 0.0,
+						"width": 0.0,
+						"height": 0.0
+					},
+					"isTemplateContents": false,
+					"properties": {
+						"Visible": false
+					}
+				}
+			]
+		}
+	]
+}

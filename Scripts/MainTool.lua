@@ -1171,7 +1171,6 @@ function sm.regui:setText(widgetName, ...)
         output = self.translatorFunction(unpack(repackedValue))
     }
 
-    
     if self:isActive() then
         self.gui:setText(widgetName, self.modifiers[widgetName].text.output)
     end
@@ -1232,7 +1231,17 @@ function sm.regui:getData(widgetName)
     return CloneTable(widget.properties)
 end
 
-print("Loaded custom functions! Now adding all GuiInterface functions...")
+function sm.regui:getRenderedPath()
+    SelfAssert(self)
+    
+    return self.renderedPath
+end
+
+function sm.regui:hasRendered()
+    SelfAssert(self)
+    
+    return self.renderedPath ~= ""
+end
 
 -- Load additional libaries
 
@@ -1244,6 +1253,7 @@ dofile("./FullscreenGui.lua")
 dofile("./FontManager.lua")
 dofile("./VideoPlayer.lua")
 dofile("./FlexibleWidget.lua")
+dofile("./ProgressBar.lua")
 
 print("Library fully loaded!")
 

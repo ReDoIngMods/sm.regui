@@ -198,3 +198,5 @@ function sm.regui.video:getAllAudioParameters()
 
     return CloneTable(self.audioParameters)
 end
+
+print("Loaded VideoPlayer!")
