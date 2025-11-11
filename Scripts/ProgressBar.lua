@@ -61,12 +61,15 @@ end
 function sm.regui.progressbar:recreateBar()
     SelfAssert(self)
     
+    local maxValue = math.max(1, self.maxValue)
+    local value = sm.util.clamp(self.value, 0, self.maxValue)
+
     local gridItem = {
         itemId = "a4f45ac4-99e4-4d01-b787-f8897dc442db",
         craftTime = self.maxValue,
 
-        -- If self.vlaue is self.maxValue, we need to set it to math.huge because fuck you SM devs!
-        remainingTicks = math.ceil(self.value) >= self.maxValue and math.huge or self.maxValue - sm.util.clamp(self.value, 0, self.maxValue),
+        -- If value is maxValue, we need to set it to math.huge because fuck you SM devs!
+        remainingTicks = (math.ceil(value) >= maxValue) and math.huge or (maxValue - value),
 
         locked = false,
         repeating = false
