@@ -7,4 +7,4 @@ Devtools/VideoGenerator/RawFrames
 Devtools/VideoGenerator/Output
 Devtools/VideoGenerator/input.mp4
 Devtools/LayoutToRelayout/output.mp4
-Cache
+ReGui/Cache/*.layout
