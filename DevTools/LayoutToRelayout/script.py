@@ -16,7 +16,7 @@ def parse_position(element):
     use_pixels = False
 
     if pos_str:
-        coords = list(map(float, pos_str.split()))
+        coords = list(map(float, pos_str.replace("-nan(ind)", "0").split()))
     else:
         pos_str = element.attrib.get("position")
         use_pixels = True
@@ -119,4 +119,4 @@ def convert_xml_to_custom_json(xml_path):
 output = convert_xml_to_custom_json("input.layout")
 
 with open("output.json", "w") as f:
-    json.dump(output, f, indent=4, ensure_ascii=False)
+    json.dump(output, f, indent="\t", ensure_ascii=False)
