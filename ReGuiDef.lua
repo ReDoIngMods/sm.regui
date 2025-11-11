@@ -145,7 +145,17 @@ sm.regui.flex = {}
 ---@return ReGuiFlexableWidget flexWidget The created flex widget
 function sm.regui.flex.createFlexWidget(widget, justifyContent, flexDirection) end
 
---- CLASSES --
+---ProgressBar utility
+sm.regui.progressbar = {}
+
+---Creates a new progress bar. The widget passed in will be directly used as a progress bar!
+---*(The widget will automaticly be changed to a ItemBox)*
+---@param widget ReGui.Widget The widget to apply the progress bar on to.
+---@param skin string The skin of the progress bar
+---@return ReGuiProgressBar progressBar The created progrss bar
+function sm.regui.progressbar.createProgressBar(widget, skin) end
+
+---CLASSES --
 
 ---A Coordinate class used by ReGui, you can ether define x and y or use [1] and [2]
 ---@class ReGuiCoordinate
@@ -163,6 +173,10 @@ local ReGuiInterface = {}
 ---Clones a ReGuiInterface
 ---@return ReGuiInterface clone The cloned interface
 function ReGuiInterface:clone() end
+
+---Renders the GUI and produces a layout file. Use ReGuiInterface:getRenderedPath to get it's path.
+---**NOTE:** This gets automaticly called by the open function!
+function ReGuiInterface:render() end
 
 ---Sets a property of a widget
 ---@param widgetName string The name of the widget
@@ -251,6 +265,14 @@ function ReGuiInterface:setData(widgetName, data) end
 ---@param widgetName string The name of the widget
 ---@return table<string, ReGuiPropertyValueType> data The received properties
 function ReGuiInterface:getData(widgetName) end
+
+---Gets the path of the rendered path, empty string if not rendered.
+---@return string renderPath The rendered path
+function ReGuiInterface:getRenderedPath() end
+
+---Returns true if the GUI has been rendered.
+---@return boolean hasRendered if it has been rendered
+function ReGuiInterface:hasRendered() end
 
 
 ---A widget in a ReGuiInterface
@@ -585,7 +607,7 @@ function ReGuiVideoPlayer:getAudioParameter(index) end
 ---@return table parameters A table of all audio parameters
 function ReGuiVideoPlayer:getAllAudioParameters() end
 
---- A flexible widget which lets you put aligned widgets, 
+---A flexible widget which lets you put aligned widgets, 
 ---@class ReGuiFlexableWidget
 local ReGuiFlexableWidget = {}
 
@@ -606,7 +628,7 @@ function ReGuiFlexableWidget:getFlexDirection() end
 function ReGuiFlexableWidget:setFlexDirection(flexDirection) end
 
 ---Pushes a widget to the flexible widget's layout stack.
---- 
+---
 ---NOTE: The widget's parent will be set to the FlexibleWidget!
 ---
 ---Note: This method **does** change the widget's parent internally.
@@ -616,7 +638,7 @@ function ReGuiFlexableWidget:pushWidget(widget) end
 ---Removes a widget from the flexible widget's layout stack.
 ---
 ---NOTE: Will not revert to the original parent from when you pushed it, instead it stays in the internal widget of the FlexibleWidget but not affected.
----      You will have to update its parent!
+---     You will have to update its parent!
 ---
 ---@param widget ReGuiInterface.Widget The widget to remove from the layout.
 function ReGuiFlexableWidget:popWidget(widget) end
@@ -639,3 +661,31 @@ function ReGuiFlexableWidget:setGapPixels(value) end
 ---Sets the gap size between child widgets in real units.
 ---@param value number The gap size in real units to set.
 function ReGuiFlexableWidget:setGapRealUnits(value) end
+
+---A GUI progress bar that displays and manages progression within a defined range.
+---@class ReGuiProgressBar
+local ReGuiProgressBar = {}
+
+---Sets the current progression value.
+---@param value number The new value to set.
+function ReGuiProgressBar:setValue(value) end
+
+---Returns the current progression value.
+---@return number value The current value of the progress bar.
+function ReGuiProgressBar:getValue() end
+
+---Sets the maximum progression value.
+---@param value number The maximum value (should be > 0 in typical use).
+function ReGuiProgressBar:setMaxValue(value) end
+
+---Returns the configured maximum progression value.
+---@return number maxValue The maximum value used by the progress bar.
+function ReGuiProgressBar:getMaxValue() end
+
+---Sets the visual skin for the progress bar.
+---@param skin string The new skin to set.
+function ReGuiProgressBar:setSkin(skin) end
+
+---Returns the currently applied skin for the progress bar.
+---@return string skin The current applied skin.
+function ReGuiProgressBar:getSkin() end
