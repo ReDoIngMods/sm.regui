@@ -84,21 +84,28 @@ function sm.regui.new(path)
             return
         end
 
-        if not widget.properties then
+        if widget.properties then
+            for key, value in pairs(widget.properties) do
+                if key == "Caption" then
+                    -- Dont need to repack using TableRepack
+                    local repackedValue = type(value) == "table" and value or {value}
+
+                    self.modifiers[name] = self.modifiers[name] or {}
+                    self.modifiers[name].text = {
+                        input = repackedValue,
+                        output = self.translatorFunction(unpack(repackedValue))
+                    }
+                end
+            end
+        end
+
+        
+        if not widget.children then
             return
         end
 
-        for key, value in pairs(widget.properties) do
-            if key == "Caption" then
-                -- Dont need to repack using TableRepack
-                local repackedValue = type(value) == "table" and value or {value}
-
-                self.modifiers[name] = self.modifiers[name] or {}
-                self.modifiers[name].text = {
-                    input = repackedValue,
-                    output = self.translatorFunction(unpack(repackedValue))
-                }
-            end
+        for _, child in pairs(widget.children) do
+            iterator(child)
         end
     end
 
@@ -1156,6 +1163,12 @@ function sm.regui:setTextTranslation(translatorFunction)
         self.translatorFunction = function(...) return ... end
     else
         self.translatorFunction = translatorFunction
+    end
+
+    for _, modifier in pairs(self.modifiers) do
+        if modifier.text then
+            modifier.text.output = self.translatorFunction(unpack(modifier.text.input))
+        end
     end
 end
 
