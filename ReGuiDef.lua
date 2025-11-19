@@ -150,7 +150,7 @@ sm.regui.progressbar = {}
 
 ---Creates a new progress bar. The widget passed in will be directly used as a progress bar!
 ---*(The widget will automaticly be changed to a ItemBox)*
----@param widget ReGui.Widget The widget to apply the progress bar on to.
+---@param widget ReGuiInterface.Widget The widget to apply the progress bar on to.
 ---@param skin string The skin of the progress bar
 ---@return ReGuiProgressBar progressBar The created progrss bar
 function sm.regui.progressbar.createProgressBar(widget, skin) end
