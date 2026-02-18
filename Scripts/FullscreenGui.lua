@@ -50,7 +50,7 @@ function sm.regui.fullscreen.createFullscreenGuiFromInterface(guiInterface, hasF
 
         setFixedAspectRatio = function (self, state)
             SelfAssert(self)
-            ValueAssert(state, 1, {"boolean"})
+            AssertArgument(state, 1, {"boolean"})
 
             hasFixedAspectRatio = state
         end,

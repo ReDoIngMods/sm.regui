@@ -93,79 +93,74 @@ function sm.regui.flex:popWidget(widget)
         self.widgetAddrToIndex[tostring(w)] = i
     end
 end
-
 function sm.regui.flex:update()
     SelfAssert(self)
 
     local isVertical = (self.flexDirection == "Vertical")
     local justifyContent = self.justifyContent or "Start"
-    local gap = self.properties.gap.value or 0
+    local gap = self:getGapRealUnits() -- use real units
 
-    local mainSize = self.mainWidget:getSize()
+    local mainSize = self.mainWidget:getSizeRealUnits()
     local mainAxisSize = isVertical and mainSize.y or mainSize.x
     local crossAxisSize = isVertical and mainSize.x or mainSize.y
 
-    local totalFixedSize = 0
-    for _, widget in ipairs(self.widgets) do
-        local size = widget:getSize()
-        totalFixedSize = totalFixedSize + (isVertical and size.y or size.x)
-    end
-
     local widgetCount = #self.widgets
-    local totalGapSize = gap * math.max(widgetCount - 1, 0)
-    local startMain = 0
+    if widgetCount == 0 then return end
+
+    -- Calculate total size of all widgets in real units
+    local totalWidgetSize = 0
+    for _, widget in ipairs(self.widgets) do
+        local size = widget:getSizeRealUnits()
+        totalWidgetSize = totalWidgetSize + (isVertical and size.y or size.x)
+    end
+
+    -- Determine spacing and starting offset
     local spacing = gap
-
-    local function getMainSize(widget)
-        local size = widget:getSize()
-        return isVertical and size.y or size.x
-    end
-
-    local function setMainSize(widget, newMainSize)
-        local size = widget:getSize()
-        if isVertical then
-            size.y = newMainSize
-        else
-            size.x = newMainSize
-        end
-        widget:setSize(size)
-    end
+    local startMain = 0
 
     if justifyContent == "Start" or justifyContent == "Left" or justifyContent == "FlexStart" then
         startMain = 0
 
     elseif justifyContent == "End" or justifyContent == "Right" or justifyContent == "FlexEnd" then
-        startMain = mainAxisSize - totalFixedSize - totalGapSize
+        startMain = mainAxisSize - totalWidgetSize - gap * (widgetCount - 1)
 
     elseif justifyContent == "Center" then
-        startMain = (mainAxisSize - totalFixedSize - totalGapSize) / 2
+        startMain = (mainAxisSize - totalWidgetSize - gap * (widgetCount - 1)) / 2
 
     elseif justifyContent == "SpaceBetween" then
-        spacing = (widgetCount > 1) and ((mainAxisSize - totalFixedSize) / (widgetCount - 1)) or 0
+        spacing = (widgetCount > 1) and ((mainAxisSize - totalWidgetSize) / (widgetCount - 1)) or 0
         startMain = 0
 
     elseif justifyContent == "SpaceAround" then
-        spacing = (widgetCount > 0) and ((mainAxisSize - totalFixedSize) / widgetCount) or 0
+        spacing = (widgetCount > 0) and ((mainAxisSize - totalWidgetSize) / widgetCount) or 0
         startMain = spacing / 2
 
     elseif justifyContent == "SpaceEvenly" then
-        spacing = (widgetCount > 0) and ((mainAxisSize - totalFixedSize) / (widgetCount + 1)) or 0
+        spacing = (widgetCount > 0) and ((mainAxisSize - totalWidgetSize) / (widgetCount + 1)) or 0
         startMain = spacing
 
     elseif justifyContent == "Stretch" then
-        local freeSpace = math.max(mainAxisSize - totalFixedSize - totalGapSize, 0)
+        local totalGap = gap * math.max(widgetCount - 1, 0)
+        local freeSpace = math.max(mainAxisSize - totalWidgetSize - totalGap, 0)
         local stretchPerWidget = (widgetCount > 0) and (freeSpace / widgetCount) or 0
 
         for _, widget in ipairs(self.widgets) do
-            local originalSize = getMainSize(widget)
-            setMainSize(widget, originalSize + stretchPerWidget)
+            local size = widget:getSizeRealUnits()
+            if isVertical then
+                size.y = size.y + stretchPerWidget
+            else
+                size.x = size.x + stretchPerWidget
+            end
+            widget:setSizeRealUnits(size)
         end
+
         startMain = 0
         spacing = gap
     end
 
+    -- Position widgets in real units
     for _, widget in ipairs(self.widgets) do
-        local size = widget:getSize()
+        local size = widget:getSizeRealUnits()
         local pos = {x = 0, y = 0}
 
         if isVertical then
@@ -178,7 +173,7 @@ function sm.regui.flex:update()
             startMain = startMain + size.x + spacing
         end
 
-        widget:setPosition(pos)
+        widget:setPositionRealUnits(pos)
     end
 end
 
@@ -192,10 +187,11 @@ function sm.regui.flex:getGapPixels()
 
     local sizePixels = self.mainWidget:getSize()
     local sizeRealUnits = self.mainWidget:getSizeRealUnits()
+
     local scaleX = sizePixels.x / sizeRealUnits.x
     local scaleY = sizePixels.y / sizeRealUnits.y
-    local scale = (scaleX + scaleY) / 2
 
+    local scale = math.min(scaleX, scaleY)
     return gap.value * scale
 end
 
@@ -209,10 +205,11 @@ function sm.regui.flex:getGapRealUnits()
 
     local sizePixels = self.mainWidget:getSize()
     local sizeRealUnits = self.mainWidget:getSizeRealUnits()
+
     local scaleX = sizeRealUnits.x / sizePixels.x
     local scaleY = sizeRealUnits.y / sizePixels.y
-    local scale = (scaleX + scaleY) / 2
 
+    local scale = math.min(scaleX, scaleY)
     return gap.value * scale
 end
 

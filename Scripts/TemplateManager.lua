@@ -82,6 +82,16 @@ function sm.regui.template:applyTemplateFromInterface(reGuiInterface)
     for _, widget in pairs(duplicateReGuiInterface:getRootChildren()) do
         widget:setParent(templateWidget)
     end
+    
+    for name, modifier in pairs(duplicateReGuiInterface.modifiers) do
+        clonedInterface.modifiers[name] = modifier
+    end
+
+    for _, command in pairs(duplicateReGuiInterface.commands) do
+        table.insert(clonedInterface.commands, command)
+    end
+
+    clonedInterface.translatorFunction = duplicateReGuiInterface.translatorFunction
 
     return clonedInterface
 end

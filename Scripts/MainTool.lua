@@ -232,6 +232,13 @@ function sm.regui:render()
                     outputValue = tostring(value[1] or value.x) .. " " .. tostring(value[2] or value.y)
                 end
 
+                if key == "Caption" then
+                    local modifier = self.modifiers[widget.instanceProperties.name or ""]
+                    if modifier then
+                        outputValue = tostring(modifier.text and modifier.text.output or outputValue)
+                    end
+                end
+
                 output = output .. "<Property key=\"" .. key .. "\" value=\"" .. escapeXMLString(outputValue) .. "\"/>"
             end
         end
@@ -649,13 +656,13 @@ local function createWidgetWrapper(gui, parentWidget, widget, parentWidgetWrappe
             SelfAssert(self)
 
             if widget.positionSize.usePixels then
-                return { x = widget.positionSize.width, y = widget.positionSize.height }
-            else
-                local parentSize = self:getSizeRealUnits()
+                local parentSize = getEffectiveParentSize(self)
                 return {
-                    x = widget.positionSize.width * parentSize.x,
-                    y = widget.positionSize.height * parentSize.y
+                    x = widget.positionSize.x / parentSize.x,
+                    y = widget.positionSize.y / parentSize.y
                 }
+            else
+                return { x = widget.positionSize.x, y = widget.positionSize.y }
             end
         end,
 
@@ -764,6 +771,7 @@ local function createWidgetWrapper(gui, parentWidget, widget, parentWidgetWrappe
                 }
             end
 
+            widget.properties = widget.properties or {}
             widget.properties[index] = tostring(value)
         end,
 
@@ -771,7 +779,7 @@ local function createWidgetWrapper(gui, parentWidget, widget, parentWidgetWrappe
             SelfAssert(self)
             AssertArgument(index, 1, {"string"})
 
-            return widget.properties[index]
+            return widget.properties and widget.properties[index] or nil
         end,
 
         setInstanceProperty = function(self, key, value)
@@ -779,6 +787,7 @@ local function createWidgetWrapper(gui, parentWidget, widget, parentWidgetWrappe
             AssertArgument(key, 1, {"string"})
             AssertArgument(value, 2, {"string", "number", "boolean", "nil"})
 
+            widget.instanceProperties = widget.instanceProperties or {}
             widget.instanceProperties[key] = tostring(value)
         end,
 
@@ -786,7 +795,7 @@ local function createWidgetWrapper(gui, parentWidget, widget, parentWidgetWrappe
             SelfAssert(self)
             AssertArgument(key, 1, {"string"})
 
-            return widget.instanceProperties[key]
+            return widget.instanceProperties and widget.instanceProperties[key] or nil
         end,
 
         setPosition = function(self, position)
@@ -1168,6 +1177,10 @@ function sm.regui:setTextTranslation(translatorFunction)
     for _, modifier in pairs(self.modifiers) do
         if modifier.text then
             modifier.text.output = self.translatorFunction(unpack(modifier.text.input))
+
+            if self:isActive() then
+                self.gui:setText(widgetName, modifier.text.output)
+            end
         end
     end
 end
