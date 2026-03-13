@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Button" skin="Button" position_real="0 0 0.25 0.10000000000000001" name="Label">
+        <Property key="FontName" value="SM_Button"/>
+        <Property key="TextAlign" value="Center"/>
+        <Property key="Caption" value="Button"/>
+        <UserString key="UserDataKey" value="UserDataValue"/>
+        <Controller type="ControllerPosition">
+            <Property key="Function" value="Accelerated"/>
+            <Property key="Position" value="50 50"/>
+        </Controller>
+    </Widget>
+    <CodeGeneratorSettings/>
+</MyGUI>

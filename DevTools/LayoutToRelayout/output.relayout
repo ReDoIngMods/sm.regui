@@ -1,0 +1,44 @@
+{
+    "version": 2,
+    "metadata": {
+        "screenWidth": 1920,
+        "screenHeight": 1080
+    },
+    "data": {
+        "type": "Layout",
+        "version": "3.2.0",
+        "children": [
+            {
+                "type": "Button",
+                "skin": "Button",
+                "position_real": [
+                    0,
+                    0,
+                    0.25,
+                    0.1
+                ],
+                "name": "Label",
+                "properties": {
+                    "FontName": "SM_Button",
+                    "TextAlign": "Center",
+                    "Caption": "Button"
+                },
+                "userStrings": {
+                    "UserDataKey": "UserDataValue"
+                },
+                "controllers": [
+                    {
+                        "type": "ControllerPosition",
+                        "properties": {
+                            "Function": "Accelerated",
+                            "Position": [
+                                50,
+                                50
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
