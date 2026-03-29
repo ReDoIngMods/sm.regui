@@ -1,4 +1,4 @@
----@class Internal.ReGui.GUIInterfaceClass
+---@class Internal.ReGui.GUIInterface.Class
 local GUIInterface = {}
 GUIInterface.__type = "ReGui.GUIInterface"
 GUIInterface.__index = GUIInterface
@@ -49,14 +49,14 @@ local function VerifyLayoutFile(contents)
             end
         end
 
-        local position = node.position
-        if type(position) ~= "table" then
-            return MakeError(path .. ".position", "table", position)
+        local coordinate = node.coordinate
+        if type(coordinate) ~= "table" then
+            return MakeError(path .. ".coordinate", "table", coordinate)
         end
 
         for _, field in ipairs({ "x", "y", "width", "height" }) do
-            if type(position[field]) ~= "number" then
-                return MakeError(path .. ".position." .. field, "number", position[field])
+            if type(coordinate[field]) ~= "number" then
+                return MakeError(path .. ".coordinate." .. field, "number", coordinate[field])
             end
         end
 
@@ -182,6 +182,10 @@ local function VerifyLayoutFile(contents)
         return MakeError("root.data.type", "string", data.type)
     end
 
+    if data.type ~= "Layout" then
+        return string.format("'%s.type': expected 'Layout', got '%s'", "root.data", data.type)
+    end
+
     if type(data.version) ~= "string" then
         return MakeError("root.data.version", "string", data.version)
     end
@@ -205,19 +209,29 @@ function GUIInterface.new(path)
     ErrorHandler:AssertArgument(path, 2, "string")
     ErrorHandler:AssertValue(path, 2, sm.json.fileExists, "File not found")
 
-    ---@class Internal.ReGui.GUIInterface.Object : Internal.ReGui.GUIInterfaceClass
+    ---@type boolean, Internal.ReGui.Meta.RelayoutFile
+    local success, result = pcall(sm.json.open, path)
+    ErrorHandler:AssertCondition(success, 2, "Failed to load layout file. ")
+
+    local success, message = VerifyLayoutFile(result)
+    ErrorHandler:AssertCondition(success, 2, message)
+    
+    ---@class Internal.ReGui.GUIInterface.Object : Internal.ReGui.GUIInterface.Class
     local self = {}
     self.filePath = path
-    
+    self.data = result
+
     self.renderer = {
         needsRendering = true,
         renderPath = ""
     }
 
-    local success, result = pcall(sm.json.open, path)
-    ErrorHandler:AssertCondition(success, 2, "Failed to load layout file. ")
-
-    VerifyLayoutFile(result)
+    ---@type Internal.ReGui.Widget.Object[]
+    self.rootWidgets = {}
+    
+    for _, child in ipairs(self.data.data.children) do
+        table.insert(self.rootWidgets, sm.regui.widgets.parseWidget(child))
+    end
 
     return setmetatable(self, GUIInterface)
 end
@@ -230,26 +244,37 @@ function GUIInterface.newBlank()
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
-function GUIInterface:render()
-    ErrorHandler:AssertSelf(self, "ReGui.GUIInterface")
-
-    if not self.renderer.needsRendering then
-        return
-    end
+function GUIInterface:render(prettify)
+    ErrorHandler:AssertSelf(self, GUIInterface.__type, true)
+    ErrorHandler:AssertArgumentMulti(prettify, 2, {"boolean", "nil"})
     
-    local filepath = sm.regui.renderer.renderGUI(self)
-    self.renderer.needsRendering = false
-    self.renderer.renderPath = filepath
+    prettify = type(prettify) == "boolean" and prettify or false
+
+    local buffer = {}
+    if prettify then
+        table.insert(buffer, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+    end
+    table.insert(buffer, "<MyGUI type=\"Layout\" version=\"" .. self.data.data.version .. "\">")
+
+    if prettify then
+        table.insert(buffer, "\n")
+    end
+
+    for _, value in pairs(self.rootWidgets) do
+        table.insert(buffer, value:renderWidget(1, prettify))
+    end
+
+    if prettify then
+        table.insert(buffer, "    <CodeGeneratorSettings/>\n")
+    end
+    table.insert(buffer, "</MyGUI>")
+
+    return table.concat(buffer)
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
 function GUIInterface:open()
-    ErrorHandler:AssertSelf(self, "ReGui.GUIInterface")
-
-    self:render()
-
-    local gui = sm.gui.createGuiFromLayout(self.renderer.renderPath, true)
-    gui:open()
+    ErrorHandler:AssertSelf(self, GUIInterface.__type)
 end
 
 sm.regui.guiinterface = GUIInterface

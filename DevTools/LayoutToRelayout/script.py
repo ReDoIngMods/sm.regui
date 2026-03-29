@@ -24,7 +24,7 @@ class PixelRect(TypedDict):
     height: int
 
 
-class PositionDict(TypedDict):
+class CoordinateDict(TypedDict):
     x: int | float
     y: int | float
     width: int | float
@@ -37,7 +37,7 @@ class ControllerDict(TypedDict, total=False):
 
 class WidgetNode(TypedDict, total=False):
     nodeProperties: dict[str, NormalizedValue]
-    position: PositionDict
+    coordinate: CoordinateDict
     properties: dict[str, NormalizedValue]
     userStrings: dict[str, ScalarValue]
     controllers: list[ControllerDict]
@@ -156,18 +156,18 @@ def resolveRealToPixels(values: list[ScalarValue], parent: PixelRect) -> PixelRe
 def extractPosition(
     attributes: dict[str, NormalizedValue],
     parent: PixelRect,
-) -> PositionDict | None:
+) -> CoordinateDict | None:
     if "position_real" in attributes:
         values = attributes.pop("position_real")
         if isinstance(values, list) and len(values) == 4:
             r = resolveRealToPixels(values, parent)
-            return PositionDict(x=r["x"], y=r["y"], width=r["width"], height=r["height"])
+            return CoordinateDict(x=r["x"], y=r["y"], width=r["width"], height=r["height"])
 
     if "position" in attributes:
         values = attributes.pop("position")
         if isinstance(values, list) and len(values) == 4:
             x, y, width, height = values
-            return PositionDict(x=x, y=y, width=width, height=height)  # type: ignore[arg-type]
+            return CoordinateDict(x=x, y=y, width=width, height=height)  # type: ignore[arg-type]
 
     return None
 
@@ -249,7 +249,7 @@ def parseWidget(element: ET.Element, parent: PixelRect) -> WidgetNode:
         children=children,
     )
     if position is not None:
-        node["position"] = position
+        node["coordinate"] = position
     return node
 
 # ---------------------------------------------------------------------------

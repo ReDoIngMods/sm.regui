@@ -6,14 +6,18 @@ dofile("Helper/CustomTostring.lua")
 dofile("Helper/ContentPath.lua")
 dofile("Helper/FunctionForwarder.lua")
 dofile("Helper/Binding.lua")
+dofile("Helper/TableClone.lua")
 
-GTempDataModInstalled = sm.tempDataMod_installed
+dofile("XMLColorful.lua")
+
+GTempDataModInstalled = GTempDataModInstalled or sm.tempDataMod_installed
 
 sm.regui = {}
 sm.regui.createGuiFromLayout = CreateFunctionForwarder("sm.regui.guiinterface.new")
 sm.regui.createGui = CreateFunctionForwarder("sm.regui.guiinterface.newBlank")
 
 dofile("GUIInterface.lua")
+dofile("Widget.lua")
 
 ---@class MainToolClass : ToolClass
 MainToolClass = class()
