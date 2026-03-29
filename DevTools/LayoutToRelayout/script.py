@@ -4,69 +4,201 @@ import argparse
 import sys
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
+from typing import TypedDict
+
+# ---------------------------------------------------------------------------
+# Types
+# ---------------------------------------------------------------------------
+
+ScalarValue = bool | int | float | str
+NormalizedValue = ScalarValue | list[ScalarValue]
+VecDict = dict[str, int | float]  # {"x", "y"} or {"x", "y", "width", "height"}
+
+TypeSpec = tuple[str, int] | str  # e.g. ("vec4", 4) or "float"
+
+
+class PixelRect(TypedDict):
+    x: int
+    y: int
+    width: int
+    height: int
+
+
+class PositionDict(TypedDict):
+    x: int | float
+    y: int | float
+    width: int | float
+    height: int | float
+
+
+class ControllerDict(TypedDict, total=False):
+    type: str | None
+
+
+class WidgetNode(TypedDict, total=False):
+    nodeProperties: dict[str, NormalizedValue]
+    position: PositionDict
+    properties: dict[str, NormalizedValue]
+    userStrings: dict[str, ScalarValue]
+    controllers: list[ControllerDict]
+    children: list["WidgetNode"]
 
 
 # ---------------------------------------------------------------------------
-# Value normalisation
+# Constants
 # ---------------------------------------------------------------------------
 
-def clean_float(value: str, precision: int = 6) -> int | float:
-    d = Decimal(value).quantize(Decimal(10) ** -precision, rounding=ROUND_HALF_UP).normalize()
-    return int(d) if d == d.to_integral() else float(d)
+KNOWN_TAGS: set[str] = {"Widget", "Property", "UserString", "Controller", "CodeGeneratorSettings"}
+
+CONTROLLER_SCHEMAS: dict[str, dict[str, TypeSpec]] = {
+    "ControllerPosition": {
+        "Coord":    ("vec4", 4),
+        "Function": "string",
+        "Position": ("vec2", 2),
+        "Size":     ("vec2", 2),
+        "Time":     "float",
+    },
+    "ControllerFadeAlpha": {
+        "Alpha":   "float",
+        "Coef":    "float",
+        "Enabled": "bool",
+    },
+    "ControllerEdgeHide": {
+        "RemainPixels": "int",
+        "ShadowSize":   "int",
+        "Time":         "float",
+    },
+}
+
+# ---------------------------------------------------------------------------
+# Value parsing
+# ---------------------------------------------------------------------------
+
+def cleanFloat(value: str, precision: int = 6) -> int | float:
+    decimal = Decimal(value).quantize(Decimal(10) ** -precision, rounding=ROUND_HALF_UP).normalize()
+    return int(decimal) if decimal == decimal.to_integral() else float(decimal)
 
 
-def normalize_scalar(raw: str) -> bool | int | float | str:
-    s = raw.strip()
-    if s.lower() == "true":
+def normalizeScalar(raw: str) -> ScalarValue:
+    stripped = raw.strip()
+    if stripped.lower() == "true":
         return True
-    if s.lower() == "false":
+    if stripped.lower() == "false":
         return False
-    if "." not in s:
+    if "." not in stripped:
         try:
-            return int(s)
+            return int(stripped)
         except ValueError:
             pass
     try:
-        return clean_float(s)
+        return cleanFloat(stripped)
     except Exception:
         pass
-    return s
+    return stripped
 
 
-def normalize_value(raw: str) -> bool | int | float | str | list:
-    """Return a scalar or a list when the attribute holds space-separated tokens."""
+def normalizeValue(raw: str) -> NormalizedValue:
     parts = raw.split()
     if len(parts) > 1:
-        return [normalize_scalar(p) for p in parts]
-    return normalize_scalar(raw)
-
+        return [normalizeScalar(part) for part in parts]
+    return normalizeScalar(raw)
 
 # ---------------------------------------------------------------------------
-# Parsing
+# Vector helpers
 # ---------------------------------------------------------------------------
 
-KNOWN_TAGS = {"Widget", "Property", "UserString", "Controller", "CodeGeneratorSettings"}
+def shapeVector(value: list[ScalarValue], kind: str) -> VecDict:
+    if kind == "vec2":
+        x, y = value
+        return {"x": float(x), "y": float(y)}
+    if kind == "vec4":
+        x, y, w, h = value
+        return {"x": float(x), "y": float(y), "width": float(w), "height": float(h)}
+    raise ValueError(f"Unknown vector kind '{kind}'")
 
 
-def parse_properties(element: ET.Element) -> dict:
-    """Collect <Property> children into a dict."""
+def coerceType(value: NormalizedValue, typeSpec: TypeSpec) -> NormalizedValue | VecDict:
+    if isinstance(typeSpec, tuple):
+        kind, size = typeSpec
+        if not isinstance(value, list) or len(value) != size:
+            raise ValueError(f"Expected {size} values for {kind}, got {value!r}")
+        return shapeVector(value, kind)
+    if typeSpec == "int":
+        if not isinstance(value, int):
+            raise ValueError(f"Expected int, got {value!r}")
+        return value
+    if typeSpec == "float":
+        if not isinstance(value, (int, float)):
+            raise ValueError(f"Expected float, got {value!r}")
+        return float(value)
+    if typeSpec == "bool":
+        if not isinstance(value, bool):
+            raise ValueError(f"Expected bool, got {value!r}")
+        return value
+    if typeSpec == "string":
+        return str(value)
+    return value
+
+# ---------------------------------------------------------------------------
+# Position resolution
+# ---------------------------------------------------------------------------
+
+def resolveRealToPixels(values: list[ScalarValue], parent: PixelRect) -> PixelRect:
+    rx, ry, rw, rh = (float(v) for v in values)
+    return PixelRect(
+        x=round(parent["x"] + rx * parent["width"]),
+        y=round(parent["y"] + ry * parent["height"]),
+        width=round(rw * parent["width"]),
+        height=round(rh * parent["height"]),
+    )
+
+
+def extractPosition(
+    attributes: dict[str, NormalizedValue],
+    parent: PixelRect,
+) -> PositionDict | None:
+    if "position_real" in attributes:
+        values = attributes.pop("position_real")
+        if isinstance(values, list) and len(values) == 4:
+            r = resolveRealToPixels(values, parent)
+            return PositionDict(x=r["x"], y=r["y"], width=r["width"], height=r["height"])
+
+    if "position" in attributes:
+        values = attributes.pop("position")
+        if isinstance(values, list) and len(values) == 4:
+            x, y, width, height = values
+            return PositionDict(x=x, y=y, width=width, height=height)  # type: ignore[arg-type]
+
+    return None
+
+# ---------------------------------------------------------------------------
+# XML parsing
+# ---------------------------------------------------------------------------
+
+def parseProperties(element: ET.Element) -> dict[str, NormalizedValue]:
     return {
-        child.attrib["key"]: normalize_value(child.attrib["value"])
+        child.attrib["key"]: normalizeValue(child.attrib["value"])
         for child in element
-        if child.tag == "Property"
-        and "key" in child.attrib
-        and "value" in child.attrib
+        if child.tag == "Property" and "key" in child.attrib and "value" in child.attrib
     }
 
 
-def parse_widget(element: ET.Element) -> dict:
-    node: dict = {k: normalize_value(v) for k, v in element.attrib.items()}
+def parseWidget(element: ET.Element, parent: PixelRect) -> WidgetNode:
+    nodeProperties: dict[str, NormalizedValue] = {
+        key: normalizeValue(value) for key, value in element.attrib.items()
+    }
+    position = extractPosition(nodeProperties, parent)
 
-    properties: dict = {}
-    user_strings: dict = {}
-    controllers: list = []
-    children: list = []
-    unknown: list = []
+    childParent: PixelRect = (
+        PixelRect(x=position["x"], y=position["y"], width=position["width"], height=position["height"])  # type: ignore[arg-type]
+        if position is not None
+        else parent
+    )
+
+    properties: dict[str, NormalizedValue] = {}
+    userStrings: dict[str, ScalarValue] = {}
+    controllers: list[ControllerDict] = []
+    children: list[WidgetNode] = []
 
     for child in element:
         tag = child.tag
@@ -75,86 +207,88 @@ def parse_widget(element: ET.Element) -> dict:
             key = child.attrib.get("key")
             value = child.attrib.get("value")
             if key and value is not None:
-                properties[key] = normalize_value(value)
+                properties[key] = normalizeValue(value)
 
         elif tag == "UserString":
             key = child.attrib.get("key")
             value = child.attrib.get("value")
             if key and value is not None:
-                user_strings[key] = normalize_scalar(value)
+                userStrings[key] = normalizeScalar(value)
 
         elif tag == "Controller":
-            controller = {k: normalize_value(v) for k, v in child.attrib.items()}
-            ctrl_props = parse_properties(child)
-            if ctrl_props:
-                controller["properties"] = ctrl_props
+            controllerType = child.attrib.get("type")
+            controller: ControllerDict = {"type": controllerType}
+            rawProps = parseProperties(child)
+            schema = CONTROLLER_SCHEMAS.get(controllerType or "", {})
+            for propKey, propValue in rawProps.items():
+                if propKey in schema:
+                    try:
+                        controller[propKey] = coerceType(propValue, schema[propKey])  # type: ignore[literal-required]
+                    except ValueError as e:
+                        print(f"WARNING: {controllerType}.{propKey}: {e}")
+                else:
+                    print(f"WARNING: Unknown property '{propKey}' in {controllerType}")
+                    controller[propKey] = propValue  # type: ignore[literal-required]
             controllers.append(controller)
 
         elif tag == "Widget":
-            parsed = parse_widget(child)
-            if parsed:
-                children.append(parsed)
+            parsedChild = parseWidget(child, childParent)
+            children.append(parsedChild)
 
         elif tag == "CodeGeneratorSettings":
             pass  # intentionally ignored
 
         else:
-            # Preserve unrecognised tags so nothing is silently dropped
-            entry = {"_tag": tag, **{k: normalize_value(v) for k, v in child.attrib.items()}}
-            unknown.append(entry)
+            print(f"WARNING: Unrecognised tag '<{tag}>'")
 
-    if properties:
-        node["properties"] = properties
-    if user_strings:
-        node["userStrings"] = user_strings
-    if controllers:
-        node["controllers"] = controllers
-    if children:
-        node["children"] = children
-    if unknown:
-        node["_unknownChildren"] = unknown
-
+    node = WidgetNode(
+        nodeProperties=nodeProperties,
+        properties=properties,
+        userStrings=userStrings,
+        controllers=controllers,
+        children=children,
+    )
+    if position is not None:
+        node["position"] = position
     return node
-
 
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
-def build_arg_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="Convert MyGUI layout XML to JSON.")
-    p.add_argument("input",  nargs="?", default="input.layout",   help="Source .layout file")
-    p.add_argument("output", nargs="?", default="output.relayout", help="Destination .relayout file")
-    p.add_argument("--width",  type=int, default=1920, dest="screen_width")
-    p.add_argument("--height", type=int, default=1080, dest="screen_height")
-    p.add_argument("--indent", type=int, default=4,    help="JSON indentation level")
-    return p
+def buildArgumentParser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Convert MyGUI layout XML to JSON.")
+    parser.add_argument("input",  nargs="?", default="input.layout",   help="Source .layout file")
+    parser.add_argument("output", nargs="?", default="output.relayout", help="Destination .relayout file")
+    parser.add_argument("--width",  type=int, default=1920, dest="screen_width")
+    parser.add_argument("--height", type=int, default=1080, dest="screen_height")
+    parser.add_argument("--indent", type=int, default=4,    help="JSON indentation level")
+    return parser
 
-
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
 
 def main() -> None:
-    args = build_arg_parser().parse_args()
+    arguments = buildArgumentParser().parse_args()
 
-    input_path = Path(args.input)
-    if not input_path.exists():
-        sys.exit(f"Error: input file '{input_path}' not found.")
+    inputPath = Path(arguments.input)
+    if not inputPath.exists():
+        sys.exit(f"Error: input file '{inputPath}' not found.")
 
     try:
-        tree = ET.parse(input_path)
-    except ET.ParseError as exc:
-        sys.exit(f"Error: failed to parse XML — {exc}")
+        tree = ET.parse(inputPath)
+    except ET.ParseError as exception:
+        sys.exit(f"Error: failed to parse XML — {exception}")
 
     root = tree.getroot()
-    layout = parse_widget(root)
+
+    screenPixels = PixelRect(x=0, y=0, width=arguments.screen_width, height=arguments.screen_height)
+
+    layout = parseWidget(root, screenPixels)
 
     output = {
         "version": 2,
         "metadata": {
-            "screenWidth":  args.screen_width,
-            "screenHeight": args.screen_height
+            "screenWidth": arguments.screen_width,
+            "screenHeight": arguments.screen_height,
         },
         "data": {
             "type":     root.attrib.get("type", "Layout"),
@@ -163,11 +297,11 @@ def main() -> None:
         },
     }
 
-    output_path = Path(args.output)
-    with output_path.open("w", encoding="utf-8") as fh:
-        json.dump(output, fh, indent=args.indent)
+    outputPath = Path(arguments.output)
+    with outputPath.open("w", encoding="utf-8") as fileHandle:
+        json.dump(output, fileHandle, indent=arguments.indent)
 
-    print(f"Written {output_path} ({output_path.stat().st_size} bytes)")
+    print(f"Written {outputPath} ({outputPath.stat().st_size} bytes)")
 
 
 if __name__ == "__main__":

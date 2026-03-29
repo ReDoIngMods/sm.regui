@@ -9,15 +9,11 @@
         "version": "3.2.0",
         "children": [
             {
-                "type": "Button",
-                "skin": "Button",
-                "position_real": [
-                    0,
-                    0,
-                    0.25,
-                    0.1
-                ],
-                "name": "Label",
+                "nodeProperties": {
+                    "type": "Button",
+                    "skin": "Button",
+                    "name": "Label"
+                },
                 "properties": {
                     "FontName": "SM_Button",
                     "TextAlign": "Center",
@@ -29,15 +25,43 @@
                 "controllers": [
                     {
                         "type": "ControllerPosition",
-                        "properties": {
-                            "Function": "Accelerated",
-                            "Position": [
-                                50,
-                                50
-                            ]
-                        }
+                        "Coord": {
+                            "x": 100.0,
+                            "y": 100.0,
+                            "width": 100.0,
+                            "height": 100.0
+                        },
+                        "Function": "Accelerated",
+                        "Position": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Size": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Time": 1.234
+                    },
+                    {
+                        "type": "ControllerFadeAlpha",
+                        "Alpha": 0.5,
+                        "Coef": 1.0,
+                        "Enabled": false
+                    },
+                    {
+                        "type": "ControllerEdgeHide",
+                        "RemainPixels": 100,
+                        "ShadowSize": 10,
+                        "Time": 1.234
                     }
-                ]
+                ],
+                "children": [],
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "width": 480,
+                    "height": 108
+                }
             }
         ]
     }

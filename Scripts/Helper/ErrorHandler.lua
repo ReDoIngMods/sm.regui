@@ -40,26 +40,12 @@ end
 function ErrorHandler:MakeArgumentError(argumentIndex, expected, got)
     local expectedStr = type(expected) == "table" and FormatExpected(expected) or expected
     local gotStr = got and (", got " .. got) or ""
+    
     if argumentIndex then
         return string.format("Bad argument #%d: expected %s%s.", argumentIndex, expectedStr, gotStr)
     end
 
     return string.format("Bad argument: expected %s%s.", expectedStr, gotStr)
-end
-
--- Asserts argument count is within [min, max].
----@param min integer Minimum number of arguments expected.
----@param max integer Maximum number of arguments expected.
----@param ... any The arguments to count.
-function ErrorHandler:AssertArgumentCount(min, max, ...)
-    local count = select("#", ...)
-    if count < min or count > max then
-        if min == max then
-            error(string.format("Expected %d argument(s), got %d.", min, count), 2)
-        end
-
-        error(string.format("Expected %d-%d argument(s), got %d.", min, max, count), 2)
-    end
 end
 
 -- Asserts argument matches expected type. overwrite is a display alias for expected in the error
@@ -110,3 +96,49 @@ function ErrorHandler:AssertNotNaN(argument, argumentIndex, overwrite)
         end
     end
 end
+
+-- Asserts a custom condition on argument. checker receives the argument and must return true to pass.
+-- message is the error detail; argumentIndex prepends the standard "Bad argument #N: " prefix.
+---@param argument any The argument to check.
+---@param argumentIndex integer? The 1-based position of the argument in the calling function (used in the error message).
+---@param checker fun(argument: any): boolean Returns true if the argument is valid.
+---@param message string The error detail appended after the "Bad argument" prefix.
+function ErrorHandler:AssertValue(argument, argumentIndex, checker, message)
+    if not checker(argument) then
+        if argumentIndex then
+            error(string.format("Bad argument #%d: %s", argumentIndex, message), 2)
+        else
+            error(string.format("Bad argument: %s", message), 2)
+        end
+    end
+end
+
+-- Asserts a condition is false; if false, raises an error with optional argument index prefix.
+---@param condition boolean The condition to check.
+---@param argumentIndex integer? The 1-based position of the argument in the calling function (used in the error message).
+---@param message string The error detail appended after the "Bad argument" prefix.
+function ErrorHandler:AssertCondition(condition, argumentIndex, message)
+    if condition then
+        return
+    end
+
+    if argumentIndex then
+        error(string.format("Bad argument #%d: %s", argumentIndex, message), 2)
+    else
+        error(string.format("Bad argument: %s", message), 2)
+    end
+end
+
+-- Asserts self is a valid instance of the expected class by checking self.__type == expected.
+---@param self any The self argument to validate.
+---@param expected string The expected value of self.__type.
+---@param hasMultipleArguments boolean? Whether the function that is calling this has multiple arguments or not. Defaults to false
+function ErrorHandler:AssertSelf(self, expected, hasMultipleArguments)
+    if type(self) ~= "table" or self.__type ~= expected then
+        local got = type(self) == "table" and tostring(self.__type) or GetRealType(self)
+        
+        error(string.format("Bad argument%s: expected %s instance, got %s.", hasMultipleArguments and " #1" or "", expected, got), 2)
+    end
+end
+
+print("Loaded Helper/ErrorHandler.lua")

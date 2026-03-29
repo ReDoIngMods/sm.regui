@@ -1,0 +1,14 @@
+---@class Internal.ReGui.Meta.DescriptionJson
+---@field allow_add_mods boolean
+---@field custom_icons boolean
+---@field description string
+---@field fileId integer?
+---@field localId string
+---@field name string
+---@field type string
+---@field version integer
+---@field dependencies Internal.ReGui.Meta.DescriptionJson.Dependency[]?
+
+---@class Internal.ReGui.Meta.DescriptionJson.Dependency
+---@field localId string
+---@field fileId string

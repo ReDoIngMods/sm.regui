@@ -1,14 +1,19 @@
 print("-- sm.regui Initalization --")
 
-dofile("Scripts/Helper/CustomTostring.lua")
-dofile("Helper/FunctionForwarder.lua")
+dofile("Helper/ErrorHandler.lua")
 dofile("Helper/Metatable.lua")
+dofile("Helper/CustomTostring.lua")
+dofile("Helper/ContentPath.lua")
+dofile("Helper/FunctionForwarder.lua")
+dofile("Helper/Binding.lua")
+
+GTempDataModInstalled = sm.tempDataMod_installed
 
 sm.regui = {}
 sm.regui.createGuiFromLayout = CreateFunctionForwarder("sm.regui.guiinterface.new")
-sm.regui.createEmptyGui = CreateFunctionForwarder("sm.regui.guiinterface.newBlank")
+sm.regui.createGui = CreateFunctionForwarder("sm.regui.guiinterface.newBlank")
 
-dofile("Renderer.lua")
+dofile("GUIInterface.lua")
 
 ---@class MainToolClass : ToolClass
 MainToolClass = class()

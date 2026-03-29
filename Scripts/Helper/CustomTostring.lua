@@ -1,4 +1,6 @@
 function CreateCustomTostringFunction(name)
+    ErrorHandler:AssertArgument(name, nil, "string")
+
     return function ()
         return name
     end

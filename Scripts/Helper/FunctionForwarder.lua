@@ -1,9 +1,12 @@
-local string_gmatch = string.gmatch
-
+---Creates a function that forwards calls to a global function at the given dot-separated path.
+---@param path string e.g. "MyModule.Utils.doThing"
+---@return function
 function CreateFunctionForwarder(path)
+    ErrorHandler:AssertArgument(path, nil, "string")
+
     return function (...)
         local parts = {}
-        for part in string_gmatch(path, "([^%.]+)") do
+        for part in path:gmatch("([^%.]+)") do
             table.insert(parts, part)
         end
 
