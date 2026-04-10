@@ -275,6 +275,15 @@ end
 ---@param self Internal.ReGui.GUIInterface.Object
 function GUIInterface:open()
     ErrorHandler:AssertSelf(self, GUIInterface.__type)
+
+    local data = self:render(false)
+    local hashedString = GenerateHashedString(data)
+
+    local filePath = sm.regui.cache.generateCachePath(hashedString)
+    sm.regui.cache.writeCachedFile(filePath, GenerateValidXMLFileForLayouts(data))
+
+    local layout = sm.gui.createGuiFromLayout(filePath, true)
+    layout:open()
 end
 
 sm.regui.guiinterface = GUIInterface

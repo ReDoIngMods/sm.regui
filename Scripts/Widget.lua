@@ -39,6 +39,8 @@ function Widget.parseWidget(node, parent, guiInterface)
     self.properties = CloneTable(node.properties)
     self.userStrings = CloneTable(node.userStrings)
     self.controllers = CloneTable(node.controllers)
+    self.coordinate = node.coordinate
+
     self.parent = parent
     self.guiInterface = guiInterface
 
@@ -222,11 +224,14 @@ function Widget:renderWidget(indentationLevel, prettify)
     local function renderMinimal()
         table.insert(buffer, "<Widget")
 
+        table.insert(buffer, " ")
+        table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
+
         if next(self.nodeProperties) then
             table.insert(buffer, " ")
 
             local fullString = {}
-            for key, value in pairs(self.nodeProperties) do
+            for key, value in PredictablePairs(self.nodeProperties) do
                 table.insert(fullString, string.format("%s=%q", key, value))
             end
 
@@ -235,11 +240,11 @@ function Widget:renderWidget(indentationLevel, prettify)
 
         table.insert(buffer, ">")
 
-        for key, value in pairs(self.properties) do
+        for key, value in PredictablePairs(self.properties) do
             table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
         end
 
-        for _, value in pairs(self.children) do
+        for _, value in PredictablePairs(self.children) do
             table.insert(buffer, value:renderWidget(indentationLevel + 1, prettify))
         end
 
@@ -249,12 +254,15 @@ function Widget:renderWidget(indentationLevel, prettify)
     local function renderPrettified()
         table.insert(buffer, generateIndentation(indentationLevel))
         table.insert(buffer, "<Widget")
+        
+        table.insert(buffer, " ")
+        table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
 
         if next(self.nodeProperties) then
             table.insert(buffer, " ")
 
             local fullString = {}
-            for key, value in pairs(self.nodeProperties) do
+            for key, value in PredictablePairs(self.nodeProperties) do
                 table.insert(fullString, string.format("%s=%q", key, value))
             end
 
@@ -263,13 +271,13 @@ function Widget:renderWidget(indentationLevel, prettify)
 
         table.insert(buffer, ">")
 
-        for key, value in pairs(self.properties) do
+        for key, value in PredictablePairs(self.properties) do
             table.insert(buffer, "\n")
             table.insert(buffer, generateIndentation(indentationLevel + 1))
             table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
         end
 
-        for _, value in pairs(self.children) do
+        for _, value in PredictablePairs(self.children) do
             table.insert(buffer, "\n")
             table.insert(buffer, value:renderWidget(indentationLevel + 1, prettify))
         end

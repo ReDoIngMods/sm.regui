@@ -1,6 +1,3 @@
-
-print("Loaded Helper/TableClone.lua")
-
 function CloneTable(original)
     ErrorHandler:AssertArgument(original, 1, "table")
 
@@ -16,3 +13,5 @@ function CloneTable(original)
     
     return copy
 end
+
+print("Loaded Helper/TableClone.lua")

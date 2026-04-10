@@ -14,14 +14,12 @@ function ResolveContentPath(path)
         return path
     end
 
-    ---@type boolean, Internal.ReGui.Meta.DescriptionJson
-    local success, result = pcall(sm.json.open, "$CONTENT_DATA/description.json")
-    if not success then
+    local modUuid = GetCurrentlyExecutingModUUID()
+    if modUuid:isNil() then
         return path
     end
 
-    local localId = result.localId
-    return "$CONTENT_" .. localId .. directPath
+    return "$CONTENT_" .. tostring(modUuid) .. directPath
 end
 
 print("Loaded Helper/ContentPath.lua")
