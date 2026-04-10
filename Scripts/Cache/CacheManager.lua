@@ -15,7 +15,29 @@ else
     sm.json.save({}, storageFilePath)
 end
 
-storage = storage or  {}
+storage = storage or {}
+
+do
+    -- Clear any files that dont exist
+    local needsUpdate = false
+    for modUuid, files in pairs(storage) do
+        for filePath, _ in pairs(files) do
+            if not sm.json.fileExists(filePath) then
+                storage[modUuid][filePath] = nil
+                needsUpdate = true
+            end
+        end
+
+        if not next(storage[modUuid]) then
+            storage[modUuid] = nil
+            needsUpdate = true
+        end
+    end
+
+    if needsUpdate then
+        sm.json.save(storage, storageFilePath)
+    end
+end
 
 local function WriteStorage(newStorage)
     if IsCurrentlyExecutingModReGui() then
@@ -35,7 +57,9 @@ function sm.regui.internal.cache.writeStorage(newStorage)
 end
 
 function sm.regui.cache.writeCachedFile(filePath, data)
-    sm.json.save(data, filePath)
+    if not sm.json.fileExists(filePath) then
+        sm.json.save(data, filePath)
+    end
 
     local executingModUuid = tostring(GetCurrentlyExecutingModUUID())
     storage[executingModUuid] = storage[executingModUuid] or {}
@@ -47,7 +71,11 @@ function sm.regui.cache.writeCachedFile(filePath, data)
 end
 
 function sm.regui.cache.generateCachePath(hash)
-    return "$CONTENT_" .. tostring(GetCurrentlyExecutingModUUID()) .. "/ReGuiCache/cache_" .. hash .. ".layout"
+    if sm.modTempDataSupport_installed then
+        return "$TEMP_DATA/regui_cache_" .. hash .. ".layout"
+    end
+
+    return "$CONTENT_" .. tostring(GetCurrentlyExecutingModUUID()) .. "/ReGuiCache/regui_cache_" .. hash .. ".layout"
 end
 
 print("Loaded Cache/CacheManager.lua")
