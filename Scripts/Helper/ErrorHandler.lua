@@ -32,6 +32,54 @@ local function FormatExpected(expectedArray)
     return table.concat(expectedArray, ", ")
 end
 
+local function ResolvePathValue(sourceTable, path)
+    local value = sourceTable
+    local pathIndex = 1
+
+    while pathIndex <= #path do
+        while pathIndex <= #path and string.sub(path, pathIndex, pathIndex) == "." do
+            pathIndex = pathIndex + 1
+        end
+
+        if pathIndex > #path then
+            break
+        end
+
+        if string.sub(path, pathIndex, pathIndex) == "[" then
+            local endBracket = string.find(path, "]", pathIndex)
+            if endBracket then
+                local indexStr = string.sub(path, pathIndex + 1, endBracket - 1)
+                local index = tonumber(indexStr)
+                if index then
+                    value = value[index]
+                else
+                    value = value[indexStr]
+                end
+                pathIndex = endBracket + 1
+            else
+                break
+            end
+        else
+            local nextDot = string.find(path, ".", pathIndex)
+            local nextBracket = string.find(path, "[", pathIndex)
+            local nextEnd = #path + 1
+
+            if nextDot then
+                nextEnd = math.min(nextEnd, nextDot)
+            end
+            if nextBracket then
+                nextEnd = math.min(nextEnd, nextBracket)
+            end
+
+            local key = string.sub(path, pathIndex, nextEnd - 1)
+            value = value[key]
+            pathIndex = nextEnd
+        end
+    end
+
+    return value
+end
+
 -- Builds a "Bad argument" message without raising. expected can be a string or string[].
 ---@param argumentIndex integer? The 1-based position of the argument (omit to exclude from message).
 ---@param expected string|string[] The display type name or an array of display type names.
@@ -79,6 +127,43 @@ function ErrorHandler:AssertArgumentMulti(argument, argumentIndex, expectedArray
     end
 
     error(self:MakeArgumentError(argumentIndex, displayNames, GetRealType(argument)), 2)
+end
+
+-- Same as AssertArgument but designed to check types inside a table
+---@param table table The table to check its contents in
+---@param argumentIndex integer? The 1-based position of the argument in the calling function (used in the error message)
+---@param path string The path to check
+---@param expected string The expected type for that value
+---@param overwrite string? Display alias shown in the error message in place of expected
+function ErrorHandler:AssertTableValue(table, argumentIndex, path, expected, overwrite)
+    local value = ResolvePathValue(table, path)
+
+    if not TypeMatches(value, expected) then
+        error(self:MakeArgumentError(argumentIndex, overwrite or expected, GetRealType(value)), 2)
+    end
+end
+
+-- Same as AssertTableValue but accepts multiple possible expected types for the resolved path value.
+---@param table table The table to check its contents in
+---@param argumentIndex integer? The 1-based position of the argument in the calling function (used in the error message)
+---@param path string The path to check
+---@param expectedArray string[] List of real accepted types, e.g. {"integer", "string", "nan"}
+---@param overwriteArray string[]? Display aliases aligned by index with expectedArray. nil slots fall back to the real type name.
+function ErrorHandler:AssertTableValueMulti(table, argumentIndex, path, expectedArray, overwriteArray)
+    local value = ResolvePathValue(table, path)
+
+    for _, expected in ipairs(expectedArray) do
+        if TypeMatches(value, expected) then
+            return
+        end
+    end
+
+    local displayNames = {}
+    for index, expected in ipairs(expectedArray) do
+        displayNames[index] = (overwriteArray and overwriteArray[index]) or expected
+    end
+
+    error(self:MakeArgumentError(argumentIndex, displayNames, GetRealType(value)), 2)
 end
 
 -- Asserts argument is not NaN. overwrite is a display alias shown in place of "NaN".
@@ -138,6 +223,24 @@ function ErrorHandler:AssertSelf(self, expected, hasMultipleArguments)
         local got = type(self) == "table" and tostring(self.__type) or GetRealType(self)
         
         error(string.format("Bad argument%s: expected %s instance, got %s.", hasMultipleArguments and " #1" or "", expected, got), 2)
+    end
+end
+
+-- Asserts when the game is in the wrong enviroment
+---@param expectsServer boolean Whether it expects a server-side enviroment
+---@param isCallback boolean? If this is for a callback or not
+function ErrorHandler:AssertEnviroment(expectsServer, isCallback)
+    if expectsServer == sm.isServerMode() then
+        return
+    end
+
+    local expectedEnviroment = expectsServer and "server" or "client"
+    local gotEnviroment = expectsServer and "client" or "server"
+
+    if isCallback then
+        error(string.format("Sandbox violation: calling %s function from %s.", expectedEnviroment, gotEnviroment), 2)
+    else
+        error(string.format("Sandbox violation: calling %s function from %s callback.", expectedEnviroment, gotEnviroment), 2)
     end
 end
 

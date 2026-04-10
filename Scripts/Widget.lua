@@ -4,19 +4,49 @@ Widget.__type = "ReGui.Widget"
 Widget.__index = Widget
 Widget.__tostring = CreateCustomTostringFunction(Widget.__type)
 
+local GUI_INTERFACE_TYPE = "ReGui.GUIInterface"
+
+---@param parent Internal.ReGui.Widget.Object
+---@param child Internal.ReGui.Widget.Object
+---@return integer?
+local function FindChildIndex(parent, child)
+    for index, value in pairs(parent.children) do
+        if value == child then
+            return index
+        end
+    end
+
+    return nil
+end
+
+---@param widget Internal.ReGui.Widget.Object
+---@param guiInterface Internal.ReGui.GUIInterface.Object?
+local function ApplyGUIInterfaceRecursive(widget, guiInterface)
+    widget.guiInterface = guiInterface
+
+    for _, child in pairs(widget.children) do
+        ApplyGUIInterfaceRecursive(child, guiInterface)
+    end
+end
+
 ---@param node Internal.ReGui.Meta.RelayoutFile.Child
-function Widget.parseWidget(node)
+---@param parent Internal.ReGui.Widget.Object?
+---@param guiInterface Internal.ReGui.GUIInterface.Object?
+function Widget.parseWidget(node, parent, guiInterface)
     ---@class Internal.ReGui.Widget.Object : Internal.ReGui.Widget.Class
     local self = {}
     self.nodeProperties = CloneTable(node.nodeProperties)
     self.properties = CloneTable(node.properties)
     self.userStrings = CloneTable(node.userStrings)
     self.controllers = CloneTable(node.controllers)
-    
+    self.parent = parent
+    self.guiInterface = guiInterface
+
     ---@type Internal.ReGui.Widget.Object[]
     self.children = {}
-    for _, childNode in ipairs(node.children) do
-        table.insert(self.children, Widget.parseWidget(childNode))
+    for _, childNode in pairs(node.children) do
+        local childWidget = Widget.parseWidget(childNode, self, guiInterface)
+        table.insert(self.children, childWidget)
     end
 
     return setmetatable(self, Widget)
@@ -115,13 +145,69 @@ function Widget:getAllPropertyKeys()
     return keys
 end
 
+-- PARENT --
+
+---@param self Internal.ReGui.Widget.Object
+---@return Internal.ReGui.Widget.Object?
+function Widget:getParent()
+    ErrorHandler:AssertSelf(self, Widget.__type, true)
+
+    return self.parent
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param parent Internal.ReGui.Widget.Object?
+function Widget:setParent(parent)
+    ErrorHandler:AssertSelf(self, Widget.__type, true)
+
+    ErrorHandler:AssertValue(parent, 2, function(value)
+        return value == nil or (type(value) == "table" and value.__type == Widget.__type)
+    end, "Expected ReGui.Widget instance or nil")
+
+    ErrorHandler:AssertCondition(parent ~= self, 2, "Widget cannot be its own parent")
+
+    if self.parent ~= nil then
+        local currentIndex = FindChildIndex(self.parent, self)
+        if currentIndex ~= nil then
+            table.remove(self.parent.children, currentIndex)
+        end
+    end
+
+    self.parent = parent
+
+    if parent ~= nil and FindChildIndex(parent, self) == nil then
+        table.insert(parent.children, self)
+    end
+
+    ApplyGUIInterfaceRecursive(self, parent and parent.guiInterface or nil)
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@return Internal.ReGui.GUIInterface.Object?
+function Widget:getGUIInterface()
+    ErrorHandler:AssertSelf(self, Widget.__type, true)
+
+    return self.guiInterface
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param guiInterface Internal.ReGui.GUIInterface.Object?
+function Widget:setGUIInterface(guiInterface)
+    ErrorHandler:AssertSelf(self, Widget.__type, true)
+    ErrorHandler:AssertValue(guiInterface, 2, function(value)
+        return value == nil or (type(value) == "table" and value.__type == GUI_INTERFACE_TYPE)
+    end, "Expected ReGui.GUIInterface instance or nil")
+
+    ApplyGUIInterfaceRecursive(self, guiInterface)
+end
+
 -- RENDERING --
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:renderWidget(indentationLevel, prettify)
     ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgumentMulti(indentationLevel, 2, {"number", "nil"})
-    ErrorHandler:AssertArgumentMulti(prettify, 3, {"boolean", "nil"})
+    ErrorHandler:AssertArgumentMulti(indentationLevel, 2, { "number", "nil" })
+    ErrorHandler:AssertArgumentMulti(prettify, 3, { "boolean", "nil" })
 
     indentationLevel = indentationLevel or 0
 

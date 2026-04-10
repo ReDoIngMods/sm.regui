@@ -53,7 +53,75 @@ local GuiInterface = {}
 ---Renders the GUIInterface into a valid MyGUI layout file.
 ---@param prettify boolean? Whether the output should be as small as possible or be readable for the user. Defaults to minimal.
 ---@return string output The produced output.
-function GUIInterface:render(prettify) end
+function GuiInterface:render(prettify) end
 
----Opens the GUIInterface.
-function GUIInterface:open() end
+---Opens the GuiInterface.
+function GuiInterface:open() end
+
+---A parsed widget in the GUI tree.
+---@class ReGui.Widget
+local Widget = {}
+
+---Gets a user-string value by key.
+---@param key string The user-string key to read.
+---@return string? value The value for the key, or nil if the key does not exist.
+function Widget:getUserString(key) end
+
+---Sets a user-string value.
+---@param key string The user-string key to write.
+---@param value string The value to assign.
+function Widget:setUserString(key, value) end
+
+---Gets all user-string keys in this widget.
+---@return string[] keys A list of all user-string keys.
+function Widget:getAllUserStringKeys() end
+
+---Gets a node-property value by key.
+---@param key string The node-property key to read.
+---@return string? value The value for the key, or nil if the key does not exist.
+function Widget:getNodeProperty(key) end
+
+---Sets a node-property value.
+---@param key string The node-property key to write.
+---@param value string The value to assign.
+function Widget:setNodeProperty(key, value) end
+
+---Gets all node-property keys in this widget.
+---@return string[] keys A list of all node-property keys.
+function Widget:getAllNodePropertyKeys() end
+
+---Gets a property value by key.
+---@param key string The property key to read.
+---@return string? value The value for the key, or nil if the key does not exist.
+function Widget:getProperty(key) end
+
+---Sets a property value.
+---@param key string The property key to write.
+---@param value string The value to assign.
+function Widget:setProperty(key, value) end
+
+---Gets all property keys in this widget.
+---@return string[] keys A list of all property keys.
+function Widget:getAllPropertyKeys() end
+
+---Gets the parent widget.
+---@return ReGui.Widget? parent The parent widget, or nil if this is a root widget.
+function Widget:getParent() end
+
+---Sets the parent widget.
+---@param parent ReGui.Widget? parent The new parent widget, or nil to detach this widget.
+function Widget:setParent(parent) end
+
+---Gets the GUI interface that owns this widget.
+---@return ReGui.GUIInterface? guiInterface The owning GUI interface, or nil if detached.
+function Widget:getGUIInterface() end
+
+---Sets the GUI interface for this widget and its subtree.
+---@param guiInterface ReGui.GUIInterface? guiInterface The GUI interface to assign, or nil to clear.
+function Widget:setGUIInterface(guiInterface) end
+
+---Renders this widget and its children into MyGUI layout XML.
+---@param indentationLevel number? The base indentation level used for pretty rendering.
+---@param prettify boolean? Whether to render with indentation and line breaks.
+---@return string output The rendered XML fragment for this widget subtree.
+function Widget:renderWidget(indentationLevel, prettify) end

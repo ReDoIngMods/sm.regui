@@ -215,7 +215,7 @@ function GUIInterface.new(path)
 
     local success, message = VerifyLayoutFile(result)
     ErrorHandler:AssertCondition(success, 2, message)
-    
+
     ---@class Internal.ReGui.GUIInterface.Object : Internal.ReGui.GUIInterface.Class
     local self = {}
     self.filePath = path
@@ -228,9 +228,9 @@ function GUIInterface.new(path)
 
     ---@type Internal.ReGui.Widget.Object[]
     self.rootWidgets = {}
-    
+
     for _, child in ipairs(self.data.data.children) do
-        table.insert(self.rootWidgets, sm.regui.widgets.parseWidget(child))
+        table.insert(self.rootWidgets, sm.regui.widgets.parseWidget(child, nil, self))
     end
 
     return setmetatable(self, GUIInterface)
@@ -246,8 +246,8 @@ end
 ---@param self Internal.ReGui.GUIInterface.Object
 function GUIInterface:render(prettify)
     ErrorHandler:AssertSelf(self, GUIInterface.__type, true)
-    ErrorHandler:AssertArgumentMulti(prettify, 2, {"boolean", "nil"})
-    
+    ErrorHandler:AssertArgumentMulti(prettify, 2, { "boolean", "nil" })
+
     prettify = type(prettify) == "boolean" and prettify or false
 
     local buffer = {}
