@@ -1,3 +1,7 @@
+---@generic T: table, K, V
+---@param tbl T
+---@return fun(table: table<K, V>, index?: K):K, V
+---@return T
 function PredictablePairs(tbl)
     local keys = {}
     for key in pairs(tbl) do
@@ -12,7 +16,7 @@ function PredictablePairs(tbl)
 
         local key = keys[index]
         return key, tbl[key]
-    end
+    end, tbl
 end
 
 print("Loaded Helpers/PredictablePairs.lua")

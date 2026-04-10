@@ -35,11 +35,11 @@ end
 function Widget.parseWidget(node, parent, guiInterface)
     ---@class Internal.ReGui.Widget.Object : Internal.ReGui.Widget.Class
     local self = {}
-    self.nodeProperties = CloneTable(node.nodeProperties)
-    self.properties = CloneTable(node.properties)
-    self.userStrings = CloneTable(node.userStrings)
-    self.controllers = CloneTable(node.controllers)
-    self.coordinate = node.coordinate
+    self.nodeProperties = CloneTable(node.nodeProperties) ---@type PropertyTable
+    self.properties = CloneTable(node.properties) ---@type PropertyTable
+    self.userStrings = CloneTable(node.userStrings) ---@type PropertyTable
+    self.controllers = CloneTable(node.controllers) ---@type Internal.ReGui.Meta.RelayoutFile.Controller[]
+    self.coordinate = CloneTable(node.coordinate) ---@type Internal.ReGui.Meta.RelayoutFile.Child.Coordinate
 
     self.parent = parent
     self.guiInterface = guiInterface
@@ -244,6 +244,32 @@ function Widget:renderWidget(indentationLevel, prettify)
             table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
         end
 
+        for _, controller in PredictablePairs(self.controllers) do
+            table.insert(buffer, "<Controller ")
+            table.insert(buffer, "type=")
+            table.insert(buffer, string.format("%q", controller.type))
+            table.insert(buffer, ">")
+
+            for key, value in PredictablePairs(controller) do
+                if key ~= "type" then
+                    table.insert(buffer, generateIndentation(indentationLevel + 2))
+                    table.insert(buffer, string.format("<Property key=%q value=", key))
+
+                    if key == "Coord" then
+                        table.insert(buffer, string.format("\"%d %d %d %d\"", value.x, value.y, value.width, value.height))
+                    elseif key == "Position" or key == "Size" then
+                        table.insert(buffer, string.format("\"%d %d\"", value.x, value.y))
+                    else
+                        table.insert(buffer, string.format("%q", value))
+                    end
+
+                    table.insert(buffer, "/>")
+                end
+            end
+
+            table.insert(buffer, "</Controller>")
+        end
+
         for _, value in PredictablePairs(self.children) do
             table.insert(buffer, value:renderWidget(indentationLevel + 1, prettify))
         end
@@ -275,6 +301,37 @@ function Widget:renderWidget(indentationLevel, prettify)
             table.insert(buffer, "\n")
             table.insert(buffer, generateIndentation(indentationLevel + 1))
             table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
+        end
+
+        for _, controller in PredictablePairs(self.controllers) do
+            table.insert(buffer, "\n")
+            table.insert(buffer, generateIndentation(indentationLevel + 1))
+            table.insert(buffer, "<Controller ")
+            table.insert(buffer, "type=")
+            table.insert(buffer, string.format("%q", controller.type))
+            table.insert(buffer, ">")
+            table.insert(buffer, "\n")
+
+            for key, value in PredictablePairs(controller) do
+                if key ~= "type" then
+                    table.insert(buffer, generateIndentation(indentationLevel + 2))
+                    table.insert(buffer, string.format("<Property key=%q value=", key))
+
+                    if key == "Coord" then
+                        table.insert(buffer, string.format("\"%d %d %d %d\"", value.x, value.y, value.width, value.height))
+                    elseif key == "Position" or key == "Size" then
+                        table.insert(buffer, string.format("\"%d %d\"", value.x, value.y))
+                    else
+                        table.insert(buffer, string.format("%q", value))
+                    end
+
+                    table.insert(buffer, "/>")
+                end
+            end
+
+            table.insert(buffer, "\n")
+            table.insert(buffer, generateIndentation(indentationLevel + 1))
+            table.insert(buffer, "</Controller>")
         end
 
         for _, value in PredictablePairs(self.children) do
