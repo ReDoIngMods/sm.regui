@@ -21,10 +21,29 @@ do
     -- Clear any files that dont exist
     local needsUpdate = false
     for modUuid, files in pairs(storage) do
-        for filePath, _ in pairs(files) do
-            if not sm.json.fileExists(filePath) then
+        for filePath, time in pairs(files) do
+            -- if not sm.json.fileExists(filePath) then
+            --     storage[modUuid][filePath] = nil
+            --     needsUpdate = true
+            -- end
+            local success, result = pcall(sm.json.open, filePath)
+            if not success then
+                -- Assume this is deleted
+                warn("File not found or inaccessible, assumed to be deleted: " .. filePath)
+                
                 storage[modUuid][filePath] = nil
                 needsUpdate = true
+            else
+                local oldTime = tonumber(time)
+                local timeDistance = os.time() - oldTime
+
+                -- Check if more than 24h, if so then this file can be deleted.
+                if timeDistance > 24 * 3600 then
+                    sm.json.save(0, filePath)
+
+                    storage[modUuid][filePath] = nil
+                    needsUpdate = true
+                end
             end
         end
 
@@ -57,7 +76,15 @@ function sm.regui.internal.cache.writeStorage(newStorage)
 end
 
 function sm.regui.cache.writeCachedFile(filePath, data)
-    if not sm.json.fileExists(filePath) then
+    if sm.json.fileExists(filePath) then
+        local success, result = pcall(sm.json.open, filePath)
+        if not success or result == 0 then
+            -- Either this file was cached but got cleared because the user was in their game for more than 24h without
+            -- the Temp Data DLL mod OR it got corrupted.
+
+            sm.json.save(data, filePath)
+        end
+    else
         sm.json.save(data, filePath)
     end
 
