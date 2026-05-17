@@ -113,11 +113,11 @@ function Widget:getParent() end
 function Widget:setParent(parent) end
 
 ---Gets the GUI interface that owns this widget.
----@return ReGui.GUIInterface? guiInterface The owning GUI interface, or nil if detached.
+---@return ReGui.GuiInterface? guiInterface The owning GUI interface, or nil if detached.
 function Widget:getGUIInterface() end
 
 ---Sets the GUI interface for this widget and its subtree.
----@param guiInterface ReGui.GUIInterface? guiInterface The GUI interface to assign, or nil to clear.
+---@param guiInterface ReGui.GuiInterface? guiInterface The GUI interface to assign, or nil to clear.
 function Widget:setGUIInterface(guiInterface) end
 
 ---Renders this widget and its children into MyGUI layout XML.

@@ -617,8 +617,14 @@ end
 ---@param name string
 ---@param theme table|nil
 function XMLColorful.addTheme(name, theme)
-    ErrorHandler:AssertArgument(name, 1, "string")
-    ErrorHandler:AssertArgumentMulti(theme, 2, { "table", "nil" }, { "ReGui.XMLColorful.Theme" })
+    ErrorHandler.AssertArgument(name, 1, "string")
+    ErrorHandler.AssertArgument(theme, 2, { "table", "nil" }, { "ReGui.XMLColorful.Theme" })
+    ErrorHandler.AssertCondition(THEMES[name] == nil, 2, "Theme '%s' already exists", name)
+
+    local tokenTypes = XMLColorful.getTokenTypes()
+    for _, key in pairs(tokenTypes) do
+        ErrorHandler.AssertTableValue(theme, 2, key, "string")
+    end
 
     THEMES[name] = theme
 end
@@ -627,7 +633,7 @@ end
 ---@param name string
 ---@return table|nil
 function XMLColorful.getTheme(name)
-    ErrorHandler:AssertArgument(name, 1, "string")
+    ErrorHandler.AssertArgument(name, 1, "string")
 
     return THEMES[name]
 end
@@ -638,8 +644,8 @@ end
 ---@param theme table|nil
 ---@return string
 function XMLColorful.colorXML(xml, theme)
-    ErrorHandler:AssertArgument(xml, 1, "string")
-    ErrorHandler:AssertArgumentMulti(theme, 2, { "table", "nil" }, { "ReGui.XMLColorful.Theme" })
+    ErrorHandler.AssertArgument(xml, 1, "string")
+    ErrorHandler.AssertArgument(theme, 2, { "table", "nil" }, { "ReGui.XMLColorful.Theme" })
 
     theme = theme or THEMES.VSDark
 

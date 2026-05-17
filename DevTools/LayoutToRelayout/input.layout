@@ -1,27 +1,14 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Layout" version="3.2.0">
-    <Widget type="Button" skin="Button" position_real="0 0 0.25 0.099609375" name="Label">
-        <Property key="FontName" value="SM_Button"/>
-        <Property key="TextAlign" value="Center"/>
-        <Property key="Caption" value="Button"/>
-        <UserString key="UserDataKey" value="UserDataValue"/>
-        <Controller type="ControllerPosition">
-            <Property key="Coord" value="100 100 100 100"/>
-            <Property key="Function" value="Accelerated"/>
-            <Property key="Position" value="50 50"/>
-            <Property key="Size" value="50 50"/>
-            <Property key="Time" value="1.234"/>
-        </Controller>
-        <Controller type="ControllerFadeAlpha">
-            <Property key="Alpha" value="0.5"/>
-            <Property key="Coef" value="1"/>
-            <Property key="Enabled" value="false"/>
-        </Controller>
-        <Controller type="ControllerEdgeHide">
-            <Property key="RemainPixels" value="100"/>
-            <Property key="ShadowSize" value="10"/>
-            <Property key="Time" value="1.234"/>
-        </Controller>
+    <Widget type="Widget" skin="PanelEmpty" position_real="0.14999999999999999 0.10000000000000001 0.69999999999999996 0.80000000000000004" name="BackPanel">
+        <Widget type="Widget" skin="BackgroundDarkRoundedUpperRight" position_real="0 0 1 0.14930555555555555" name="TitlePanel">
+            <Widget type="TextBox" skin="TextBox" position_real="0 0 1 1">
+                <Property key="TextAlign" value="Center"/>
+                <Property key="FontName" value="SM_HeaderLarge_Wide"/>
+                <Property key="Caption" value="HELLO, WORLD!"/>
+            </Widget>
+        </Widget>
+        <Widget type="Widget" skin="BackgroundLightRoundedLowerLeft" position_real="0 0.14930555555555555 1 0.84953703703703709" name="MainPanel"/>
     </Widget>
     <CodeGeneratorSettings/>
 </MyGUI>

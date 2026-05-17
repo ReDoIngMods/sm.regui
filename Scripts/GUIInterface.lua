@@ -5,216 +5,105 @@ GUIInterface.__index = GUIInterface
 GUIInterface.__tostring = CreateCustomTostringFunction(GUIInterface.__type)
 
 ---@param contents Internal.ReGui.Meta.RelayoutFile
-local function VerifyLayoutFile(contents)
-    local function MakeError(path, expected, actual)
-        return false, string.format("'%s': expected %s, got %s", path, expected, type(actual))
-    end
-
+local function VerifyLayoutFile(contents, argumentIndex)
     local function VerifyNode(node, path)
-        if type(node) ~= "table" then
-            return MakeError(path, "table", node)
+        ErrorHandler.AssertArgument(node, nil, "table")
+        ErrorHandler.AssertTableValue(node, nil, "nodeProperties", "table", path .. ".nodeProperties")
+        ErrorHandler.AssertTableValue(node.nodeProperties, nil, "type", "string", path .. ".nodeProperties.type")
+        ErrorHandler.AssertTableValue(node.nodeProperties, nil, "skin", "string", path .. ".nodeProperties.skin")
+        ErrorHandler.AssertTableValue(node.nodeProperties, nil, "name", "string", path .. ".nodeProperties.name")
+        ErrorHandler.AssertTableValue(node, nil, "properties", "table", path .. ".properties")
+        ErrorHandler.AssertTableValue(node, nil, "userStrings", "table", path .. ".userStrings")
+
+        for key, value in pairs(node.properties) do
+            ErrorHandler.AssertArgument(key, nil, "string")
+            ErrorHandler.AssertArgument(value, nil, "string")
         end
 
-        local nodeProperties = node.nodeProperties
-        if type(nodeProperties) ~= "table" then
-            return MakeError(path .. ".nodeProperties", "table", nodeProperties)
+        for key, value in pairs(node.userStrings) do
+            ErrorHandler.AssertArgument(key, nil, "string")
+            ErrorHandler.AssertArgument(value, nil, "string")
         end
 
-        if type(nodeProperties.type) ~= "string" then
-            return MakeError(path .. ".nodeProperties.type", "string", nodeProperties.type)
-        end
-
-        if type(nodeProperties.skin) ~= "string" then
-            return MakeError(path .. ".nodeProperties.skin", "string", nodeProperties.skin)
-        end
-
-        if type(nodeProperties.name) ~= "string" then
-            return MakeError(path .. ".nodeProperties.name", "string", nodeProperties.name)
-        end
-
-        for _, mapKey in ipairs({ "properties", "userStrings" }) do
-            local map = node[mapKey]
-            if type(map) ~= "table" then
-                return MakeError(path .. "." .. mapKey, "table", map)
-            end
-
-            for key, value in pairs(map) do
-                if type(key) ~= "string" then
-                    return MakeError(path .. "." .. mapKey .. ".<key>", "string", key)
-                end
-
-                if type(value) ~= "string" then
-                    return MakeError(path .. "." .. mapKey .. "." .. key, "string", value)
-                end
-            end
-        end
-
-        local coordinate = node.coordinate
-        if type(coordinate) ~= "table" then
-            return MakeError(path .. ".coordinate", "table", coordinate)
-        end
-
-        for _, field in ipairs({ "x", "y", "width", "height" }) do
-            if type(coordinate[field]) ~= "number" then
-                return MakeError(path .. ".coordinate." .. field, "number", coordinate[field])
-            end
-        end
-
-        if type(node.controllers) ~= "table" then
-            return MakeError(path .. ".controllers", "table", node.controllers)
-        end
+        ErrorHandler.AssertTableValue(node, nil, "coordinate", "table", path .. ".coordinate")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "x", { "number" }, path .. ".coordinate.x")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "y", { "number" }, path .. ".coordinate.y")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "width", { "number" }, path .. ".coordinate.width")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "height", { "number" }, path .. ".coordinate.height")
+        ErrorHandler.AssertTableValue(node, nil, "controllers", "table", path .. ".controllers")
+        ErrorHandler.AssertTableValue(node, nil, "children", "table", path .. ".children")
 
         for index, controller in ipairs(node.controllers) do
             local controllerPath = string.format("%s.controllers[%d]", path, index)
-            if type(controller) ~= "table" then
-                return MakeError(controllerPath, "table", controller)
-            end
-
-            if type(controller.type) ~= "string" then
-                return MakeError(controllerPath .. ".type", "string", controller.type)
-            end
+            ErrorHandler.AssertArgument(controller, nil, "table")
+            ErrorHandler.AssertTableValue(controller, nil, "type", { "string" }, controllerPath .. ".type")
 
             if controller.type == "ControllerPosition" then
-                local coord = controller.Coord
-                if type(coord) ~= "table" then
-                    return MakeError(controllerPath .. ".Coord", "table", coord)
-                end
-
-                for _, field in ipairs({ "x", "y", "width", "height" }) do
-                    if type(coord[field]) ~= "number" then
-                        return MakeError(controllerPath .. ".Coord." .. field, "number", coord[field])
-                    end
-                end
-
-                for _, vecName in ipairs({ "Position", "Size" }) do
-                    local vector = controller[vecName]
-                    if type(vector) ~= "table" then
-                        return MakeError(controllerPath .. "." .. vecName, "table", vector)
-                    end
-
-                    if type(vector.x) ~= "number" then
-                        return MakeError(controllerPath .. "." .. vecName .. ".x", "number", vector.x)
-                    end
-
-                    if type(vector.y) ~= "number" then
-                        return MakeError(controllerPath .. "." .. vecName .. ".y", "number", vector.y)
-                    end
-                end
-
-                if type(controller.Function) ~= "string" then
-                    return MakeError(controllerPath .. ".Function", "string", controller.Function)
-                end
-
-                if type(controller.Time) ~= "number" then
-                    return MakeError(controllerPath .. ".Time", "number", controller.Time)
-                end
+                ErrorHandler.AssertTableValue(controller, nil, "Coord", "table", controllerPath .. ".Coord")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "x", { "number" }, controllerPath .. ".Coord.x")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "y", { "number" }, controllerPath .. ".Coord.y")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "width", { "number" }, controllerPath .. ".Coord.width")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "height", { "number" }, controllerPath .. ".Coord.height")
+                ErrorHandler.AssertTableValue(controller, nil, "Position", "table", controllerPath .. ".Position")
+                ErrorHandler.AssertTableValue(controller.Position, nil, "x", { "number" }, controllerPath .. ".Position.x")
+                ErrorHandler.AssertTableValue(controller.Position, nil, "y", { "number" }, controllerPath .. ".Position.y")
+                ErrorHandler.AssertTableValue(controller, nil, "Size", "table", controllerPath .. ".Size")
+                ErrorHandler.AssertTableValue(controller.Size, nil, "x", { "number" }, controllerPath .. ".Size.x")
+                ErrorHandler.AssertTableValue(controller.Size, nil, "y", { "number" }, controllerPath .. ".Size.y")
+                ErrorHandler.AssertTableValue(controller, nil, "Function", "string", controllerPath .. ".Function")
+                ErrorHandler.AssertTableValue(controller, nil, "Time", "number", controllerPath .. ".Time")
             elseif controller.type == "ControllerFadeAlpha" then
-                if type(controller.Alpha) ~= "number" then
-                    return MakeError(controllerPath .. ".Alpha", "number", controller.Alpha)
-                end
-
-                if type(controller.Coef) ~= "number" then
-                    return MakeError(controllerPath .. ".Coef", "number", controller.Coef)
-                end
-
-                if type(controller.Enabled) ~= "boolean" then
-                    return MakeError(controllerPath .. ".Enabled", "boolean", controller.Enabled)
-                end
+                ErrorHandler.AssertTableValue(controller, nil, "Alpha", "number", controllerPath .. ".Alpha")
+                ErrorHandler.AssertTableValue(controller, nil, "Coef", "number", controllerPath .. ".Coef")
+                ErrorHandler.AssertTableValue(controller, nil, "Enabled", "boolean", controllerPath .. ".Enabled")
             elseif controller.type == "ControllerEdgeHide" then
-                if type(controller.RemainPixels) ~= "number" then
-                    return MakeError(controllerPath .. ".RemainPixels", "number", controller.RemainPixels)
-                end
-
-                if type(controller.ShadowSize) ~= "number" then
-                    return MakeError(controllerPath .. ".ShadowSize", "number", controller.ShadowSize)
-                end
-
-                if type(controller.Time) ~= "number" then
-                    return MakeError(controllerPath .. ".Time", "number", controller.Time)
-                end
+                ErrorHandler.AssertTableValue(controller, nil, "RemainPixels", { "number" }, controllerPath .. ".RemainPixels")
+                ErrorHandler.AssertTableValue(controller, nil, "ShadowSize", { "number" }, controllerPath .. ".ShadowSize")
+                ErrorHandler.AssertTableValue(controller, nil, "Time", { "number" }, controllerPath .. ".Time")
             else
-                return false, string.format("'%s.type': unknown controller type '%s'", controllerPath, controller.type)
+                ErrorHandler.AssertCondition(false, nil, string.format("'%s.type': unknown controller type '%s'", controllerPath, controller.type))
             end
-        end
-
-        if type(node.children) ~= "table" then
-            return MakeError(path .. ".children", "table", node.children)
         end
 
         for index, child in ipairs(node.children) do
-            local success, message = VerifyNode(child, string.format("%s.children[%d]", path, index))
-
-            if not success then
-                return false, message
-            end
+            VerifyNode(child, string.format("%s.children[%d]", path, index))
         end
-
-        return true
     end
 
-    if type(contents) ~= "table" then
-        return MakeError("root", "table", contents)
-    end
+    local success, message = pcall(function()
+        ErrorHandler.AssertArgument(contents, argumentIndex, "table")
+        ErrorHandler.AssertTableValue(contents, argumentIndex, "version", "number",  "version")
+        ErrorHandler.AssertTableValue(contents, argumentIndex, "metadata", "table", "metadata")
+        ErrorHandler.AssertTableValue(contents.metadata, argumentIndex, "screenWidth", "number", "metadata.screenWidth")
+        ErrorHandler.AssertTableValue(contents.metadata, argumentIndex, "screenHeight", "number", "metadata.screenHeight")
+        ErrorHandler.AssertTableValue(contents, argumentIndex, "data", "table", "data")
+        ErrorHandler.AssertTableValue(contents.data, argumentIndex, "type", "string", "data.type")
+        ErrorHandler.AssertCondition(contents.data.type == "Layout", argumentIndex, string.format("'%s': expected 'Layout', got '%s'", "data.type", contents.data.type))
+        ErrorHandler.AssertTableValue(contents.data, argumentIndex, "version", "string", "data.version")
+        ErrorHandler.AssertTableValue(contents.data, argumentIndex, "children", "table", "data.children")
 
-    if type(contents.version) ~= "number" then
-        return MakeError("root.version", "number", contents.version)
-    end
-
-    local metadata = contents.metadata
-    if type(metadata) ~= "table" then
-        return MakeError("root.metadata", "table", metadata)
-    end
-
-    if type(metadata.screenWidth) ~= "number" then
-        return MakeError("root.metadata.screenWidth", "number", metadata.screenWidth)
-    end
-
-    if type(metadata.screenHeight) ~= "number" then
-        return MakeError("root.metadata.screenHeight", "number", metadata.screenHeight)
-    end
-
-    local data = contents.data
-    if type(data) ~= "table" then
-        return MakeError("root.data", "table", data)
-    end
-
-    if type(data.type) ~= "string" then
-        return MakeError("root.data.type", "string", data.type)
-    end
-
-    if data.type ~= "Layout" then
-        return string.format("'%s.type': expected 'Layout', got '%s'", "root.data", data.type)
-    end
-
-    if type(data.version) ~= "string" then
-        return MakeError("root.data.version", "string", data.version)
-    end
-
-    if type(data.children) ~= "table" then
-        return MakeError("root.data.children", "table", data.children)
-    end
-
-    for index, child in ipairs(data.children) do
-        local success, message = VerifyNode(child, string.format("root.data.children[%d]", index))
-
-        if not success then
-            return false, message
+        for index, child in ipairs(contents.data.children) do
+            VerifyNode(child, string.format("root.data.children[%d]", index))
         end
+    end)
+
+    if not success then
+        return false, message
     end
 
     return true
 end
 
 function GUIInterface.new(path)
-    ErrorHandler:AssertArgument(path, 2, "string")
-    ErrorHandler:AssertValue(path, 2, sm.json.fileExists, "File not found")
+    ErrorHandler.AssertArgument(path, 1, "string")
+    ErrorHandler.AssertValue(path, 1, sm.json.fileExists, "File not found")
 
     ---@type boolean, Internal.ReGui.Meta.RelayoutFile
     local success, result = pcall(sm.json.open, path)
-    ErrorHandler:AssertCondition(success, 2, "Failed to load layout file. ")
+    ErrorHandler.AssertCondition(success, 1, "Failed to load layout file. ")
 
-    local success, message = VerifyLayoutFile(result)
-    ErrorHandler:AssertCondition(success, 2, message)
+    local success, message = VerifyLayoutFile(result, 1)
+    ErrorHandler.AssertCondition(success, 1, message)
 
     ---@class Internal.ReGui.GUIInterface.Object : Internal.ReGui.GUIInterface.Class
     local self = {}
@@ -245,8 +134,8 @@ end
 
 ---@param self Internal.ReGui.GUIInterface.Object
 function GUIInterface:render(prettify)
-    ErrorHandler:AssertSelf(self, GUIInterface.__type, true)
-    ErrorHandler:AssertArgumentMulti(prettify, 2, { "boolean", "nil" })
+    ErrorHandler.AssertSelf(self, GUIInterface.__type, true)
+    ErrorHandler.AssertArgument(prettify, 2, { "boolean", "nil" })
 
     prettify = type(prettify) == "boolean" and prettify or false
 
@@ -274,7 +163,7 @@ end
 
 ---@param self Internal.ReGui.GUIInterface.Object
 function GUIInterface:open()
-    ErrorHandler:AssertSelf(self, GUIInterface.__type)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
 
     local data = self:render(false)
     local hashedString = GenerateHashedString(data)

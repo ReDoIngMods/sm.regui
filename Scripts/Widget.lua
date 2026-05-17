@@ -58,24 +58,24 @@ end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:getUserString(key)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgument(key, 2, "string")
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(key, 2, "string")
 
     return self.userStrings[key]
 end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:setUserString(key, value)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgument(key, 2, "string")
-    ErrorHandler:AssertArgument(value, 3, "string")
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(key, 2, "string")
+    ErrorHandler.AssertArgument(value, 3, "string")
 
     self.userStrings[key] = value
 end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:getAllUserStringKeys()
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
     local keys = {}
     for key in pairs(self.userStrings) do
@@ -89,24 +89,24 @@ end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:getNodeProperty(key)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgument(key, 2, "string")
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(key, 2, "string")
 
     return self.nodeProperties[key]
 end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:setNodeProperty(key, value)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgument(key, 2, "string")
-    ErrorHandler:AssertArgument(value, 3, "string")
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(key, 2, "string")
+    ErrorHandler.AssertArgument(value, 3, "string")
 
     self.nodeProperties[key] = value
 end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:getAllNodePropertyKeys()
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
     local keys = {}
     for key in pairs(self.nodeProperties) do
@@ -120,24 +120,24 @@ end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:getProperty(key)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgument(key, 2, "string")
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(key, 2, "string")
 
     return self.properties[key]
 end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:setProperty(key, value)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgument(key, 2, "string")
-    ErrorHandler:AssertArgument(value, 3, "string")
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(key, 2, "string")
+    ErrorHandler.AssertArgument(value, 3, "string")
 
     self.properties[key] = value
 end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:getAllPropertyKeys()
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
     local keys = {}
     for key in pairs(self.properties) do
@@ -152,7 +152,7 @@ end
 ---@param self Internal.ReGui.Widget.Object
 ---@return Internal.ReGui.Widget.Object?
 function Widget:getParent()
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
     return self.parent
 end
@@ -160,13 +160,13 @@ end
 ---@param self Internal.ReGui.Widget.Object
 ---@param parent Internal.ReGui.Widget.Object?
 function Widget:setParent(parent)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
-    ErrorHandler:AssertValue(parent, 2, function(value)
+    ErrorHandler.AssertValue(parent, 2, function(value)
         return value == nil or (type(value) == "table" and value.__type == Widget.__type)
     end, "Expected ReGui.Widget instance or nil")
 
-    ErrorHandler:AssertCondition(parent ~= self, 2, "Widget cannot be its own parent")
+    ErrorHandler.AssertCondition(parent ~= self, 2, "Widget cannot be its own parent")
 
     if self.parent ~= nil then
         local currentIndex = FindChildIndex(self.parent, self)
@@ -187,7 +187,7 @@ end
 ---@param self Internal.ReGui.Widget.Object
 ---@return Internal.ReGui.GUIInterface.Object?
 function Widget:getGUIInterface()
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
     return self.guiInterface
 end
@@ -195,8 +195,8 @@ end
 ---@param self Internal.ReGui.Widget.Object
 ---@param guiInterface Internal.ReGui.GUIInterface.Object?
 function Widget:setGUIInterface(guiInterface)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertValue(guiInterface, 2, function(value)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertValue(guiInterface, 2, function(value)
         return value == nil or (type(value) == "table" and value.__type == GUI_INTERFACE_TYPE)
     end, "Expected ReGui.GUIInterface instance or nil")
 
@@ -207,9 +207,9 @@ end
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:renderWidget(indentationLevel, prettify)
-    ErrorHandler:AssertSelf(self, Widget.__type, true)
-    ErrorHandler:AssertArgumentMulti(indentationLevel, 2, { "number", "nil" })
-    ErrorHandler:AssertArgumentMulti(prettify, 3, { "boolean", "nil" })
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(indentationLevel, 2, { "number", "nil" })
+    ErrorHandler.AssertArgument(prettify, 3, { "boolean", "nil" })
 
     indentationLevel = indentationLevel or 0
 

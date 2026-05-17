@@ -27,7 +27,7 @@ sm.regui.internal = sm.regui.internal or {}
 dofile("XMLColorful.lua")
 
 function sm.regui.internal.executeCode(functionPath, ...)
-    ErrorHandler:AssertArgument(functionPath, 1, "string")
+    ErrorHandler.AssertArgument(functionPath, 1, "string")
 
     assert(type(sm.regui.internal.tool) == "Tool", "Cannot execute executeCode before MainTool has been initialized!")
 
@@ -62,7 +62,7 @@ end
 
 ---@param data {functionPath: string, arguments: any[], totalArguments: integer}
 function MainToolClass:svcl_executeCode(data)
-    ErrorHandler:AssertArgument(data, 1, "table")
+    ErrorHandler.AssertArgument(data, 1, "table")
 
     -- Hack but works
     CreateFunctionForwarder(data.functionPath)(unpack(data.arguments, 1, data.totalArguments))

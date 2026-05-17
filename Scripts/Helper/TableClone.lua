@@ -1,5 +1,5 @@
 function CloneTable(original)
-    ErrorHandler:AssertArgument(original, 1, "table")
+    ErrorHandler.AssertArgument(original, 1, "table")
 
     local copy = {}
 

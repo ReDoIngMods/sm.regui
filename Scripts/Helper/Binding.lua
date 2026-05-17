@@ -64,7 +64,7 @@ end
 ---Placeholders are resolved in order: _1 maps to the first call-time argument, _2 to the second, etc.
 ---@return Internal.ReGui.PlaceHolder.PlaceHolder
 function Binding:CreatePlaceholder()
-    ErrorHandler:AssertSelf(self, BindingClassType)
+    ErrorHandler.AssertSelf(self, BindingClassType)
 
     ---@type metatable
     local metatable = {}
@@ -85,8 +85,8 @@ end
 ---@param ... any bound arguments, placeholders, or Binding.IgnoreArgs
 ---@return function
 function Binding:CreateBind(func, ...)
-    ErrorHandler:AssertSelf(self, BindingClassType, true)
-    ErrorHandler:AssertArgument(func, 2, "function")
+    ErrorHandler.AssertSelf(self, BindingClassType, true)
+    ErrorHandler.AssertArgument(func, 2, "function")
 
     local boundArguments = { ... }
     local boundCount = select("#", ...)

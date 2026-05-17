@@ -2,7 +2,7 @@
 ---@param path string e.g. "MyModule.Utils.doThing"
 ---@return function
 function CreateFunctionForwarder(path)
-    ErrorHandler:AssertArgument(path, nil, "string")
+    ErrorHandler.AssertArgument(path, nil, "string")
 
     return function (...)
         local parts = {}

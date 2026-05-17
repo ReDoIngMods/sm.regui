@@ -22,8 +22,8 @@ local tableToMetatable = initalizeTableToMetatable()
 ---@param metatable? metatable|table
 ---@return table
 function setmetatable(tbl, metatable)
-    ErrorHandler:AssertArgument(tbl, 1, "table")
-    ErrorHandler:AssertArgumentMulti(metatable, 2, {"table", "nil"})
+    ErrorHandler.AssertArgument(tbl, 1, "table")
+    ErrorHandler.AssertArgument(metatable, 2, {"table", "nil"})
 
     if not metatable then
         local metatable = tableToMetatable[tbl]
@@ -76,7 +76,7 @@ end
 ---@return table metatable
 ---@nodiscard
 function getmetatable(tbl)
-    ErrorHandler:AssertArgument(tbl, 1, "table")
+    ErrorHandler.AssertArgument(tbl, 1, "table")
     
     local metatable = tableToMetatable[tbl]
     if type(metatable) ~= "table" then
@@ -96,8 +96,8 @@ end
 ---@return any
 ---@nodiscard
 function rawget(tbl, key)
-    ErrorHandler:AssertArgument(tbl, 1, "table")
-    ErrorHandler:AssertArgument(key, 2, "string")
+    ErrorHandler.AssertArgument(tbl, 1, "table")
+    ErrorHandler.AssertArgument(key, 2, "string")
 
     local metatable = tableToMetatable[tbl]
     if not metatable then
@@ -121,7 +121,7 @@ end
 ---@return integer len
 ---@nodiscard
 function rawlen(value)
-    ErrorHandler:AssertArgumentMulti(value, 1, {"table", "string"})
+    ErrorHandler.AssertArgument(value, 1, {"table", "string"})
 
     -- We dont support metatable for strings
     if type(value) == "string" then
@@ -153,8 +153,8 @@ end
 ---@param value any
 ---@return table
 function rawset(tbl, key, value)
-    ErrorHandler:AssertArgument(tbl, 1, "table")
-    ErrorHandler:AssertArgument(key, 2, "string")
+    ErrorHandler.AssertArgument(tbl, 1, "table")
+    ErrorHandler.AssertArgument(key, 2, "string")
 
     local metatable = tableToMetatable[tbl]
     if not metatable then
