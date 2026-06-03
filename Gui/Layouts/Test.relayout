@@ -1,13 +1,1 @@
-{
-    "identifer": "ReGui",
-    "version": 2,
-    "metadata": {
-        "maxWidth": 1920,
-        "maxHeight": 1080
-    },
-    "data": [
-        {
-            
-        }
-    ]
-}
+{"version":2,"metadata":{"screenWidth":1920,"screenHeight":1080},"data":{"type":"Layout","version":"3.2.0","children":[{"nodeProperties":{"type":"Widget","skin":"PanelEmpty","name":"BackPanel"},"properties":{},"userStrings":{},"controllers":[],"children":[{"nodeProperties":{"type":"Widget","skin":"BackgroundDarkRoundedUpperRight","name":"TitlePanel"},"properties":{},"userStrings":{},"controllers":[],"children":[{"nodeProperties":{"type":"TextBox","skin":"TextBox"},"properties":{"TextAlign":"Center","FontName":"SM_HeaderLarge_Wide","Caption":"HELLO, WORLD!"},"userStrings":{},"controllers":[],"children":[],"coordinate":{"x":0,"y":0,"width":1344,"height":129}}],"coordinate":{"x":0,"y":0,"width":1344,"height":129}},{"nodeProperties":{"type":"Widget","skin":"BackgroundLightRoundedLowerLeft","name":"MainPanel"},"properties":{},"userStrings":{},"controllers":[],"children":[{"nodeProperties":{"type":"TextBox","skin":"TextBox"},"properties":{"Caption":"FARD FARD","FontName":"DejaVuSansFont_28"},"userStrings":{},"controllers":[],"children":[],"coordinate":{"x":20.0,"y":20.0,"width":570.0,"height":280.0}},{"nodeProperties":{"type":"Button","skin":"Button"},"properties":{"Caption":"BALLS","FontName":"SM_Button"},"userStrings":{},"controllers":[],"children":[],"coordinate":{"x":880.0,"y":440.0,"width":350.0,"height":120.0}}],"coordinate":{"x":0,"y":129,"width":1344,"height":734}}],"coordinate":{"x":0,"y":0,"width":1344,"height":864}}]}}

@@ -1,0 +1,18 @@
+{
+    "partList": [
+        {
+            "uuid": "e2dc6235-d382-4274-b01d-00742e4dd4fc",
+			"name": "sm_regui_debug_shape",
+			"renderable": "$GAME_DATA/Objects/Renderable/Interactive/obj_interactive_logicgate.rend",
+			"box": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+            "scripted": {
+                "filename": "$CONTENT_DATA/Scripts/Debug/DebugInteractable.lua",
+                "classname": "DebugInteractableClass"
+            }
+        }
+    ]
+}

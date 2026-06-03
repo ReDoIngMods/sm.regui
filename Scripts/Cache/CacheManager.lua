@@ -1,4 +1,4 @@
--- TODO: TempData DLL Mod support
+local DEV_MODE = true -- If true, disables caching entirely
 
 local storageFilePath = "$CONTENT_DATA/regui_cache.json"
 local storage = nil
@@ -60,7 +60,7 @@ end
 
 local function WriteStorage(newStorage)
     if IsCurrentlyExecutingModReGui() then
-        sm.json.save(storageFilePath, newStorage)
+        sm.json.save(newStorage, storageFilePath)
         return
     end
     
@@ -76,6 +76,11 @@ function sm.regui.internal.cache.writeStorage(newStorage)
 end
 
 function sm.regui.cache.writeCachedFile(filePath, data)
+    if DEV_MODE then
+        sm.json.save(data, filePath)
+        return
+    end
+    
     if sm.json.fileExists(filePath) then
         local success, result = pcall(sm.json.open, filePath)
         if not success or result == 0 then

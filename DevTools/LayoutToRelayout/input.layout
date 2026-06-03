@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Layout" version="3.2.0">
-    <Widget type="Widget" skin="PanelEmpty" position_real="0.14999999999999999 0.10000000000000001 0.69999999999999996 0.80000000000000004" name="BackPanel">
+    <Widget type="Widget" skin="PanelEmpty" position_real="0 0 0.69999999999999996 0.80000000000000004" name="BackPanel">
         <Widget type="Widget" skin="BackgroundDarkRoundedUpperRight" position_real="0 0 1 0.14930555555555555" name="TitlePanel">
             <Widget type="TextBox" skin="TextBox" position_real="0 0 1 1">
                 <Property key="TextAlign" value="Center"/>
@@ -8,7 +8,16 @@
                 <Property key="Caption" value="HELLO, WORLD!"/>
             </Widget>
         </Widget>
-        <Widget type="Widget" skin="BackgroundLightRoundedLowerLeft" position_real="0 0.14930555555555555 1 0.84953703703703709" name="MainPanel"/>
+        <Widget type="Widget" skin="BackgroundLightRoundedLowerLeft" position_real="0 0.14930555555555555 1 0.84953703703703709" name="MainPanel">
+            <Widget type="TextBox" skin="TextBox" position="20 20 570 280">
+                <Property key="Caption" value="FARD FARD"/>
+                <Property key="FontName" value="DejaVuSansFont_28"/>
+            </Widget>
+            <Widget type="Button" skin="Button" position="880 440 350 120">
+                <Property key="Caption" value="BALLS"/>
+                <Property key="FontName" value="SM_Button"/>
+            </Widget>
+        </Widget>
     </Widget>
     <CodeGeneratorSettings/>
 </MyGUI>

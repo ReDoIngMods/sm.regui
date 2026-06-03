@@ -24,6 +24,8 @@
         "*.json": "jsonc",
         "*.tooldb": "jsonc",
         "*.toolset": "jsonc",
-        "*.relayout": "jsonc"
+        "*.relayout": "jsonc",
+        "*.shapedb": "jsonc",
+        "*.shapeset": "jsonc"
     }
 }

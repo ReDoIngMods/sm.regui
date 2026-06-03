@@ -10,57 +10,114 @@
         "children": [
             {
                 "nodeProperties": {
-                    "type": "Button",
-                    "skin": "Button",
-                    "name": "Label"
+                    "type": "Widget",
+                    "skin": "PanelEmpty",
+                    "name": "BackPanel"
                 },
-                "properties": {
-                    "FontName": "SM_Button",
-                    "TextAlign": "Center",
-                    "Caption": "Button"
-                },
-                "userStrings": {
-                    "UserDataKey": "UserDataValue"
-                },
-                "controllers": [
+                "properties": {},
+                "userStrings": {},
+                "controllers": [],
+                "children": [
                     {
-                        "type": "ControllerPosition",
-                        "Coord": {
-                            "x": 100.0,
-                            "y": 100.0,
-                            "width": 100.0,
-                            "height": 100.0
+                        "nodeProperties": {
+                            "type": "Widget",
+                            "skin": "BackgroundDarkRoundedUpperRight",
+                            "name": "TitlePanel"
                         },
-                        "Function": "Accelerated",
-                        "Position": {
-                            "x": 50.0,
-                            "y": 50.0
-                        },
-                        "Size": {
-                            "x": 50.0,
-                            "y": 50.0
-                        },
-                        "Time": 1.234
+                        "properties": {},
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [
+                            {
+                                "nodeProperties": {
+                                    "type": "TextBox",
+                                    "skin": "TextBox"
+                                },
+                                "properties": {
+                                    "TextAlign": "Center",
+                                    "FontName": "SM_HeaderLarge_Wide",
+                                    "Caption": "HELLO, WORLD!"
+                                },
+                                "userStrings": {},
+                                "controllers": [],
+                                "children": [],
+                                "coordinate": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "width": 1344,
+                                    "height": 129
+                                }
+                            }
+                        ],
+                        "coordinate": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 1344,
+                            "height": 129
+                        }
                     },
                     {
-                        "type": "ControllerFadeAlpha",
-                        "Alpha": 0.5,
-                        "Coef": 1.0,
-                        "Enabled": false
-                    },
-                    {
-                        "type": "ControllerEdgeHide",
-                        "RemainPixels": 100,
-                        "ShadowSize": 10,
-                        "Time": 1.234
+                        "nodeProperties": {
+                            "type": "Widget",
+                            "skin": "BackgroundLightRoundedLowerLeft",
+                            "name": "MainPanel"
+                        },
+                        "properties": {},
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [
+                            {
+                                "nodeProperties": {
+                                    "type": "TextBox",
+                                    "skin": "TextBox"
+                                },
+                                "properties": {
+                                    "Caption": "FARD FARD",
+                                    "FontName": "DejaVuSansFont_28"
+                                },
+                                "userStrings": {},
+                                "controllers": [],
+                                "children": [],
+                                "coordinate": {
+                                    "x": 20.0,
+                                    "y": 20.0,
+                                    "width": 570.0,
+                                    "height": 280.0
+                                }
+                            },
+                            {
+                                "nodeProperties": {
+                                    "type": "Button",
+                                    "skin": "Button"
+                                },
+                                "properties": {
+                                    "Caption": "BALLS",
+                                    "FontName": "SM_Button"
+                                },
+                                "userStrings": {},
+                                "controllers": [],
+                                "children": [],
+                                "coordinate": {
+                                    "x": 880.0,
+                                    "y": 440.0,
+                                    "width": 350.0,
+                                    "height": 120.0
+                                }
+                            }
+                        ],
+                        "coordinate": {
+                            "x": 0,
+                            "y": 129,
+                            "width": 1344,
+                            "height": 734
+                        }
                     }
                 ],
-                "children": [],
                 "coordinate": {
                     "x": 0,
                     "y": 0,
-                    "width": 480,
-                    "height": 108
+                    "width": 1344,
+                    "height": 864
                 }
             }
         ]

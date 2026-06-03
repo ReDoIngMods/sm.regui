@@ -6,6 +6,28 @@ Widget.__tostring = CreateCustomTostringFunction(Widget.__type)
 
 local GUI_INTERFACE_TYPE = "ReGui.GUIInterface"
 
+local VALID_WIDGET_TYPES = {
+    ["Button"] = true,
+    ["Canvas"] = true,
+    ["ComboBox"] = true,
+    ["DDContainer"] = true,
+    ["EditBox"] = true,
+    ["ItemBox"] = true,
+    ["ListBox"] = true,
+    ["MenuBar"] = true,
+    ["MultiListBox"] = true,
+    ["PopupMenu"] = true,
+    ["ProgressBar"] = true,
+    ["ScrollBar"] = true,
+    ["ScrollView"] = true,
+    ["ImageBox"] = true,
+    ["TextBox"] = true,
+    ["TabControl"] = true,
+    ["Widget"] = true,
+    ["Window"] = true,
+    ["StrangeButton"] = true
+}
+
 ---@param parent Internal.ReGui.Widget.Object
 ---@param child Internal.ReGui.Widget.Object
 ---@return integer?
@@ -34,7 +56,7 @@ end
 ---@param guiInterface Internal.ReGui.GUIInterface.Object?
 function Widget.parseWidget(node, parent, guiInterface)
     ---@class Internal.ReGui.Widget.Object : Internal.ReGui.Widget.Class
-    local self = {}
+    local self = setmetatable({}, Widget)
     self.nodeProperties = CloneTable(node.nodeProperties) ---@type PropertyTable
     self.properties = CloneTable(node.properties) ---@type PropertyTable
     self.userStrings = CloneTable(node.userStrings) ---@type PropertyTable
@@ -44,14 +66,22 @@ function Widget.parseWidget(node, parent, guiInterface)
     self.parent = parent
     self.guiInterface = guiInterface
 
+    self.nodeProperties.name = self.nodeProperties.name or ""
+    self.nodeProperties.skin = self.nodeProperties.skin or "PanelEmpty"
+    self.nodeProperties.type = self.nodeProperties.type or "Widget"
+
+    if not VALID_WIDGET_TYPES[self.nodeProperties.type] then
+        warn(string.format("Widget '%s' has invalid type '%s', defaulting to 'Widget'", self.nodeProperties.name, self.nodeProperties.type))
+        self.nodeProperties.type = "Widget"
+    end
+
     ---@type Internal.ReGui.Widget.Object[]
     self.children = {}
     for _, childNode in pairs(node.children) do
-        local childWidget = Widget.parseWidget(childNode, self, guiInterface)
-        table.insert(self.children, childWidget)
+        table.insert(self.children, Widget.parseWidget(childNode, self, guiInterface))
     end
 
-    return setmetatable(self, Widget)
+    return self
 end
 
 -- USER STRINGS --
@@ -203,7 +233,246 @@ function Widget:setGUIInterface(guiInterface)
     ApplyGUIInterfaceRecursive(self, guiInterface)
 end
 
+---@param self Internal.ReGui.Widget.Object
+---@return string name
+function Widget:getName()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return self.nodeProperties.name
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@return string skin
+function Widget:getSkin()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return self.nodeProperties.skin
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@return string type
+function Widget:getType()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return self.nodeProperties.type
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param name string
+function Widget:setName(name)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(name, 2, "string")
+    
+    self.nodeProperties.name = name
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param skin string
+function Widget:setSkin(skin)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(skin, 2, "string")
+    
+    self.nodeProperties.skin = skin
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param type string
+function Widget:setType(type)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(type, 2, "string")
+    ErrorHandler.AssertCondition(VALID_WIDGET_TYPES[type] == true, 2, "Invalid widget type: " .. type)
+
+    self.nodeProperties.type = type
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param name string
+---@param recursive boolean
+---@return Internal.ReGui.Widget.Object?
+function Widget:findWidget(name, recursive)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(name, 2, "string")
+    ErrorHandler.AssertArgument(recursive, 3, { "boolean", "nil" })
+
+    for _, child in pairs(self.children) do
+        if child:getName() == name then
+            return child
+        end
+        
+        if recursive then
+            local foundInChild = child:findWidget(name, true)
+            if foundInChild then
+                return foundInChild
+            end
+        end
+    end
+
+    return nil
+end
+
+-- PIXEL POSITION/SIZE --
+
+---@param self Internal.ReGui.Widget.Object
+---@return integer
+---@return integer
+function Widget:getPosition()
+    ErrorHandler.AssertSelf(self, Widget.__type)
+
+    return self.coordinate.x, self.coordinate.y
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@return integer
+---@return integer
+function Widget:getSize()
+    ErrorHandler.AssertSelf(self, Widget.__type)
+
+    return self.coordinate.width, self.coordinate.height
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param x integer
+---@param y integer
+function Widget:setPosition(x, y)
+    ErrorHandler.AssertSelf(self, Widget.__type)
+    ErrorHandler.AssertArgument(x, 2, "number")
+    ErrorHandler.AssertArgument(y, 3, "number")
+
+    self.coordinate.x = x
+    self.coordinate.y = y
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param width integer
+---@param height integer
+function Widget:setSize(width, height)
+    ErrorHandler.AssertSelf(self, Widget.__type)
+    ErrorHandler.AssertArgument(width, 2, "number")
+    ErrorHandler.AssertArgument(height, 3, "number")
+
+    self.coordinate.width = width
+    self.coordinate.height = height
+end
+
+-- REAL UNITS POSITION/SIZE --
+
+---@param self Internal.ReGui.Widget.Object
+---@return number
+---@return number
+function Widget:getPositionReal()
+    local screenWidth = self.guiInterface.data.metadata.screenWidth
+    local screenHeight = self.guiInterface.data.metadata.screenHeight
+    ErrorHandler.AssertSelf(self, Widget.__type)
+
+    local x, y = self:getPosition()
+    local parent = self.parent
+
+    if parent then
+        local pw, ph = parent:getSize()
+        pw = pw ~= 0 and pw or 1
+        ph = ph ~= 0 and ph or 1
+        return x / pw, y / ph
+    end
+
+    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
+    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
+
+    return x / screenWidth, y / screenHeight
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@return number
+---@return number
+function Widget:getSizeReal()
+    local screenWidth = self.guiInterface.data.metadata.screenWidth
+    local screenHeight = self.guiInterface.data.metadata.screenHeight
+    ErrorHandler.AssertSelf(self, Widget.__type)
+
+    local w, h = self:getSize()
+    local parent = self.parent
+
+    if parent then
+        local pw, ph = parent:getSize()
+        pw = pw ~= 0 and pw or 1
+        ph = ph ~= 0 and ph or 1
+        return w / pw, h / ph
+    end
+
+    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
+    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
+
+    return w / screenWidth, h / screenHeight
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param rx number
+---@param ry number
+function Widget:setPositionReal(rx, ry)
+    ErrorHandler.AssertSelf(self, Widget.__type)
+    ErrorHandler.AssertArgument(rx, 2, "number")
+    ErrorHandler.AssertArgument(ry, 3, "number")
+
+    local parent = self.parent
+    if parent then
+        local pw, ph = parent:getSize()
+        pw = pw ~= 0 and pw or 1
+        ph = ph ~= 0 and ph or 1
+
+        local x = math.floor(rx * pw + 0.5)
+        local y = math.floor(ry * ph + 0.5)
+
+        self:setPosition(x, y)
+        return
+    end
+
+    local screenWidth = self.guiInterface and self.guiInterface.data.metadata.screenWidth or 1
+    local screenHeight = self.guiInterface and self.guiInterface.data.metadata.screenHeight or 1
+    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
+    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
+
+    local x = math.floor(rx * screenWidth + 0.5)
+    local y = math.floor(ry * screenHeight + 0.5)
+
+    self:setPosition(x, y)
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param rw number
+---@param rh number
+function Widget:setSizeReal(rw, rh)
+    ErrorHandler.AssertSelf(self, Widget.__type)
+    ErrorHandler.AssertArgument(rw, 2, "number")
+    ErrorHandler.AssertArgument(rh, 3, "number")
+
+    local parent = self.parent
+    if parent then
+        local pw, ph = parent:getSize()
+        pw = pw ~= 0 and pw or 1
+        ph = ph ~= 0 and ph or 1
+
+        local w = math.floor(rw * pw + 0.5)
+        local h = math.floor(rh * ph + 0.5)
+
+        self:setSize(w, h)
+        return
+    end
+
+    local screenWidth = self.guiInterface and self.guiInterface.data.metadata.screenWidth or 1
+    local screenHeight = self.guiInterface and self.guiInterface.data.metadata.screenHeight or 1
+    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
+    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
+
+    local w = math.floor(rw * screenWidth + 0.5)
+    local h = math.floor(rh * screenHeight + 0.5)
+
+    self:setSize(w, h)
+end
+
 -- RENDERING --
+
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:renderWidget(indentationLevel, prettify)
@@ -215,29 +484,49 @@ function Widget:renderWidget(indentationLevel, prettify)
 
     prettify = type(prettify) == "boolean" and prettify or false
 
+    self.nodeProperties.name = self.nodeProperties.name or ""
+    self.nodeProperties.skin = self.nodeProperties.skin or "PanelEmpty"
+    self.nodeProperties.type = self.nodeProperties.type or "Widget"
+
+    if not VALID_WIDGET_TYPES[self.nodeProperties.type] then
+        warn(string.format("Widget '%s' has invalid type '%s', defaulting to 'Widget'", self.nodeProperties.name, self.nodeProperties.type))
+        self.nodeProperties.type = "Widget"
+    end
+
     local buffer = {}
 
     local function generateIndentation(level)
         return string.rep("    ", level)
     end
 
+    local function insertCoordinates()
+        local useRealCoordinates = self.guiInterface and self.guiInterface:isAutoConversionToRealUnitsEnabled()
+        if useRealCoordinates then
+            -- TODO
+            local realPositionX, realPositionY = self:getPositionReal()
+            local realSizeX, realSizeY = self:getSizeReal()
+
+            table.insert(buffer, string.format("position_real=\"%.3f %.3f %.3f %.3f\"", realPositionX, realPositionY, realSizeX, realSizeY))
+            --table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
+        else
+            table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
+        end
+    end
+
     local function renderMinimal()
         table.insert(buffer, "<Widget")
 
         table.insert(buffer, " ")
-        table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
+        insertCoordinates()
 
-        if next(self.nodeProperties) then
-            table.insert(buffer, " ")
-
-            local fullString = {}
-            for key, value in PredictablePairs(self.nodeProperties) do
-                table.insert(fullString, string.format("%s=%q", key, value))
-            end
-
-            table.insert(buffer, table.concat(fullString, " "))
+        table.insert(buffer, " ")
+        
+        local fullString = {}
+        for key, value in PredictablePairs(self.nodeProperties) do
+            table.insert(fullString, string.format("%s=%q", key, value))
         end
 
+        table.insert(buffer, table.concat(fullString, " "))
         table.insert(buffer, ">")
 
         for key, value in PredictablePairs(self.properties) do
@@ -282,19 +571,16 @@ function Widget:renderWidget(indentationLevel, prettify)
         table.insert(buffer, "<Widget")
         
         table.insert(buffer, " ")
-        table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
+        insertCoordinates()
 
-        if next(self.nodeProperties) then
-            table.insert(buffer, " ")
+        table.insert(buffer, " ")
 
-            local fullString = {}
-            for key, value in PredictablePairs(self.nodeProperties) do
-                table.insert(fullString, string.format("%s=%q", key, value))
-            end
-
-            table.insert(buffer, table.concat(fullString, " "))
+        local fullString = {}
+        for key, value in PredictablePairs(self.nodeProperties) do
+            table.insert(fullString, string.format("%s=%q", key, value))
         end
 
+        table.insert(buffer, table.concat(fullString, " "))
         table.insert(buffer, ">")
 
         for key, value in PredictablePairs(self.properties) do

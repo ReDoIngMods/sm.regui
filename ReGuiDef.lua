@@ -1,15 +1,15 @@
----@diagnostic disable: missing-return
-
+---@diagnostic disable
+---@
 ---sm.regui, ReDoing Graphical User Interfaces
 sm.regui = {}
 
 ---Creates a GUI from a layout file
 ---@param path string The path to the layout file
----@return ReGui.GuiInterface The created GUI object
+---@return ReGui.GuiInterface guiinterface The created GUI object
 function sm.regui.createGuiFromLayout(path) end
 
 ---Creates an empty GUI
----@return ReGui.GuiInterface The created GUI object
+---@return ReGui.GuiInterface guiinterface The created GUI object
 function sm.regui.createGui() end
 
 --- UTILS --
@@ -57,6 +57,20 @@ function GuiInterface:render(prettify) end
 
 ---Opens the GuiInterface.
 function GuiInterface:open() end
+
+---Checks if automatic conversion of pixel coordinates to real units is enabled.
+---@return boolean enabled True if automatic conversion is enabled, false otherwise.
+function GuiInterface:isAutoConversionToRealUnitsEnabled() end
+
+---Toggles whether pixel coordinates should be automatically converted to real units.
+---@param value boolean Whether to enable or disable automatic conversion.
+function GuiInterface:toggleAutomaticConversionToRealUnits(value) end
+
+---Finds a widget by name.
+---@param widgetName string The name of the widget to find.
+---@param recursive boolean Whether to search recursively through child widgets. Defaults to false.
+---@return ReGui.Widget? widget The found widget, or nil if not found.
+function GuiInterface:findWidget(widgetName, recursive) end
 
 ---A parsed widget in the GUI tree.
 ---@class ReGui.Widget
@@ -119,6 +133,76 @@ function Widget:getGUIInterface() end
 ---Sets the GUI interface for this widget and its subtree.
 ---@param guiInterface ReGui.GuiInterface? guiInterface The GUI interface to assign, or nil to clear.
 function Widget:setGUIInterface(guiInterface) end
+
+---Gets the name of this widget.
+---@return string name The name of this widget.
+function Widget:getName() end
+
+---Gets the skin of this widget.
+---@return string skin The skin of this widget.
+function Widget:getSkin() end
+
+---Gets the type of this widget.
+---@return string type The type of this widget.
+function Widget:getType() end
+
+---Sets the name of this widget.
+---@param name string The new name for this widget.
+function Widget:setName(name) end
+
+---Sets the skin of this widget.
+---@param skin string The new skin for this widget.
+function Widget:setSkin(skin) end
+
+---Sets the type of this widget.
+---@param type string The new type for this widget.
+function Widget:setType(type) end
+
+---Finds a child widget by name.
+---@param widgetName string The name of the child widget to find.
+---@param recursive boolean Whether to search recursively through descendants. Defaults to false.
+---@return ReGui.Widget? widget The found child widget, or nil if not found.
+function Widget:findWidget(widgetName, recursive) end
+
+---Gets the pixel position of this widget.
+---@return integer x The x-coordinate of the widget in pixels.
+---@return integer y The y-coordinate of the widget in pixels.
+function Widget:getPosition() end
+
+---Gets the pixel size of this widget.
+---@return integer width The width of the widget in pixels.
+---@return integer height The height of the widget in pixels.
+function Widget:getSize() end
+
+---Sets the pixel position of this widget.
+---@param x integer The new x-coordinate in pixels.
+---@param y integer The new y-coordinate in pixels.
+function Widget:setPosition(x, y) end
+
+---Sets the pixel size of this widget.
+---@param width integer The new width in pixels.
+---@param height integer The new height in pixels.
+function Widget:setSize(width, height) end
+
+---Gets the real-unit position of this widget.
+---@return number x The x-coordinate of the widget in real units.
+---@return number y The y-coordinate of the widget in real units.   
+function Widget:getPositionReal() end
+
+---Gets the real-unit size of this widget.
+---@return number width The width of the widget in real units.
+---@return number height The height of the widget in real units.
+function Widget:getSizeReal() end
+
+---Sets the real-unit position of this widget.
+---@param x number The new x-coordinate in real units.
+---@param y number The new y-coordinate in real units.
+function Widget:setPositionReal(x, y) end
+
+---Sets the real-unit size of this widget.
+---@param width number The new width in real units.
+---@param height number The new height in real units.
+function Widget:setSizeReal(width, height) end
 
 ---Renders this widget and its children into MyGUI layout XML.
 ---@param indentationLevel number? The base indentation level used for pretty rendering.

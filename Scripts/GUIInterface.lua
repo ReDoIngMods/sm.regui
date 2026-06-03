@@ -11,7 +11,9 @@ local function VerifyLayoutFile(contents, argumentIndex)
         ErrorHandler.AssertTableValue(node, nil, "nodeProperties", "table", path .. ".nodeProperties")
         ErrorHandler.AssertTableValue(node.nodeProperties, nil, "type", "string", path .. ".nodeProperties.type")
         ErrorHandler.AssertTableValue(node.nodeProperties, nil, "skin", "string", path .. ".nodeProperties.skin")
-        ErrorHandler.AssertTableValue(node.nodeProperties, nil, "name", "string", path .. ".nodeProperties.name")
+        ErrorHandler.AssertTableValue(node.nodeProperties, nil, "name", { "string", "nil" }, path .. ".nodeProperties.name")
+        node.nodeProperties.name = node.nodeProperties.name or ""
+        
         ErrorHandler.AssertTableValue(node, nil, "properties", "table", path .. ".properties")
         ErrorHandler.AssertTableValue(node, nil, "userStrings", "table", path .. ".userStrings")
 
@@ -106,9 +108,10 @@ function GUIInterface.new(path)
     ErrorHandler.AssertCondition(success, 1, message)
 
     ---@class Internal.ReGui.GUIInterface.Object : Internal.ReGui.GUIInterface.Class
-    local self = {}
+    local self = setmetatable({}, GUIInterface)
     self.filePath = path
     self.data = result
+    self.toRealCoordinates = true
 
     self.renderer = {
         needsRendering = true,
@@ -122,7 +125,7 @@ function GUIInterface.new(path)
         table.insert(self.rootWidgets, sm.regui.widgets.parseWidget(child, nil, self))
     end
 
-    return setmetatable(self, GUIInterface)
+    return self
 end
 
 function GUIInterface.newBlank()
@@ -173,6 +176,48 @@ function GUIInterface:open()
 
     local layout = sm.gui.createGuiFromLayout(filePath, true)
     layout:open()
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+---@return boolean
+function GUIInterface:isAutoConversionToRealUnitsEnabled()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+
+    return self.toRealCoordinates
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+---@param value boolean
+function GUIInterface:toggleAutomaticConversionToRealUnits(value)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type, true)
+    ErrorHandler.AssertArgument(value, 2, "boolean")
+
+    self.toRealCoordinates = value
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+---@param widgetName string
+---@param recursive boolean
+---@return Internal.ReGui.Widget.Object?
+function GUIInterface:findWidget(widgetName, recursive)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+    ErrorHandler.AssertArgument(widgetName, 2, "string")
+    ErrorHandler.AssertArgument(recursive, 3, { "boolean", "nil" })
+
+    for _, widget in pairs(self.rootWidgets) do
+        if widget:getName() == widgetName then
+            return widget
+        end
+
+        if recursive then
+            local foundWidget = widget:findWidget(widgetName, true)
+            if foundWidget then
+                return foundWidget
+            end
+        end
+    end
+
+    return nil
 end
 
 sm.regui.guiinterface = GUIInterface
