@@ -164,6 +164,24 @@ function GUIInterface.newBlank()
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
+---@return Internal.ReGui.GUIInterface.Object
+function GUIInterface:clone()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+
+    local clone = GUIInterface.newBlank()
+    clone.data = CloneTable(self.data)
+    clone.toRealCoordinates = self.toRealCoordinates
+    clone.settings = self.settings or CloneTable(self.settings)
+
+    for _, widget in pairs(self.rootWidgets) do
+        table.insert(clone.rootWidgets, widget:clone(clone))
+    end
+
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return clone
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
 function GUIInterface:render(prettify)
     ErrorHandler.AssertSelf(self, GUIInterface.__type, true)
     ErrorHandler.AssertArgument(prettify, 2, { "boolean", "nil" })

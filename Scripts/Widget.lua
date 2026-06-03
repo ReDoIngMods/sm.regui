@@ -84,6 +84,28 @@ function Widget.parseWidget(node, parent, guiInterface)
     return self
 end
 
+---@param self Internal.ReGui.Widget.Object
+---@return Internal.ReGui.Widget.Object
+function Widget:clone()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+
+    local clone = Widget.parseWidget({
+        nodeProperties = CloneTable(self.nodeProperties),
+        properties = CloneTable(self.properties),
+        userStrings = CloneTable(self.userStrings),
+        controllers = CloneTable(self.controllers),
+        coordinate = CloneTable(self.coordinate),
+        children = {}
+    }, nil, nil)
+
+    for _, child in pairs(self.children) do
+        local childClone = child:clone()
+        childClone:setParent(clone)
+    end
+
+    return clone
+end
+
 -- USER STRINGS --
 
 ---@param self Internal.ReGui.Widget.Object

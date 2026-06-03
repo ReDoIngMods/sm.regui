@@ -61,6 +61,10 @@ function GuiInterface:open() end
 ---Closes the GuiInterface
 function GuiInterface:close() end
 
+---Clones the GuiInterface, creating a new instance with the same properties and widgets.
+---@return ReGui.GuiInterface clone The cloned GuiInterface
+function GuiInterface:clone() end
+
 ---Checks if automatic conversion of pixel coordinates to real units is enabled.
 ---@return boolean enabled True if automatic conversion is enabled, false otherwise.
 function GuiInterface:isAutoConversionToRealUnitsEnabled() end
@@ -78,6 +82,10 @@ function GuiInterface:findWidget(widgetName, recursive) end
 ---A parsed widget in the GUI tree.
 ---@class ReGui.Widget
 local Widget = {}
+
+---Clones this widget and returns the new instance.
+---@return ReGui.Widget clone The cloned widget.
+function Widget:clone() end
 
 ---Gets a user-string value by key.
 ---@param key string The user-string key to read.
