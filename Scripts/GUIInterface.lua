@@ -126,6 +126,7 @@ function GUIInterface.new(path)
     end
 
     self.activeInternalGui = nil ---@type GuiInterface?
+    self.settings = nil ---@type GuiSettings?
 
     return self
 end
@@ -157,6 +158,7 @@ function GUIInterface.newBlank()
     ---@type Internal.ReGui.Widget.Object[]
     self.rootWidgets = {}
     self.activeInternalGui = nil ---@type GuiInterface?
+    self.settings = nil ---@type GuiSettings?
 
     return setmetatable(self, GUIInterface)
 end
@@ -202,7 +204,7 @@ function GUIInterface:open()
 
     self:close()
     
-    self.activeInternalGui = sm.gui.createGuiFromLayout(filePath, true)
+    self.activeInternalGui = sm.gui.createGuiFromLayout(filePath, true, self.settings)
     self.activeInternalGui:open()
 end
 
@@ -232,6 +234,36 @@ function GUIInterface:toggleAutomaticConversionToRealUnits(value)
 
     self.toRealCoordinates = value
 end
+
+---@param self Internal.ReGui.GUIInterface.Object
+---@return GuiSettings?
+function GUIInterface:getSettings()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+
+    return CloneTable(self.settings)
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+---@param settings GuiSettings?
+function GUIInterface:setSettings(settings)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type, true)
+    ErrorHandler.AssertArgument(settings, 2, { "table", "nil" })
+
+    if not settings then
+        self.settings = nil
+        return
+    end
+
+    ErrorHandler.AssertTableValue(settings, 2, "isHud", { "boolean", "nil" })
+    ErrorHandler.AssertTableValue(settings, 2, "isInteractive", { "boolean", "nil" })
+    ErrorHandler.AssertTableValue(settings, 2, "needsCursor", { "boolean", "nil" })
+    ErrorHandler.AssertTableValue(settings, 2, "hidesHotbar", { "boolean", "nil" })
+    ErrorHandler.AssertTableValue(settings, 2, "isOverlapped", { "boolean", "nil" })
+    ErrorHandler.AssertTableValue(settings, 2, "backgroundAlpha", { "number", "nil" })
+
+    self.settings = CloneTable(settings)
+end
+
 
 ---@param self Internal.ReGui.GUIInterface.Object
 ---@param widgetName string
