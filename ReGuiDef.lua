@@ -58,6 +58,9 @@ function GuiInterface:render(prettify) end
 ---Opens the GuiInterface.
 function GuiInterface:open() end
 
+---Closes the GuiInterface
+function GuiInterface:close() end
+
 ---Checks if automatic conversion of pixel coordinates to real units is enabled.
 ---@return boolean enabled True if automatic conversion is enabled, false otherwise.
 function GuiInterface:isAutoConversionToRealUnitsEnabled() end

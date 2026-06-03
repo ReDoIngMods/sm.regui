@@ -125,12 +125,38 @@ function GUIInterface.new(path)
         table.insert(self.rootWidgets, sm.regui.widgets.parseWidget(child, nil, self))
     end
 
+    self.activeInternalGui = nil ---@type GuiInterface?
+
     return self
 end
 
 function GUIInterface.newBlank()
+    local screenWidth, screenHeight = GetMyGuiScreenSize()
+
     local self = {}
     self.filePath = nil
+    self.data = {
+        version = 2,
+        metadata = {
+            screenWidth = screenWidth,
+            screenHeight = screenHeight,
+        },
+        data = {
+            type = "Layout",
+            version = "3.2.0",
+            children = {}
+        }
+    }
+    self.toRealCoordinates = true
+
+    self.renderer = {
+        needsRendering = true,
+        renderPath = ""
+    }
+
+    ---@type Internal.ReGui.Widget.Object[]
+    self.rootWidgets = {}
+    self.activeInternalGui = nil ---@type GuiInterface?
 
     return setmetatable(self, GUIInterface)
 end
@@ -174,8 +200,20 @@ function GUIInterface:open()
     local filePath = sm.regui.cache.generateCachePath(hashedString)
     sm.regui.cache.writeCachedFile(filePath, GenerateValidXMLFileForLayouts(data))
 
-    local layout = sm.gui.createGuiFromLayout(filePath, true)
-    layout:open()
+    self:close()
+    
+    self.activeInternalGui = sm.gui.createGuiFromLayout(filePath, true)
+    self.activeInternalGui:open()
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+function GUIInterface:close()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+
+    if sm.exists(self.activeInternalGui) then
+        self.activeInternalGui:destroy()
+        self.activeInternalGui = nil
+    end
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
