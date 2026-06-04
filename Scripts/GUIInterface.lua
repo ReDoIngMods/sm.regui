@@ -308,6 +308,41 @@ function GUIInterface:findWidget(widgetName, recursive)
     return nil
 end
 
+---@param self Internal.ReGui.GUIInterface.Object
+---@param widgetName string
+---@param widgetType string?
+---@param widgetSkin string?
+---@return Internal.ReGui.Widget.Object
+function GUIInterface:addWidget(widgetName, widgetType, widgetSkin)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+    ErrorHandler.AssertArgument(widgetName, 2, "string")
+    ErrorHandler.AssertArgument(widgetType, 3, { "string", "nil" })
+    ErrorHandler.AssertArgument(widgetSkin, 4, { "string", "nil" })
+
+    local widgetData = {
+        nodeProperties = {
+            name = widgetName,
+            type = widgetType or "Widget",
+            skin = widgetSkin or "PanelEmpty"
+        },
+        properties = {},
+        userStrings = {},
+        coordinate = {
+            x = 0,
+            y = 0,
+            width = 100,
+            height = 100
+        },
+        controllers = {},
+        children = {}
+    }
+
+    local widgetObject = sm.regui.widgets.parseWidget(widgetData, nil, self)
+    table.insert(self.rootWidgets, widgetObject)
+
+    return widgetObject
+end
+
 sm.regui.guiinterface = GUIInterface
 
 print("Loaded GUIInterface.lua")

@@ -89,7 +89,44 @@ function Widget.parseWidget(node, parent, guiInterface)
     return self
 end
 
--- CLONING & DELETION --
+-- ADDING & CLONING & DELETION --
+
+---@param self Internal.ReGui.Widget.Object
+---@param widgetName string
+---@param widgetType string?
+---@param widgetSkin string?
+---@return Internal.ReGui.Widget.Object newWidget
+function Widget:addWidget(widgetName, widgetType, widgetSkin)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(widgetName, 2, "string")
+    ErrorHandler.AssertArgument(widgetType, 3, { "string", "nil" })
+    ErrorHandler.AssertArgument(widgetSkin, 4, { "string", "nil" })
+
+    if widgetType and not VALID_WIDGET_TYPES[widgetType] then
+        error(string.format("Invalid widget type: %s", widgetType), 2)
+    end
+
+    local newWidget = Widget.parseWidget({
+        nodeProperties = {
+            name = widgetName,
+            type = widgetType or "Widget",
+            skin = widgetSkin or "PanelEmpty"
+        },
+        properties = {},
+        userStrings = {},
+        controllers = {},
+        coordinate = {
+            x = 0,
+            y = 0,
+            width = 0,
+            height = 0
+        },
+        children = {}
+    }, self, self.guiInterface)
+
+    table.insert(self.children, newWidget)
+    return newWidget
+end
 
 ---@param self Internal.ReGui.Widget.Object
 ---@return Internal.ReGui.Widget.Object

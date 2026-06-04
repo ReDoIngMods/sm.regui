@@ -1,5 +1,439 @@
 ---@diagnostic disable
----@
+
+---MyGui widget types
+---@alias Regui.WidgetType 
+---| "Button"
+---| "Canvas"
+---| "ComboBox"
+---| "DDContainer"
+---| "EditBox"
+---| "ItemBox"
+---| "ListBox"
+---| "MenuBar"
+---| "MultiListBox"
+---| "PopupMenu"
+---| "ProgressBar"
+---| "ScrollBar"
+---| "ScrollView"
+---| "ImageBox"
+---| "TextBox"
+---| "TabControl"
+---| "Widget"
+---| "Window"
+---| "StrangeButton" 
+
+---MyGui, New & old Scrap Mechanic skins
+---@alias ReGui.SkinType
+---| "InventoryBackground" [Old Scrap Mechanic]
+---| "VerticalScroll" [Old Scrap Mechanic]
+---| "GenericButton" [Old Scrap Mechanic]
+---| "LeftArrow" [Old Scrap Mechanic]
+---| "RightArrow" [Old Scrap Mechanic]
+---| "TransparentTextBox"
+---| "TabButton" [Old Scrap Mechanic]
+---| "CameraBorder"
+---| "SelectionFieldBox"
+---| "InventoryVScroll" [Old Scrap Mechanic]
+---| "DebugHSlider" [Old Scrap Mechanic]
+---| "SMEditBox"
+---| "SMButton" [Old Scrap Mechanic]
+---| "SMWhiteButton"
+---| "SMSmallButton" [Old Scrap Mechanic]
+---| "SMTextBox_NoBackground"
+---| "SMTextBox_Small_NoBackground"
+---| "SMListBoxItem" [Old Scrap Mechanic]
+---| "SMListBox" [Old Scrap Mechanic]
+---| "SMTabHeaderButton" [Old Scrap Mechanic]
+---| "SMTabControl" [Old Scrap Mechanic]
+---| "SMEmptyScrollView"
+---| "SMScrollView" [Old Scrap Mechanic]
+---| "HyperTextLine"
+---| "TileEditorHyperTextBox"
+---| "PanelEmpty"
+---| "RotatingSkin"
+---| "TextBoxSkin"
+---| "ImageBox"
+---| "Canvas"
+---| "EditClientSkin"
+---| "CheckBoxSkin" [Old MyGui]
+---| "RadioButtonSkin" [Old MyGui]
+---| "ButtonCloseSkin" [Old MyGui]
+---| "ButtonDownSkin" [Old MyGui]
+---| "ButtonUpSkin" [Old MyGui]
+---| "ButtonLeftSkin" [Old MyGui]
+---| "ButtonRightSkin" [Old MyGui]
+---| "SliderTrackVSkin" [Old MyGui]
+---| "ScrollTrackVSkin" [Old MyGui]
+---| "SliderTrackHSkin" [Old MyGui]
+---| "ScrollTrackHSkin" [Old MyGui]
+---| "ButtonSkin" [Old MyGui]
+---| "ButtonEmptySkin" [Old MyGui]
+---| "EditBoxSkin" [Old MyGui]
+---| "MenuBarSkin" [Old MyGui]
+---| "MenuItemSkin" [Old MyGui]
+---| "ScrollPanelHSkin" [Old MyGui]
+---| "ScrollPanelVSkin" [Old MyGui]
+---| "ListBoxItemSkin" [Old MyGui]
+---| "SepDownHSkin" [Old MyGui]
+---| "SepUpHSkin" [Old MyGui]
+---| "SepDownVSkin" [Old MyGui]
+---| "SepUpVSkin" [Old MyGui]
+---| "ClientDefaultSkin" [Old MyGui]
+---| "ClientTileSkin" [Old MyGui]
+---| "PanelSkin" [Old MyGui]
+---| "WhiteSkin"
+---| "CaptionEmptySkin" [Old MyGui]
+---| "CaptionSkin" [Old MyGui]
+---| "CaptionWithButtonSkin" [Old MyGui]
+---| "WindowFrameSkin" [Old MyGui]
+---| "WindowResizeLeftDownSkin" [Old MyGui]
+---| "WindowResizeRightDownSkin" [Old MyGui]
+---| "TabHeaderButtonSkin" [Old MyGui]
+---| "TabHeaderEmptySkin" [Old MyGui]
+---| "TabPanelSkin" [Old MyGui]
+---| "MenuItemNormalSkin" [Old MyGui]
+---| "MenuItemPopupButtonSkin" [Old MyGui]
+---| "MenuItemCheckButtonSkin" [Old MyGui]
+---| "ProgressBarTrackHSkin" [Old MyGui]
+---| "MultiListButtonSkin" [Old MyGui]
+---| "CheckBox" [Old MyGui]
+---| "RadioButton" [Old MyGui]
+---| "ScrollBarH" [Old MyGui]
+---| "ScrollBarV" [Old MyGui]
+---| "SliderH" [Old MyGui]
+---| "SliderV" [Old MyGui]
+---| "SliderHEmpty" [Old MyGui]
+---| "SliderVEmpty" [Old MyGui]
+---| "Button" [Old MyGui]
+---| "ButtonImage"
+---| "TextBox"
+---| "EditBox" [Old MyGui]
+---| "EditBoxStretch" [Old MyGui]
+---| "EditBoxEmpty"
+---| "WordWrapEmpty"
+---| "ComboBox" [Old MyGui]
+---| "Window" [Old MyGui]
+---| "WindowC" [Old MyGui]
+---| "WindowCS" [Old MyGui]
+---| "WindowCX" [Old MyGui]
+---| "WindowCSX" [Old MyGui]
+---| "MenuBar" [Old MyGui]
+---| "MenuBarButton" [Old MyGui]
+---| "MenuBarSeparator" [Old MyGui]
+---| "PopupMenu" [Old MyGui]
+---| "PopupMenuSeparator" [Old MyGui]
+---| "PopupMenuNormal" [Old MyGui]
+---| "PopupMenuPopup" [Old MyGui]
+---| "ProgressBar" [Old MyGui]
+---| "ProgressBarFill" [Old MyGui]
+---| "ListBoxItem" [Old MyGui]
+---| "ListBox" [Old MyGui]
+---| "ItemBox" [Old MyGui]
+---| "ItemBoxEmpty" [Old MyGui]
+---| "ScrollView" [Old MyGui]
+---| "ScrollViewEmpty" [Old MyGui]
+---| "TabHeaderButton" [Old MyGui]
+---| "TabControl" [Old MyGui]
+---| "MultiListBox" [Old MyGui]
+---| "MultiListButton" [Old MyGui]
+---| "MultiSubListBox" [Old MyGui]
+---| "TextureBox"
+---| "WhiteButton"
+---| "SMEditorListBox"
+---| "EditorWindow"
+---| "EditorWindowNoResize"
+---| "EditorEditBox"
+---| "EditorButton"
+---| "EditorCheckBox"
+---| "EditorListBox"
+---| "DressbotEffectBackground"
+---| "ContainerItemBackground"
+---| "InventoryScrollBackground"
+---| "InventoryScrollTrack"
+---| "SearchBarBackground"
+---| "HotbarItemKeybindingBackground"
+---| "PageArrowUp"
+---| "PageArrowDown"
+---| "PageIndicator"
+---| "PropertyIndicator"
+---| "ExpandButton"
+---| "EditButton"
+---| "ActiveButton"
+---| "PrimaryButton"
+---| "SecondaryButton"
+---| "EscButton"
+---| "GenderButton"
+---| "FeatureButton"
+---| "ColorBackground"
+---| "ScrollBackgroundHorizontal"
+---| "ScrollTrackHorizontal"
+---| "SettingsButton"
+---| "DropDownBackground"
+---| "DropDownCollapse"
+---| "DropDownItem"
+---| "DropDownExpandBackground"
+---| "DropDownExpand"
+---| "LargeVerticalSliderBackground"
+---| "LargeVerticalSliderInnerShadow"
+---| "LargeVerticalSliderLimiter"
+---| "LargeVerticalSliderHandle"
+---| "UpgradeButton"
+---| "LargeVerticalSliderProgress"
+---| "CraftbotRecipeItemBackground"
+---| "CraftbotVerticalScrollTrack"
+---| "CraftbotProgressBackground"
+---| "CraftbotProgressFill"
+---| "CraftbotRepeat"
+---| "StyledButtonLarge"
+---| "StyledButtonSmall"
+---| "ProcessBackground"
+---| "InteractionBindingBackground"
+---| "HudBackgroundShadowLarge"
+---| "HudBackgroundShadowSmall"
+---| "HudProgressBarDamageLarge"
+---| "HudProgressBarDamageSmall"
+---| "HudProgressBarHealth"
+---| "HudProgressBarFood"
+---| "HudProgressBarWater"
+---| "LargeHorizontalSliderInnerShadow"
+---| "LargeHorizontalSliderLimiter"
+---| "LargeHorizontalSliderProgress"
+---| "LargeHorizontalSliderHandle"
+---| "LargeHorizontalSliderBackground"
+---| "HudProgressBarBreath"
+---| "SequenceListBackground"
+---| "SequenceListBackgroundLocked"
+---| "SmallBrightSliderBackground"
+---| "SmallBrightSliderProgress"
+---| "SmallBrightSliderTrack"
+---| "ControllerCircle"
+---| "ToggleButton"
+---| "LargeVerticalSliderHandleLeft"
+---| "LargeHorizontalSliderProgressInverted"
+---| "LargeHorizontalSliderHandleNoPoint"
+---| "DressbotQueueBackground"
+---| "StyledButtonDressbotMake"
+---| "StyledButtonDressbot"
+---| "DressbotProgress"
+---| "DressbotProgressBackground"
+---| "DressbotArrowLeft"
+---| "DressbotArrowRight"
+---| "StyledButtonDressbotUnbox"
+---| "HighlightSelectionBox"
+---| "LoadingbarProgress"
+---| "LoadingbarBackground"
+---| "LoadingbarShadow"
+---| "HotbarItemBackground"
+---| "InteractionBackground"
+---| "HudBackgroundLarge"
+---| "HudBackgroundSmall"
+---| "HudBackgroundIcon"
+---| "MenuButton"
+---| "gui_keybinds_bg"
+---| "gui_keybinds_bg_white"
+---| "gui_keybinds_bg_orange"
+---| "ButtonPlay"
+---| "InventoryItemBox2"
+---| "InventoryVSlider"
+---| "InventoryHSlider"
+---| "SM_ListBoxItem"
+---| "SM_ListBox"
+---| "CraftbotVSlider"
+---| "InventoryVSliderSmall"
+---| "CraftbotProgressBar"
+---| "HUDProgressBarGreen"
+---| "HUDProgressBarYellow"
+---| "HUDProgressBarBlue"
+---| "HUDProgressBarRedLarge"
+---| "HUDProgressBarRedSmall"
+---| "HUDProgressBarLightBlue"
+---| "DressbotProgressBar"
+---| "LargeProgressBar"
+---| "BlurryBackgroundSkin"
+---| "BackgroundEngine"
+---| "BackgroundEngineNoUpgrade"
+---| "BackgroundSensor"
+---| "BackgroundSensorNoUpgrade"
+---| "BackgroundWorkbench"
+---| "BackgroundCookbot"
+---| "BackgroundHideout"
+---| "BackgroundMechanicStation"
+---| "BackgroundMechanicStationTooltip"
+---| "BackgroundPiston"
+---| "BackgroundMenuInGame"
+---| "BackgroundContainerAmmunition"
+---| "BackgroundContainerBattery"
+---| "BackgroundContainerChemicals"
+---| "BackgroundContainerFertilizer"
+---| "BackgroundContainerGas"
+---| "BackgroundContainerSeed"
+---| "BackgroundContainerWater"
+---| "BackgroundSequenceController"
+---| "BackgroundInteractableNarrow"
+---| "BackgroundInteractableWide"
+---| "BackgroundDressbot"
+---| "BackgroundBlueBot"
+---| "BackgroundGreenBot"
+---| "BackgroundRedBot"
+---| "BackgroundYellowBot"
+---| "BackgroundSensorColorSelect"
+---| "BackgroundInteractableUltraWide"
+---| "ButtonPizzaBurger"
+---| "ButtonVeggieBurger"
+---| "ButtonRevivalBaguette"
+---| "ButtonCookBot"
+---| "ButtonDressBot"
+---| "ButtonCraftBot"
+---| "ButtonRefineryBot"
+---| "ButtonResourceBot"
+---| "quest_partpin"
+---| "quest_toolpin"
+---| "quest_rotbearringpin"
+---| "quest_connectionorderpin"
+---| "BackgroundContainerItemAmmunition"
+---| "BackgroundContainerItemBattery"
+---| "BackgroundContainerItemChemicals"
+---| "BackgroundContainerItemFertilizer"
+---| "BackgroundContainerItemGas"
+---| "BackgroundContainerItemSeeds"
+---| "BackgroundContainerItemWater"
+---| "BackgroundFuelBattery"
+---| "BackgroundFuelGas"
+---| "BackgroundDarkRoundedUpperRight"
+---| "BackgroundDarkRoundedLowerLeft"
+---| "BackgroundLightSquared"
+---| "BackgroundLightRoundedLowerLeft"
+---| "BackgroundPopup"
+---| "BackgroundPromptNarrow"
+---| "BackgroundPromptWide"
+---| "ItemColorLine"
+---| "InventoryTab"
+---| "ModPanelBackground"
+---| "BackgroundInventoryToolTip"
+---| "ToolTipLeft"
+---| "ToolTipRight"
+---| "TutorialBgBottom"
+---| "TutorialBgMain"
+---| "BeaconBG"
+---| "BeaconBottomBG"
+---| "BeaconIconColor"
+---| "BeaconIconColorBorder"
+---| "BeaconIconBorder"
+---| "BeaconWorldIconBG"
+---| "Banner"
+---| "Unlock"
+---| "BackgroundCraftbot"
+---| "BackgroundCraftbotTooltip"
+---| "CraftbotTab"
+---| "DressbotRewardItem"
+---| "DressbotProcessItem"
+---| "DressbotDragProcessItem"
+---| "DressbotBoxItem"
+---| "DressbotDragBoxItem"
+---| "BackgroundLiftImport"
+---| "BackgroundPanel"
+---| "LiftTab"
+---| "LiftGrid"
+---| "LiftInput"
+---| "BackgroundLiftExport"
+---| "LiftCameraButton"
+---| "LiftSteamButton"
+---| "EditBox_LiftInput"
+---| "LogbookBG"
+---| "LogbookGridBG@720"
+---| "LogbookBeaconIconBG"
+---| "LogbookButton"
+---| "LogbookButtonBeacon"
+---| "LogbookButtonSwitch"
+---| "LogbookItemBG"
+---| "LogItemBox"
+---| "BeaconItemBox"
+---| "PhotoDescription"
+---| "LogicGateBG"
+---| "LogicGateButtons"
+---| "NonBlurryBackgroundDarkRoundedUpperRight"
+---| "NonBlurryBackgroundDarkRoundedLowerLeft"
+---| "NonBlurryBackgroundLightSquared"
+---| "NonBlurryBackgroundLightRoundedLowerLeft"
+---| "BackgroundMenuSurvival"
+---| "BackgroundMenuCreative"
+---| "BackgroundMenuCreative_tilebuilder"
+---| "BackgroundMenuCreative_worldbuilder"
+---| "BackgroundMenuDownload"
+---| "BackgroundMenuChallenge"
+---| "BackgroundMenuChallenge_challengebuilder"
+---| "BackgroundMenuChallenge_details"
+---| "BackgroundMenuChallenge_builderdetails"
+---| "PickupBgParts"
+---| "PickupBgBlocks"
+---| "PickupBgInteractives"
+---| "PickupBgTools"
+---| "PickupBgConsumables"
+
+---All fonts available in Scrap Mechanic, including their size, spacing and supported characters. There may be inaccuracies for spacing & font size!
+---@alias ReGui.FontName
+---| SM_HeaderXLarge_Wide              |   FSize   60      |   Tracking   1.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBCGHJKLQWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| SM_HeaderLarge_Wide               |   FSize   40      |   Tracking   6.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
+---| SM_HeaderLarge_Medium             |   FSize   40      |   Tracking   2.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
+---| SM_HeaderLarge_Narrow             |   FSize   40      |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
+---| SM_HeaderMedium                   |   FSize   30      |   Tracking   2      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzFJKPQVXZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| SM_SubHeader                      |   FSize   25      |   Tracking   3      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_Header                         |   FSize   22.50   |   Tracking   1.33   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_HeaderSmall                    |   FSize   20      |   Tracking   1.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
+---| SM_HeaderTiny                     |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_Tab                            |   FSize   22.50   |   Tracking   1.33   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_TabSmall                       |   FSize   20      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_TextLabel                      |   FSize   22.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_Label                          |   FSize   22.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_LabelSmall                     |   FSize   20      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_LabelTiny                      |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_LabelMini                      |   FSize   15      |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBFGHJKMNPQUXYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| SM_SliderLabel                    |   FSize   12.50   |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBCDEGHJKNPQRUVYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| SM_SearchText                     |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_ToolTipText                    |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_TextLarge                      |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   qxEHJKLNOPRVWX0123456789`-=[]\;'/~_{}|"<>?@#$%^&*()
+---| SM_Text                           |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_TextDesc                       |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   bdfgijkmquvxyzABCDEFGHIJKLMNOPQRTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| SM_TextSmall                      |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_TextTiny                       |   FSize   17.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_ItemTitle                      |   FSize   27.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_GameName                       |   FSize   27.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_ButtonLarge                    |   FSize   32.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzDJQVWYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| SM_Button                         |   FSize   25      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_ButtonSmall                    |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
+---| SM_ButtonTiny                     |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_ButtonSmallBold                |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_NumberHuge                     |   FSize   52.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',./~_+{}|"<>?!@#$%^&*()
+---| SM_NumberSmall                    |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
+---| SM_NumberTiny                     |   FSize   17.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_NumberMini                     |   FSize   15      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWYZ`-=[]\;',.~_+{}|:"<>?!@#$%^&()
+---| SM_UserName                       |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_ListItem                       |   FSize   22.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_HotbarBinding                  |   FSize   16.25   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_IntlText                       |   FSize   45      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| SM_Digital                        |   FSize   45      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',./~_+{}|"<>?!@#$%^&*()
+---| X_Interactable_Timer_TimeUnit     |   FSize   37.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLNOPQRTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| X_Interactable_Timer_TickCount    |   FSize   27.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABDEFGHJLMNOPQRUVWXYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| X_Interactable_LogicGate_Category |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| X_MenuGamemodeMenu_GameMode       |   FSize   62.50   |   Tracking   3.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBDFJKMOPQWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| X_Hud_Alert                       |   FSize   30      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| X_Hud_Interaction                 |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| X_Hud_PlayerName                  |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| X_Hud_ItemStack                   |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| HandbookTitle                     |   FSize   13.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzJKXZ0123456789`-=[]\;,./~_+{}|:"<>?!@#$%^&*() 
+---| HandbookSubTitle                  |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGJKOVXZ01246789`=[]\;/~_{}|:<>!@#$%^*
+---| HandbookSubTitleItalic            |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzABCDFGHIJKMNOPQRSUVWXYZ0123456789`-=[]\;/~_+{}|:"<>?@#$%^&*()
+---| HandbookPageCount                 |   FSize   40      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',.~_+{}|:"<>?!@#$%^&*()
+---| HandbookDescriptionLarge          |   FSize   23.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jxDEFGHJKLMNOQRUVWXYZ0123456789`-=[]\;'/~_+{}|:"<>?!@#$%^&*()
+---| HandbookDescriptionSmall          |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGIJKLMNORVXZ0123456789`=[]\;'/~_+{}|"<>?@#$%^&*()
+---| HandbookInstructionLarge          |   FSize   41.67   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dfghjpqwxzADEFGJKLMNOQRSTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| HandbookInstructionMedium         |   FSize   28.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   fqwxyzBEFGKNQTUVWXYZ0123456789`-=[]\;',.~_+{}|:"<>?!@#$%^&*()
+---| HandbookInstructionSmall          |   FSize   25      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   qvxzEFGIJMNOQUVXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| HandbookLogicDescription          |   FSize   13.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   bjmpquwxzBCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| HandbookFAQQuestion               |   FSize   26.67   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jkqxzABCDEFGJKLNPQRSTUVXYZ0123456789`-=[]\;'./~_+{}|:"<>@#$%^&*()
+---| HandbookFAQAnswer                 |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGJKOVXZ01246789`=[]\;/~_{}|:<>!@#$%^*
+---| DeJaVuSans                        |   FSize   18.75   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   FULL      |   Missing en-US:   None
+
 ---sm.regui, ReDoing Graphical User Interfaces
 sm.regui = {}
 
@@ -79,6 +513,12 @@ function GuiInterface:toggleAutomaticConversionToRealUnits(value) end
 ---@return ReGui.Widget? widget The found widget, or nil if not found.
 function GuiInterface:findWidget(widgetName, recursive) end
 
+---Creates a widget and adds it to the GUIInterface.
+---@param name string The name of the widget to create.
+---@param type ReGui.WidgetType The type of the widget to create.
+---@param skin string The skin of the widget to create.
+function GuiInterface:createWidget(name, type, skin) end
+
 ---A parsed widget in the GUI tree.
 ---@class ReGui.Widget
 local Widget = {}
@@ -153,11 +593,11 @@ function Widget:setGUIInterface(guiInterface) end
 function Widget:getName() end
 
 ---Gets the skin of this widget.
----@return string skin The skin of this widget.
+---@return ReGui.SkinType skin The skin of this widget.
 function Widget:getSkin() end
 
 ---Gets the type of this widget.
----@return string type The type of this widget.
+---@return ReGui.WidgetType type The type of this widget.
 function Widget:getType() end
 
 ---Sets the name of this widget.
@@ -165,11 +605,11 @@ function Widget:getType() end
 function Widget:setName(name) end
 
 ---Sets the skin of this widget.
----@param skin string The new skin for this widget.
+---@param skin ReGui.SkinType The new skin for this widget.
 function Widget:setSkin(skin) end
 
 ---Sets the type of this widget.
----@param type string The new type for this widget.
+---@param type ReGui.WidgetType The new type for this widget.
 function Widget:setType(type) end
 
 ---Finds a child widget by name.
