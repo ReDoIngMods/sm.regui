@@ -22,6 +22,8 @@ function DebugInteractableClass:client_onInteract(character, state)
     
     local gui = sm.regui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/Test.relayout")
     local widget = gui:findWidget("MainPanel", true)
+    widget:destroy()
+    
     gui:open()
 end
 

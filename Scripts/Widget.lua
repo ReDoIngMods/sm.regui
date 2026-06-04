@@ -1,10 +1,15 @@
 ---@class Internal.ReGui.Widget.Class
 local Widget = {}
 Widget.__type = "ReGui.Widget"
-Widget.__index = Widget
-Widget.__tostring = CreateCustomTostringFunction(Widget.__type)
+Widget.__index = function (tbl, index)
+    local isDeleted = rawget(tbl, "isDeleted")
+    if isDeleted then
+        error(string.format("Attempt to access %s on deleted widget", tostring(index)), 2)
+    end
 
-local GUI_INTERFACE_TYPE = "ReGui.GUIInterface"
+    return Widget[index]
+end
+Widget.__tostring = CreateCustomTostringFunction(Widget.__type)
 
 local VALID_WIDGET_TYPES = {
     ["Button"] = true,
@@ -84,6 +89,8 @@ function Widget.parseWidget(node, parent, guiInterface)
     return self
 end
 
+-- CLONING & DELETION --
+
 ---@param self Internal.ReGui.Widget.Object
 ---@return Internal.ReGui.Widget.Object
 function Widget:clone()
@@ -104,6 +111,21 @@ function Widget:clone()
     end
 
     return clone
+end
+
+---@param self Internal.ReGui.Widget.Object
+function Widget:destroy()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+
+    self:setParent(nil)
+    self:setGUIInterface(nil)
+    self.isDeleted = true
+
+    for _, child in pairs(self.children) do
+        child:destroy()
+    end
+
+    self.children = {}
 end
 
 -- USER STRINGS --
@@ -213,11 +235,7 @@ end
 ---@param parent Internal.ReGui.Widget.Object?
 function Widget:setParent(parent)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-
-    ErrorHandler.AssertValue(parent, 2, function(value)
-        return value == nil or (type(value) == "table" and value.__type == Widget.__type)
-    end, "Expected ReGui.Widget instance or nil")
-
+    ErrorHandler.AssertArgument(parent, 2, { "ReGui.Widget", "nil" })
     ErrorHandler.AssertCondition(parent ~= self, 2, "Widget cannot be its own parent")
 
     if self.parent ~= nil then
@@ -248,12 +266,12 @@ end
 ---@param guiInterface Internal.ReGui.GUIInterface.Object?
 function Widget:setGUIInterface(guiInterface)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertValue(guiInterface, 2, function(value)
-        return value == nil or (type(value) == "table" and value.__type == GUI_INTERFACE_TYPE)
-    end, "Expected ReGui.GUIInterface instance or nil")
+    ErrorHandler.AssertArgument(guiInterface, 2, { "ReGui.GUIInterface", "nil" })
 
     ApplyGUIInterfaceRecursive(self, guiInterface)
 end
+
+-- BASIC NODE PROPERTIES --
 
 ---@param self Internal.ReGui.Widget.Object
 ---@return string name
@@ -309,6 +327,8 @@ function Widget:setType(type)
 
     self.nodeProperties.type = type
 end
+
+-- WIDGET HIERARCHY --
 
 ---@param self Internal.ReGui.Widget.Object
 ---@param name string

@@ -87,6 +87,9 @@ local Widget = {}
 ---@return ReGui.Widget clone The cloned widget.
 function Widget:clone() end
 
+---Deletes this widget, removing it from the GUI tree and freeing associated resources.
+function Widget:destroy() end
+
 ---Gets a user-string value by key.
 ---@param key string The user-string key to read.
 ---@return string? value The value for the key, or nil if the key does not exist.

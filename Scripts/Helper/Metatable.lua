@@ -22,8 +22,8 @@ local tableToMetatable = initalizeTableToMetatable()
 ---@param metatable? metatable|table
 ---@return table
 function setmetatable(tbl, metatable)
-    ErrorHandler.AssertArgument(tbl, 1, "table")
-    ErrorHandler.AssertArgument(metatable, 2, {"table", "nil"})
+    ErrorHandler.AssertArgument(tbl, 1, "table", nil, true)
+    ErrorHandler.AssertArgument(metatable, 2, {"table", "nil"}, nil, true)
 
     if not metatable then
         local metatable = tableToMetatable[tbl]
@@ -76,7 +76,7 @@ end
 ---@return table metatable
 ---@nodiscard
 function getmetatable(tbl)
-    ErrorHandler.AssertArgument(tbl, 1, "table")
+    ErrorHandler.AssertArgument(tbl, 1, "table", nil, true)
     
     local metatable = tableToMetatable[tbl]
     if type(metatable) ~= "table" then
@@ -96,7 +96,7 @@ end
 ---@return any
 ---@nodiscard
 function rawget(tbl, key)
-    ErrorHandler.AssertArgument(tbl, 1, "table")
+    ErrorHandler.AssertArgument(tbl, 1, "table", nil, true)
     ErrorHandler.AssertArgument(key, 2, "string")
 
     local metatable = tableToMetatable[tbl]
@@ -121,7 +121,7 @@ end
 ---@return integer len
 ---@nodiscard
 function rawlen(value)
-    ErrorHandler.AssertArgument(value, 1, {"table", "string"})
+    ErrorHandler.AssertArgument(value, 1, {"table", "string"}, nil, true)
 
     -- We dont support metatable for strings
     if type(value) == "string" then
@@ -153,7 +153,7 @@ end
 ---@param value any
 ---@return table
 function rawset(tbl, key, value)
-    ErrorHandler.AssertArgument(tbl, 1, "table")
+    ErrorHandler.AssertArgument(tbl, 1, "table", nil, true)
     ErrorHandler.AssertArgument(key, 2, "string")
 
     local metatable = tableToMetatable[tbl]
@@ -168,6 +168,15 @@ function rawset(tbl, key, value)
     metatable.__newindex = old
 
     return tbl
+end
+
+function __getmetatable_unsafe(tbl)
+    local metatable = tableToMetatable[tbl]
+    if type(metatable) ~= "table" then
+        return metatable
+    end
+
+    return metatable.__metatable or metatable
 end
 
 print("Loaded Helper/Metatable.lua")

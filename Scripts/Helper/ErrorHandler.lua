@@ -1,8 +1,16 @@
 ErrorHandler = {}
 
 local function GetRealType(value)
-    if type(value) ~= "number" then
-        return type(value)
+    local luaType = type(value)
+    if luaType ~= "number" then
+        if luaType == "table" then
+            local meta = __getmetatable_unsafe(value)
+            if meta and type(meta.__type) == "string" then
+                return meta.__type
+            end
+        end
+        
+        return luaType
     end
 
     if value ~= value then
@@ -16,13 +24,19 @@ local function GetRealType(value)
     return "number"
 end
 
-local function TypeMatches(value, expected)
+local function TypeMatches(value, expected, enableRawTypeCheck)
     local realType = GetRealType(value)
-    local luaType = type(value)
-
     if type(expected) == "table" then
         for _, allowed in pairs(expected) do
-            if allowed == realType or allowed == luaType then
+            if allowed == "number" and realType == "integer" then
+                return true
+            end
+
+            if allowed == realType then
+                return true
+            end
+
+            if enableRawTypeCheck and allowed == type(value) then
                 return true
             end
         end
@@ -30,7 +44,15 @@ local function TypeMatches(value, expected)
         return false
     end
 
-    return expected == realType or expected == luaType
+    if expected == "number" and realType == "integer" then
+        return true
+    end
+
+    if enableRawTypeCheck and expected == type(value) then
+        return true
+    end
+
+    return expected == realType
 end
 
 local function FormatExpected(expected)
@@ -110,8 +132,9 @@ end
 ---@param argumentIndex integer
 ---@param expected string|string[]
 ---@param overwrite string|string[]
-function ErrorHandler.AssertArgument(argument, argumentIndex, expected, overwrite)
-    if TypeMatches(argument, expected) then
+---@param enableRawTypeCheck boolean?
+function ErrorHandler.AssertArgument(argument, argumentIndex, expected, overwrite, enableRawTypeCheck)
+    if TypeMatches(argument, expected, enableRawTypeCheck) then
         return
     end
 
@@ -137,10 +160,11 @@ end
 ---@param expected string|string[]
 ---@param displayPath string
 ---@param overwrite string|string[]
-function ErrorHandler.AssertTableValue(sourceTable, argumentIndex, path, expected, displayPath, overwrite)
+---@param enableRawTypeCheck boolean?
+function ErrorHandler.AssertTableValue(sourceTable, argumentIndex, path, expected, displayPath, overwrite, enableRawTypeCheck)
     local value = ResolvePathValue(sourceTable, path)
 
-    if TypeMatches(value, expected) then
+    if TypeMatches(value, expected, enableRawTypeCheck) then
         return
     end
 
