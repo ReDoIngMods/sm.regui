@@ -495,6 +495,10 @@ function GuiInterface:open() end
 ---Closes the GuiInterface
 function GuiInterface:close() end
 
+---Checks if the GuiInterface is currently open.
+---@return boolean isOpen True if the GuiInterface is open, false otherwise.
+function GuiInterface:isOpen() end
+
 ---Clones the GuiInterface, creating a new instance with the same properties and widgets.
 ---@return ReGui.GuiInterface clone The cloned GuiInterface
 function GuiInterface:clone() end
@@ -665,6 +669,14 @@ function Widget:setPositionReal(x, y) end
 ---@param width number The new width in real units.
 ---@param height number The new height in real units.
 function Widget:setSizeReal(width, height) end
+
+---Gets the text content of this widget, if applicable.
+---@return string? text The text content, or nil if not set.
+function Widget:getText() end
+
+---Sets the text content of this widget, if applicable.
+---@param text string? The new text content for this widget. Pass nil to clear the text.
+function Widget:setText(text) end
 
 ---Renders this widget and its children into MyGUI layout XML.
 ---@param indentationLevel number? The base indentation level used for pretty rendering.

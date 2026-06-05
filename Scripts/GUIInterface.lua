@@ -230,10 +230,17 @@ end
 function GUIInterface:close()
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
 
-    if sm.exists(self.activeInternalGui) then
+    if self.activeInternalGui and sm.exists(self.activeInternalGui) then
         self.activeInternalGui:destroy()
         self.activeInternalGui = nil
     end
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+function GUIInterface:isOpen()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+
+    return self.activeInternalGui and sm.exists(self.activeInternalGui)
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object

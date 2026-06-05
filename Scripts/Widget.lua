@@ -557,6 +557,32 @@ function Widget:setSizeReal(rw, rh)
     self:setSize(w, h)
 end
 
+-- TEXT --
+
+-- TODO: Implement TextManager for translation support & update text after ui gets opened.
+
+---@param self Internal.ReGui.Widget.Object
+---@return string? text
+function Widget:getText()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    
+    local text = self.properties.Caption
+    if type(text) == "string" then
+        return text
+    end
+
+    return nil
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param text string?
+function Widget:setText(text)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(text, 2, { "string", "nil" })
+
+    self.properties.Caption = text
+end
+
 -- RENDERING --
 
 
@@ -588,12 +614,10 @@ function Widget:renderWidget(indentationLevel, prettify)
     local function insertCoordinates()
         local useRealCoordinates = self.guiInterface and self.guiInterface:isAutoConversionToRealUnitsEnabled()
         if useRealCoordinates then
-            -- TODO
             local realPositionX, realPositionY = self:getPositionReal()
             local realSizeX, realSizeY = self:getSizeReal()
 
             table.insert(buffer, string.format("position_real=\"%.3f %.3f %.3f %.3f\"", realPositionX, realPositionY, realSizeX, realSizeY))
-            --table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
         else
             table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
         end
