@@ -31,7 +31,7 @@ end
 
 ---@param self Internal.ReGui.TextManager.Object
 ---@return fun(...: any): string
-function TextManager:getTranslatorFunction()
+function TextManager:getTranslationFunction()
     ErrorHandler.AssertSelf(self, TextManager.__type)
 
     return self.translatorFunction
@@ -39,7 +39,7 @@ end
 
 ---@param self Internal.ReGui.TextManager.Object
 ---@param translatorFunction fun(...: any): string
-function TextManager:setTranslatorFunction(translatorFunction)
+function TextManager:setTranslationFunction(translatorFunction)
     ErrorHandler.AssertSelf(self, TextManager.__type, true)
     ErrorHandler.AssertArgument(translatorFunction, 2, {"function"})
 
@@ -62,3 +62,5 @@ function TextManager:translateText(...)
 
     return self.translatorFunction(...)
 end
+
+print("Loaded TextManager.lua")

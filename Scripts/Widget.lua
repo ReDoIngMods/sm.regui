@@ -71,6 +71,9 @@ function Widget.parseWidget(node, parent, guiInterface)
     self.parent = parent
     self.guiInterface = guiInterface
 
+    self.translatable = true
+    self.pendingTextContent = nil ---@type string?
+
     self.nodeProperties.name = self.nodeProperties.name or ""
     self.nodeProperties.skin = self.nodeProperties.skin or "PanelEmpty"
     self.nodeProperties.type = self.nodeProperties.type or "Widget"
@@ -118,8 +121,8 @@ function Widget:addWidget(widgetName, widgetType, widgetSkin)
         coordinate = {
             x = 0,
             y = 0,
-            width = 0,
-            height = 0
+            width = 100,
+            height = 100
         },
         children = {}
     }, self, self.guiInterface)
@@ -146,6 +149,9 @@ function Widget:clone()
         local childClone = child:clone()
         childClone:setParent(clone)
     end
+
+    self.translatable = self.translatable
+    self.pendingTextContent = self.pendingTextContent
 
     return clone
 end
@@ -212,6 +218,8 @@ function Widget:setNodeProperty(key, value)
     ErrorHandler.AssertArgument(key, 2, "string")
     ErrorHandler.AssertArgument(value, 3, "string")
 
+    ErrorHandler.AssertCondition(key ~= "name" and key ~= "type" and key ~= "skin" and key ~= "position" and key ~= "position_real", 2, "Cannot set reserved node property: " .. key)
+    
     self.nodeProperties[key] = value
 end
 
@@ -243,6 +251,8 @@ function Widget:setProperty(key, value)
     ErrorHandler.AssertArgument(key, 2, "string")
     ErrorHandler.AssertArgument(value, 3, "string")
 
+    ErrorHandler.AssertCondition(key ~= "Caption" and key ~= "Image" and key ~= "Color" and key ~= "FontName" and key ~= "TextAlign", 2, "Cannot set reserved property: " .. key)
+    
     self.properties[key] = value
 end
 
@@ -559,8 +569,6 @@ end
 
 -- TEXT --
 
--- TODO: Implement TextManager for translation support & update text after ui gets opened.
-
 ---@param self Internal.ReGui.Widget.Object
 ---@return string? text
 function Widget:getText()
@@ -581,10 +589,35 @@ function Widget:setText(text)
     ErrorHandler.AssertArgument(text, 2, { "string", "nil" })
 
     self.properties.Caption = text
+
+    if self.guiInterface and self.guiInterface:isOpen() then
+        if not self.translatable then
+            self.guiInterface.activeInternalGui:setText(self.nodeProperties.name, text)
+            return
+        end
+
+        local translatedText = self.guiInterface.textManager:translateText(text)
+        self.guiInterface.activeInternalGui:setText(self.nodeProperties.name, translatedText)
+    end
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@return boolean isTranslationEnabled
+function Widget:isTranslationEnabled()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    return self.translatable
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param enabled boolean
+function Widget:setTranslationEnabled(enabled)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(enabled, 2, "boolean")
+
+    self.translatable = enabled
 end
 
 -- RENDERING --
-
 
 ---@param self Internal.ReGui.Widget.Object
 function Widget:renderWidget(indentationLevel, prettify)
@@ -640,7 +673,12 @@ function Widget:renderWidget(indentationLevel, prettify)
         table.insert(buffer, ">")
 
         for key, value in PredictablePairs(self.properties) do
-            table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
+            if self.translatable and key == "Caption" then
+                local translatedText = self.guiInterface and self.guiInterface.textManager:translateText(value) or value
+                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, translatedText))
+            else
+                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
+            end
         end
 
         for _, controller in PredictablePairs(self.controllers) do
@@ -696,7 +734,12 @@ function Widget:renderWidget(indentationLevel, prettify)
         for key, value in PredictablePairs(self.properties) do
             table.insert(buffer, "\n")
             table.insert(buffer, generateIndentation(indentationLevel + 1))
-            table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
+            if self.translatable and key == "Caption" then
+                local translatedText = self.guiInterface and self.guiInterface.textManager:translateText(value) or value
+                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, translatedText))
+            else
+                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
+            end
         end
 
         for _, controller in PredictablePairs(self.controllers) do

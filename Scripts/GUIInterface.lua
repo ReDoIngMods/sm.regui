@@ -367,6 +367,39 @@ function GUIInterface:addWidget(widgetName, widgetType, widgetSkin)
     return widgetObject
 end
 
+---@param self Internal.ReGui.GUIInterface.Object
+---@param widgetName string
+---@param text string
+function GUIInterface:setText(widgetName, text)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+    ErrorHandler.AssertArgument(widgetName, 2, "string")
+    ErrorHandler.AssertArgument(text, 3, "string")
+
+    local widget = self:findWidget(widgetName, true)
+    if not widget then
+        sm.log.warning(string.format("Failed to set text for widget '%s': widget not found", widgetName))
+        return
+    end
+
+    widget:setText(text)
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+---@param widgetName string
+---@return string?
+function GUIInterface:getText(widgetName)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+    ErrorHandler.AssertArgument(widgetName, 2, "string")
+
+    local widget = self:findWidget(widgetName, true)
+    if not widget then
+        sm.log.warning(string.format("Failed to get text for widget '%s': widget not found", widgetName))
+        return ""
+    end
+
+    return widget:getText()
+end
+
 sm.regui.guiinterface = GUIInterface
 
 print("Loaded GUIInterface.lua")

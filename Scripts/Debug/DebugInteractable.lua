@@ -15,16 +15,27 @@ end
 
 function DebugInteractableClass:client_onCreate()
     print("DebugInteractableClass:client_onCreate")
+
+    self.gui = sm.regui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/Test.relayout")
+    
+    local textManager = self.gui:getTextManager()
+    textManager:setTranslationFunction(function(key)
+        if key == "test.text" then
+            return "This is a translated text!"
+        end
+
+        return key
+    end)
 end
 
 function DebugInteractableClass:client_onInteract(character, state)
     if not state then return end
     
-    local gui = sm.regui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/Test.relayout")
-    local widget = gui:findWidget("MainPanel", true)
-    widget:destroy()
-    
-    gui:open()
+    self.gui:open()
+end
+
+function DebugInteractableClass:client_onFixedUpdate()
+    self.gui:setText("MainText", "Server Ticks: " .. sm.game.getServerTick())
 end
 
 function DebugInteractableClass:client_onRefresh()

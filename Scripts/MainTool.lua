@@ -22,6 +22,8 @@ dofile("Helper/XMLEscape.lua")
 
 dofile("Helper/Binding.lua")
 
+dofile("Managers/TextManager.lua")
+
 sm.regui = sm.regui or {}
 sm.regui.internal = sm.regui.internal or {}
 
