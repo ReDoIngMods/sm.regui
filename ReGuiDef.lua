@@ -484,6 +484,10 @@ function sm.regui.xmlcolorful.colorXML(xml, theme) end
 ---@class ReGui.GuiInterface
 local GuiInterface = {}
 
+---Returns the attached TextManager of this GUIInterface.
+---@return ReGui.TextManager textManager The attached TextManager.
+function GuiInterface:getTextManager() end
+
 ---Renders the GUIInterface into a valid MyGUI layout file.
 ---@param prettify boolean? Whether the output should be as small as possible or be readable for the user. Defaults to minimal.
 ---@return string output The produced output.
@@ -568,12 +572,12 @@ function Widget:getAllNodePropertyKeys() end
 
 ---Gets a property value by key.
 ---@param key string The property key to read.
----@return string? value The value for the key, or nil if the key does not exist.
+---@return (string|number|boolean)? value The value for the key, or nil if the key does not exist.
 function Widget:getProperty(key) end
 
 ---Sets a property value.
 ---@param key string The property key to write.
----@param value string The value to assign.
+---@param value (string|number|boolean)? The value to assign.
 function Widget:setProperty(key, value) end
 
 ---Gets all property keys in this widget.
@@ -683,3 +687,24 @@ function Widget:setText(text) end
 ---@param prettify boolean? Whether to render with indentation and line breaks.
 ---@return string output The rendered XML fragment for this widget subtree.
 function Widget:renderWidget(indentationLevel, prettify) end
+
+---Manages text for proper updating & translation
+---@class ReGui.TextManager
+local TextManager = {}
+
+---Clones the TextManager, creating a new instance with the same properties.
+---@return ReGui.TextManager clone The cloned TextManager
+function TextManager:clone() end
+
+---Gets the translation function currently set.
+---@return fun(...: any): string
+function TextManager:getTranslationFunction() end
+
+---Sets the translation function to use for translating text keys.
+---@param translationFunction fun(...: any): string The function to use for translating text keys.
+function TextManager:setTranslationFunction(translationFunction) end
+
+---Translates a text key using the current translation function.
+---@param ... any The arguments to pass to the translation function.
+---@return string translation The translated text.
+function TextManager:translateText(...) end

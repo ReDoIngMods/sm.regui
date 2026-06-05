@@ -128,6 +128,8 @@ function GUIInterface.new(path)
     self.activeInternalGui = nil ---@type GuiInterface?
     self.settings = nil ---@type GuiSettings?
 
+    self.textManager = TextManager.new(self)
+
     return self
 end
 
@@ -164,6 +166,13 @@ function GUIInterface.newBlank()
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
+---@return Internal.ReGui.TextManager.Object
+function GUIInterface:getTextManager()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+    return self.textManager
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
 ---@return Internal.ReGui.GUIInterface.Object
 function GUIInterface:clone()
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
@@ -172,6 +181,7 @@ function GUIInterface:clone()
     clone.data = CloneTable(self.data)
     clone.toRealCoordinates = self.toRealCoordinates
     clone.settings = self.settings or CloneTable(self.settings)
+    clone.textManager = self.textManager:clone()
 
     for _, widget in pairs(self.rootWidgets) do
         table.insert(clone.rootWidgets, widget:clone(clone))

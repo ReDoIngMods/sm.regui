@@ -27,4 +27,11 @@ function GetTableSize(tbl)
     return count
 end
 
+function PackTable(...)
+    return {
+        n = select("#", ...),
+        ...
+    }
+end
+
 print("Loaded Helpers/TableUtils.lua")
