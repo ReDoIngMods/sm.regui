@@ -392,6 +392,13 @@ function Widget:findWidget(name, recursive)
     return nil
 end
 
+---@param self Internal.ReGui.Widget.Object
+---@return Internal.ReGui.Widget.Object[]
+function Widget:getChildren()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    return self.children
+end
+
 -- PIXEL POSITION/SIZE --
 
 ---@param self Internal.ReGui.Widget.Object

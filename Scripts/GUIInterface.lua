@@ -309,6 +309,13 @@ function GUIInterface:findWidget(widgetName, recursive)
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
+---@return Internal.ReGui.Widget.Object[]
+function GUIInterface:getRootWidgets()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+    return self.rootWidgets
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
 ---@param widgetName string
 ---@param widgetType string?
 ---@param widgetSkin string?

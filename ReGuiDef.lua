@@ -513,6 +513,10 @@ function GuiInterface:toggleAutomaticConversionToRealUnits(value) end
 ---@return ReGui.Widget? widget The found widget, or nil if not found.
 function GuiInterface:findWidget(widgetName, recursive) end
 
+---Gets the root widgets of this GUIInterface.
+---@return ReGui.Widget[] rootWidgets A list of root widgets.
+function GuiInterface:getRootWidgets() end
+
 ---Creates a widget and adds it to the GUIInterface.
 ---@param name string The name of the widget to create.
 ---@param type ReGui.WidgetType The type of the widget to create.
@@ -617,6 +621,10 @@ function Widget:setType(type) end
 ---@param recursive boolean Whether to search recursively through descendants. Defaults to false.
 ---@return ReGui.Widget? widget The found child widget, or nil if not found.
 function Widget:findWidget(widgetName, recursive) end
+
+---Gets the child widgets of this widget.
+---@return ReGui.Widget[] childWidgets A list of child widgets.
+function Widget:getChildWidgets() end
 
 ---Gets the pixel position of this widget.
 ---@return integer x The x-coordinate of the widget in pixels.
