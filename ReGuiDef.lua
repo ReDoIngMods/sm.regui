@@ -478,6 +478,46 @@ function sm.regui.xmlcolorful.getTheme(name) end
 ---@return string coloredXML The color-prefixed string
 function sm.regui.xmlcolorful.colorXML(xml, theme) end
 
+---Utility functions for sm.regui
+sm.regui.utils = {}
+
+---Creates a translator function for use with `TextManager` in `GuiInterface`.
+---
+---The translator reads from a JSON file at:
+---`$CONTENT_DATA/Gui/Languages/<CurrentLanguage>/<fileName>.json`
+---
+---The JSON file must be a flat key-value object, where each key is a translation key and
+---each value is the translated string. Missing files or unknown keys fall back to returning
+---the key itself.
+---
+---**JSON format**
+---```jsonc
+---{
+---    "greeting":        "Hello, World!",
+---    "welcome_user":    "Welcome, %s!",        // %s is replaced by the first argument
+---    "items_in_bag":    "%s has %d item(s).",  // multiple placeholders are supported
+---}
+---```
+---
+---**Example Usage**
+---```lua
+---local translator = sm.regui.utils.createTranslatorJSONFile("mymod_translations")
+---
+---translator("greeting")                      -- "Hello, World!"
+---translator("welcome_user", "Alice")         -- "Welcome, Alice!"
+---translator("items_in_bag", "Alice", 3)      -- "Alice has 3 item(s)."
+---translator("unknown_key")                   -- "unknown_key"  (fallback)
+---
+----- You also can use it directly with TextManager:
+---guiInterface:getTextManager():setTranslator(translator)
+---```
+---
+---Additional arguments are forwarded to `string.format`, so any format specifiers
+---supported by Lua's `string.format` (`%s`, `%d`, `%f`, etc.) can be used in values.
+---@param fileName string The name of the JSON file (without path, with `.json` extension)
+---@return fun(key: string, ...: any): string translator
+function sm.regui.utils.createTranslatorJSONFile(fileName) end
+
 --- CLASSES ---
 
 ---A interface for creating and managing GUIs with sm.regui

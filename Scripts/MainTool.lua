@@ -64,7 +64,11 @@ function MainToolClass:server_onRefresh()
 end
 
 ---@param data {functionPath: string, arguments: any[], totalArguments: integer}
-function MainToolClass:svcl_executeCode(data)
+function MainToolClass:svcl_executeCode(data, player)
+    if player then -- Prevents executing code via sendToServer
+        return
+    end
+
     ErrorHandler.AssertArgument(data, 1, "table")
 
     -- Hack but works
