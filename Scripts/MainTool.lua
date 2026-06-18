@@ -71,6 +71,10 @@ function MainToolClass:svcl_executeCode(data, player)
         return
     end
 
+    if sm.isServerMode() then
+        return
+    end
+
     ErrorHandler.AssertArgument(data, 1, "table")
 
     -- Hack but works
