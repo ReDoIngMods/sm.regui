@@ -130,6 +130,8 @@ function GUIInterface.new(path)
 
     self.textManager = TextManager.new(self)
 
+    self.commands = {}
+
     return self
 end
 
@@ -162,6 +164,10 @@ function GUIInterface.newBlank()
     self.activeInternalGui = nil ---@type GuiInterface?
     self.settings = nil ---@type GuiSettings?
 
+    self.textManager = TextManager.new(self)
+
+    self.commands = {}
+
     return setmetatable(self, GUIInterface)
 end
 
@@ -182,6 +188,7 @@ function GUIInterface:clone()
     clone.toRealCoordinates = self.toRealCoordinates
     clone.settings = self.settings or CloneTable(self.settings)
     clone.textManager = self.textManager:clone()
+    clone.commands = CloneTable(self.commands)
 
     for _, widget in pairs(self.rootWidgets) do
         table.insert(clone.rootWidgets, widget:clone(clone))
@@ -233,6 +240,10 @@ function GUIInterface:open()
     self:close()
     
     self.activeInternalGui = sm.gui.createGuiFromLayout(filePath, true, self.settings)
+    for _, command in pairs(self.commands) do
+        self.activeInternalGui[command.name](self.activeInternalGui, unpack(command.arguments))
+    end
+
     self.activeInternalGui:open()
 end
 
@@ -247,10 +258,39 @@ function GUIInterface:close()
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
-function GUIInterface:isOpen()
+function GUIInterface:destroy()
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
 
-    return self.activeInternalGui and sm.exists(self.activeInternalGui)
+    self.commands = {}
+    self:close()
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+---@param widgetName string
+---@param properties table<string, boolean|number|string>
+function GUIInterface:setData(widgetName, properties)
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+    ErrorHandler.AssertArgument(widgetName, 2, "string")
+    ErrorHandler.AssertArgument(properties, 3, "table")
+
+    local widget = self:findWidget(widgetName, true)
+    ErrorHandler.AssertCondition(widget, 2, string.format("Widget '%s' not found", widgetName))
+
+    for key, value in pairs(properties) do
+        ErrorHandler.AssertArgument(key, nil, "string")
+        ErrorHandler.AssertArgument(value, nil, { "boolean", "number", "string" })
+    end
+
+    for key, value in pairs(properties) do
+        widget:setProperty(key, value)
+    end
+end
+
+---@param self Internal.ReGui.GUIInterface.Object
+function GUIInterface:isActive()
+    ErrorHandler.AssertSelf(self, GUIInterface.__type)
+
+    return self.activeInternalGui and sm.exists(self.activeInternalGui) and self.activeInternalGui:isActive()
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object

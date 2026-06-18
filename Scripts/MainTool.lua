@@ -28,6 +28,8 @@ sm.regui = sm.regui or {}
 sm.regui.internal = sm.regui.internal or {}
 
 dofile("XMLColorful.lua")
+dofile("Utils.lua")
+dofile("GUIInterfaceWrap.lua")
 
 function sm.regui.internal.executeCode(functionPath, ...)
     ErrorHandler.AssertArgument(functionPath, 1, "string")
