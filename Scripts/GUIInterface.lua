@@ -311,7 +311,7 @@ function GUIInterface:toggleAutomaticConversionToRealUnits(value)
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
----@return GuiSettings?
+---@return ReGui.GuiSettings?
 function GUIInterface:getSettings()
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
 
@@ -319,7 +319,7 @@ function GUIInterface:getSettings()
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
----@param settings GuiSettings?
+---@param settings ReGui.GuiSettings?
 function GUIInterface:setSettings(settings)
     ErrorHandler.AssertSelf(self, GUIInterface.__type, true)
     ErrorHandler.AssertArgument(settings, 2, { "table", "nil" })
@@ -377,7 +377,7 @@ end
 ---@param widgetType string?
 ---@param widgetSkin string?
 ---@return Internal.ReGui.Widget.Object
-function GUIInterface:addWidget(widgetName, widgetType, widgetSkin)
+function GUIInterface:createWidget(widgetName, widgetType, widgetSkin)
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
     ErrorHandler.AssertArgument(widgetName, 2, "string")
     ErrorHandler.AssertArgument(widgetType, 3, { "string", "nil" })
@@ -409,8 +409,8 @@ end
 
 ---@param self Internal.ReGui.GUIInterface.Object
 ---@param widgetName string
----@param text string
-function GUIInterface:setText(widgetName, text)
+---@param ... any
+function GUIInterface:setText(widgetName, ...)
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
     ErrorHandler.AssertArgument(widgetName, 2, "string")
     ErrorHandler.AssertArgument(text, 3, "string")
@@ -421,7 +421,7 @@ function GUIInterface:setText(widgetName, text)
         return
     end
 
-    widget:setText(text)
+    widget:setText(...)
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object

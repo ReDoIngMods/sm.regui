@@ -67,7 +67,7 @@ end
 
 ---@param data {functionPath: string, arguments: any[], totalArguments: integer}
 function MainToolClass:svcl_executeCode(data, player)
-    if player then -- Prevents executing code via sendToServer
+    if player then
         return
     end
 

@@ -1,7 +1,7 @@
----@diagnostic disable
+---@diagnostic disable: missing-return, unused-local
 
 ---MyGui widget types
----@alias Regui.WidgetType 
+---@alias ReGui.WidgetType 
 ---| "Button"
 ---| "Canvas"
 ---| "ComboBox"
@@ -372,67 +372,76 @@
 
 ---All fonts available in Scrap Mechanic, including their size, spacing and supported characters. There may be inaccuracies for spacing & font size!
 ---@alias ReGui.FontName
----| SM_HeaderXLarge_Wide              |   FSize   60      |   Tracking   1.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBCGHJKLQWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| SM_HeaderLarge_Wide               |   FSize   40      |   Tracking   6.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
----| SM_HeaderLarge_Medium             |   FSize   40      |   Tracking   2.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
----| SM_HeaderLarge_Narrow             |   FSize   40      |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
----| SM_HeaderMedium                   |   FSize   30      |   Tracking   2      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzFJKPQVXZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| SM_SubHeader                      |   FSize   25      |   Tracking   3      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_Header                         |   FSize   22.50   |   Tracking   1.33   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_HeaderSmall                    |   FSize   20      |   Tracking   1.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
----| SM_HeaderTiny                     |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_Tab                            |   FSize   22.50   |   Tracking   1.33   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_TabSmall                       |   FSize   20      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_TextLabel                      |   FSize   22.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_Label                          |   FSize   22.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_LabelSmall                     |   FSize   20      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_LabelTiny                      |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_LabelMini                      |   FSize   15      |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBFGHJKMNPQUXYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| SM_SliderLabel                    |   FSize   12.50   |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBCDEGHJKNPQRUVYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| SM_SearchText                     |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_ToolTipText                    |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_TextLarge                      |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   qxEHJKLNOPRVWX0123456789`-=[]\;'/~_{}|"<>?@#$%^&*()
----| SM_Text                           |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_TextDesc                       |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   bdfgijkmquvxyzABCDEFGHIJKLMNOPQRTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| SM_TextSmall                      |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_TextTiny                       |   FSize   17.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_ItemTitle                      |   FSize   27.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_GameName                       |   FSize   27.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_ButtonLarge                    |   FSize   32.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzDJQVWYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| SM_Button                         |   FSize   25      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_ButtonSmall                    |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
----| SM_ButtonTiny                     |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_ButtonSmallBold                |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_NumberHuge                     |   FSize   52.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',./~_+{}|"<>?!@#$%^&*()
----| SM_NumberSmall                    |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
----| SM_NumberTiny                     |   FSize   17.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_NumberMini                     |   FSize   15      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWYZ`-=[]\;',.~_+{}|:"<>?!@#$%^&()
----| SM_UserName                       |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_ListItem                       |   FSize   22.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_HotbarBinding                  |   FSize   16.25   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_IntlText                       |   FSize   45      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
----| SM_Digital                        |   FSize   45      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',./~_+{}|"<>?!@#$%^&*()
----| X_Interactable_Timer_TimeUnit     |   FSize   37.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLNOPQRTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| X_Interactable_Timer_TickCount    |   FSize   27.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABDEFGHJLMNOPQRUVWXYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| X_Interactable_LogicGate_Category |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| X_MenuGamemodeMenu_GameMode       |   FSize   62.50   |   Tracking   3.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBDFJKMOPQWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| X_Hud_Alert                       |   FSize   30      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| X_Hud_Interaction                 |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| X_Hud_PlayerName                  |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| X_Hud_ItemStack                   |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
----| HandbookTitle                     |   FSize   13.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzJKXZ0123456789`-=[]\;,./~_+{}|:"<>?!@#$%^&*() 
----| HandbookSubTitle                  |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGJKOVXZ01246789`=[]\;/~_{}|:<>!@#$%^*
----| HandbookSubTitleItalic            |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzABCDFGHIJKMNOPQRSUVWXYZ0123456789`-=[]\;/~_+{}|:"<>?@#$%^&*()
----| HandbookPageCount                 |   FSize   40      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',.~_+{}|:"<>?!@#$%^&*()
----| HandbookDescriptionLarge          |   FSize   23.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jxDEFGHJKLMNOQRUVWXYZ0123456789`-=[]\;'/~_+{}|:"<>?!@#$%^&*()
----| HandbookDescriptionSmall          |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGIJKLMNORVXZ0123456789`=[]\;'/~_+{}|"<>?@#$%^&*()
----| HandbookInstructionLarge          |   FSize   41.67   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dfghjpqwxzADEFGJKLMNOQRSTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| HandbookInstructionMedium         |   FSize   28.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   fqwxyzBEFGKNQTUVWXYZ0123456789`-=[]\;',.~_+{}|:"<>?!@#$%^&*()
----| HandbookInstructionSmall          |   FSize   25      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   qvxzEFGIJMNOQUVXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| HandbookLogicDescription          |   FSize   13.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   bjmpquwxzBCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
----| HandbookFAQQuestion               |   FSize   26.67   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jkqxzABCDEFGJKLNPQRSTUVXYZ0123456789`-=[]\;'./~_+{}|:"<>@#$%^&*()
----| HandbookFAQAnswer                 |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGJKOVXZ01246789`=[]\;/~_{}|:<>!@#$%^*
----| DeJaVuSans                        |   FSize   18.75   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   FULL      |   Missing en-US:   None
+---| "SM_HeaderXLarge_Wide"              |   FSize   60      |   Tracking   1.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBCGHJKLQWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "SM_HeaderLarge_Wide"               |   FSize   40      |   Tracking   6.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
+---| "SM_HeaderLarge_Medium"             |   FSize   40      |   Tracking   2.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
+---| "SM_HeaderLarge_Narrow"             |   FSize   40      |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzQ`-=[];~+{}|:<>@#$%^&*()
+---| "SM_HeaderMedium"                   |   FSize   30      |   Tracking   2      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzFJKPQVXZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "SM_SubHeader"                      |   FSize   25      |   Tracking   3      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_Header"                         |   FSize   22.50   |   Tracking   1.33   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_HeaderSmall"                    |   FSize   20      |   Tracking   1.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
+---| "SM_HeaderTiny"                     |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_Tab"                            |   FSize   22.50   |   Tracking   1.33   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_TabSmall"                       |   FSize   20      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_TextLabel"                      |   FSize   22.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_Label"                          |   FSize   22.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_LabelSmall"                     |   FSize   20      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_LabelTiny"                      |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_LabelMini"                      |   FSize   15      |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBFGHJKMNPQUXYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "SM_SliderLabel"                    |   FSize   12.50   |   Tracking   0.67   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBCDEGHJKNPQRUVYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "SM_SearchText"                     |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_ToolTipText"                    |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_TextLarge"                      |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   qxEHJKLNOPRVWX0123456789`-=[]\;'/~_{}|"<>?@#$%^&*()
+---| "SM_Text"                           |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_TextDesc"                       |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   bdfgijkmquvxyzABCDEFGHIJKLMNOPQRTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "SM_TextSmall"                      |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_TextTiny"                       |   FSize   17.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_ItemTitle"                      |   FSize   27.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_GameName"                       |   FSize   27.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_ButtonLarge"                    |   FSize   32.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzDJQVWYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "SM_Button"                         |   FSize   25      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_ButtonSmall"                    |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
+---| "SM_ButtonTiny"                     |   FSize   17.50   |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_ButtonSmallBold"                |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_NumberHuge"                     |   FSize   52.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',./~_+{}|"<>?!@#$%^&*()
+---| "SM_NumberSmall"                    |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dgjqxyzJQ`=\;',./~_+{}|"<>?@#$%^&*()
+---| "SM_NumberTiny"                     |   FSize   17.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_NumberMini"                     |   FSize   15      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWYZ`-=[]\;',.~_+{}|:"<>?!@#$%^&()
+---| "SM_UserName"                       |   FSize   20      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_ListItem"                       |   FSize   22.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_HotbarBinding"                  |   FSize   16.25   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_IntlText"                       |   FSize   45      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "SM_Digital"                        |   FSize   45      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',./~_+{}|"<>?!@#$%^&*()
+---| "X_Interactable_Timer_TimeUnit"     |   FSize   37.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLNOPQRTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "X_Interactable_Timer_TickCount"    |   FSize   27.50   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABDEFGHJLMNOPQRUVWXYZ`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "X_Interactable_LogicGate_Category" |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "X_MenuGamemodeMenu_GameMode"       |   FSize   62.50   |   Tracking   3.33   |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzBDFJKMOPQWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "X_Hud_Alert"                       |   FSize   30      |   Tracking   0.67   |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "X_Hud_Interaction"                 |   FSize   25      |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "X_Hud_PlayerName"                  |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "X_Hud_ItemStack"                   |   FSize   27.50   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   None
+---| "HandbookTitle"                     |   FSize   13.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzJKXZ0123456789`-=[]\;,./~_+{}|:"<>?!@#$%^&*() 
+---| "HandbookSubTitle"                  |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGJKOVXZ01246789`=[]\;/~_{}|:<>!@#$%^*
+---| "HandbookSubTitleItalic"            |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jqzABCDFGHIJKMNOPQRSUVWXYZ0123456789`-=[]\;/~_+{}|:"<>?@#$%^&*()
+---| "HandbookPageCount"                 |   FSize   40      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`-=[]\;',.~_+{}|:"<>?!@#$%^&*()
+---| "HandbookDescriptionLarge"          |   FSize   23.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jxDEFGHJKLMNOQRUVWXYZ0123456789`-=[]\;'/~_+{}|:"<>?!@#$%^&*()
+---| "HandbookDescriptionSmall"          |   FSize   20      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGIJKLMNORVXZ0123456789`=[]\;'/~_+{}|"<>?@#$%^&*()
+---| "HandbookInstructionLarge"          |   FSize   41.67   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   dfghjpqwxzADEFGJKLMNOQRSTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "HandbookInstructionMedium"         |   FSize   28.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   fqwxyzBEFGKNQTUVWXYZ0123456789`-=[]\;',.~_+{}|:"<>?!@#$%^&*()
+---| "HandbookInstructionSmall"          |   FSize   25      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   qvxzEFGIJMNOQUVXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "HandbookLogicDescription"          |   FSize   13.33   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   bjmpquwxzBCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`-=[]\;',./~_+{}|:"<>?!@#$%^&*()
+---| "HandbookFAQQuestion"               |   FSize   26.67   |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   jkqxzABCDEFGJKLNPQRSTUVXYZ0123456789`-=[]\;'./~_+{}|:"<>@#$%^&*()
+---| "HandbookFAQAnswer"                 |   FSize   30      |   Tracking   0      |   en-US       |   Latn       |   Cyrl       |   All Chars:   PARTIAL   |   Missing en-US:   DGJKOVXZ01246789`=[]\;/~_{}|:<>!@#$%^*
+---| "DeJaVuSans"                        |   FSize   18.75   |   Tracking   0      |   en-US   X   |   Latn   X   |   Cyrl   X   |   All Chars:   FULL      |   Missing en-US:   None
+
+---GuiInterface settings
+---@class ReGui.GuiSettings
+---@field isHud? boolean Whether the gui is part of the HUD or not
+---@field isInteractive? boolean Whether the gui is interactive or not
+---@field needsCursor? boolean Whether the gui makes use of the mouse cursor or not
+---@field hidesHotbar? boolean Whether the gui hides the hotbar or not
+---@field isOverlapped? boolean Unknown
+---@field backgroundAlpha? number The alpha of the background(0 - transparent | 1 - opaque, black background)
 
 ---sm.regui, ReDoing Graphical User Interfaces
 sm.regui = {}
@@ -539,9 +548,12 @@ function GuiInterface:open() end
 ---Closes the GuiInterface
 function GuiInterface:close() end
 
----Checks if the GuiInterface is currently open.
----@return boolean isOpen True if the GuiInterface is open, false otherwise.
-function GuiInterface:isOpen() end
+---Destroys the GUIInterface (behaves same as close but also removes all "commands")
+function GuiInterface:destroy() end
+
+---Checks if the GuiInterface is currently open/active or not.
+---@return boolean isActive True if the GuiInterface is open/active, false otherwise.
+function GuiInterface:isActive() end
 
 ---Clones the GuiInterface, creating a new instance with the same properties and widgets.
 ---@return ReGui.GuiInterface clone The cloned GuiInterface
@@ -554,6 +566,14 @@ function GuiInterface:isAutoConversionToRealUnitsEnabled() end
 ---Toggles whether pixel coordinates should be automatically converted to real units.
 ---@param value boolean Whether to enable or disable automatic conversion.
 function GuiInterface:toggleAutomaticConversionToRealUnits(value) end
+
+---Gets current GUIInterface settings
+---@return ReGui.GuiSettings settings The current GUIInterface settings.
+function GuiInterface:getSettings() end
+
+---Sets current GUIInterface settings
+---@param settings ReGui.GuiSettings The new settings to apply.
+function GuiInterface:setSettings(settings) end
 
 ---Finds a widget by name.
 ---@param widgetName string The name of the widget to find.
@@ -570,6 +590,272 @@ function GuiInterface:getRootWidgets() end
 ---@param type ReGui.WidgetType The type of the widget to create.
 ---@param skin string The skin of the widget to create.
 function GuiInterface:createWidget(name, type, skin) end
+
+---Sets the text of a widget.
+---@param widgetName string The name of the widget.
+---@param ... any The text to set. Arguments are passed into TextManager's translator if available, and then formatted into a string.
+function GuiInterface:setText(widgetName, ...) end
+
+---Gets the text of a widget.
+---@param widgetName string The name of the widget.
+---@return string text The text of the widget.
+function GuiInterface:getText(widgetName) end
+
+---Adds an item to a grid  
+---@param gridName string The name of the grid
+---@param item table The item
+function GuiInterface:addGridItem(gridName, item) end
+
+---Adds items to a grid from json  
+---@param gridName string The name of the grid
+---@param jsonPath string Json file path
+---@param additionalData? table Additional data to the json (Optional)
+function GuiInterface:addGridItemsFromFile(gridName, jsonPath, additionalData) end
+
+---*Client only*
+---@param uuid Uuid The uuid of the item
+---@param difference integer Amount of items
+function GuiInterface:addToPickupDisplay( uuid, difference ) end
+
+---Appends an item to a list  
+---@param listName string The name of the list
+---@param itemName string The name of the item
+---@param data table Table of data to store
+function GuiInterface:addListItem(listName, itemName, data) end
+
+---Clears a grid  
+---@param gridName string The name of the grid to clear
+function GuiInterface:clearGrid(gridName) end
+
+---Clears a list  
+---@param listName string The name of the list
+function GuiInterface:clearList(listName) end
+
+---Creates a dropdown at the specified widget  
+---@param widgetName string The name of the widget
+---@param functionName string The name of the function
+---@param options table The options in the dropdown menu
+function GuiInterface:createDropDown(widgetName, functionName, options) end
+
+---Creats a grid from a table/json  
+---@param gridName string The name of the grid
+---@param index table Grid data table { type=string, layout=string, itemWidth=integer, itemHeight=integer, itemCount=integer }
+function GuiInterface:createGridFromJson(gridName, index) end
+
+---Creates a slider at the specified widget  
+---@param widgetName string The name of the widget
+---@param range number The range of the slider
+---@param value number The start value on the slider
+---@param functionName string Slider change callback function name
+---@param numbered? boolean Enable numbered steps (Defaults to false)
+function GuiInterface:createHorizontalSlider(widgetName, range, value, functionName, numbered) end
+
+---Creates a slider at the specified widget  
+---@param widgetName string The name of the widget
+---@param range number The range of the slider
+---@param value number The start value on the slider
+---@param functionName string Slider change callback function name
+function GuiInterface:createVerticalSlider(widgetName, range, value, functionName) end
+
+---Plays an effect at a widget  
+---@param widgetName string The name of the widget
+---@param effectName string The name of the effect
+---@param restart? boolean If the effect should restart if its already palying
+function GuiInterface:playEffect(widgetName, effectName, restart) end
+
+---Plays an effect at widget inside a grid  
+---@param gridName string The name of the grid
+---@param index integer The index in the grid
+---@param effectName string The name of the effect
+---@param restart? boolean If the effect should restart if its already palying
+function GuiInterface:playGridEffect(gridName, index, effectName, restart) end
+
+---Sets a button callback to be called when the button is pressed  
+---@param buttonName string The button name
+---@param callback string Function to be called when button is pressed
+function GuiInterface:setButtonCallback(buttonName, callback) end
+
+---Sets the button state  
+---@param buttonName string The name of the button
+---@param state boolean The state of the button
+function GuiInterface:setButtonState(buttonName, state) end
+
+---Sets the color of a widget  
+---@param widgetName string The name of the widget
+---@param Color Color The color
+function GuiInterface:setColor(widgetName, Color) end
+
+---Sets a container to a grid  
+---@param gridName string The name of the grid
+---@param container Container The container
+function GuiInterface:setContainer(gridName, container) end
+
+---Sets multiple containers to a grid  
+---@param gridName string The name of the grid
+---@param containers table Table of containers. {[Container], ..}
+function GuiInterface:setContainers(gridName, containers) end
+
+---Sets data to a widget  
+---@param widgetName string The name of the widget
+---@param data table The data
+function GuiInterface:setData(widgetName, data) end
+
+---Sets the fade range for a world gui  
+---@param range number The fade range
+function GuiInterface:setFadeRange(range) end
+
+---Sets a widget to recieve key focus  
+---@param widgetName string The name of the widget that needs focus
+function GuiInterface:setFocus(widgetName) end
+
+---Sets a callback to be called when a button inside a grid is pressed  
+---@param buttonName string The button name
+---@param callback string Function to be called when button is pressed
+function GuiInterface:setGridButtonCallback(buttonName, callback) end
+
+---Sets an item in a grid  
+---@param gridName string The name of the grid
+---@param index integer The item index
+---@param item? table The item
+function GuiInterface:setGridItem(gridName, index, item) end
+
+---Sets a callback to be called when a grid item is changed  
+---@param gridName string The grid name
+---@param callback string Function to be called when button is pressed
+function GuiInterface:setGridItemChangedCallback(gridName, callback) end
+
+---Sets a callback to be called when a grid widget gets mouse focus  
+---@param buttonName string The button name
+---@param callback string Function to be called when button is pressed
+function GuiInterface:setGridMouseFocusCallback(buttonName, callback) end
+
+---Sets the size of a grid  
+---@param gridName string The name of the grid
+---@param index integer The size
+function GuiInterface:setGridSize(gridName, index) end
+
+---Sets a [Character|Shape] as host for a world gui  
+---@param object Character|Shape The object to host the gui
+---@param joint? string The joint (Optional)
+function GuiInterface:setHost(object, joint) end
+
+---Sets the icon image to a shape from an uuid  
+---@param itembox string The name of the itembox
+---@param uuid Uuid The item uuid
+function GuiInterface:setIconImage(itembox, uuid) end
+
+---Sets the image of an imagebox  
+---@param imagebox string The name of the imagebox widget
+---@param image string The name or path of the image
+function GuiInterface:setImage(imagebox, image) end
+
+---Sets the resource, group and item name on an imagebox widget  
+---@param imagebox string The name of the imagebox
+---@param itemResource string The item resource 
+---@param itemGroup string The item group
+---@param itemName string The item name
+function GuiInterface:setItemIcon(imagebox, itemResource, itemGroup, itemName) end
+
+---Sets a callback to be called when a list selection is changed  
+---@param listName string The list name
+---@param callback string Function to be called when list is selected
+function GuiInterface:setListSelectionCallback(listName, callback) end
+
+---Sets the maximum render distance for a world gui  
+---@param distance number The max render distance
+function GuiInterface:setMaxRenderDistance(distance) end
+
+---Sets a mesh preview to display an item from uuid  
+---@param widgetName string The name of the widget
+---@param uuid Uuid The item uuid to display
+function GuiInterface:setMeshPreview(widgetName, uuid) end
+
+---Sets a callback to be called when the gui is closed  
+---@param callback string Function to be called when gui is closed
+function GuiInterface:setOnCloseCallback(callback) end
+
+---Sets if a world gui requires line of sight to be shown  
+---@param required boolean True if gui requires line of sight to render
+function GuiInterface:setRequireLineOfSight(required) end
+
+---Sets the selected item in a dropdown widget
+---@param widget string The dropdown widget
+---@param item string The item to be selected in the dropdown
+function GuiInterface:setSelectedDropDownItem(widget, item) end
+
+---Selects an item in a list  
+---@param listName string The name of the list
+---@param itemName string The name of the item
+function GuiInterface:setSelectedListItem(listName, itemName) end
+
+---Sets a callback to be called when the slider is moved  
+---@param sliderName string The button name
+---@param callback string Function to be called when slider is moved
+function GuiInterface:setSliderCallback(sliderName, callback) end
+
+---Sets the position and range of a slider  
+---@param sliderName string The name of the slider
+---@param range number The slider range
+---@param position number The slider position
+function GuiInterface:setSliderData(sliderName, range, position) end
+
+---Sets the position of a slider  
+---@param sliderName string The name of the slider
+---@param position integer The slider position
+function GuiInterface:setSliderPosition(sliderName, position) end
+
+---Sets the slider range of a slider.  
+---@param sliderName string The name of the slider
+---@param range integer The slider range
+function GuiInterface:setSliderRange(sliderName, range) end
+
+---Sets the range limit of a slider  
+---@param sliderName string The name of the slider
+---@param limit integer The slider range limit
+function GuiInterface:setSliderRangeLimit(sliderName, limit) end
+
+---Sets a callback to be called when the text change is accepted  
+---@param editBoxName string The edit box name
+---@param callback string Function to be called when text is committed
+function GuiInterface:setTextAcceptedCallback(editBoxName, callback) end
+
+---Sets a callback to be called when the text is changed  
+---@param editBoxName string The edit box name
+---@param callback string Function to be called when text is edited
+function GuiInterface:setTextChangedCallback(editBoxName, callback) end
+
+---Sets a widget to be visible or not  
+---@param widgetName string The name of the widget
+---@param visible boolean True if visible
+function GuiInterface:setVisible(widgetName, visible) end
+
+---Sets the world position for a world gui  
+---@param position Vec3 The world position of the interface
+---@param world? World The world, defaults to same as the script
+function GuiInterface:setWorldPosition(position, world) end
+
+---Stops an effect playing at a widget  
+---@param widgetName string The name of the widget
+---@param effectName string The name of the effect
+---@param immediate? boolean When true, the effect stops immediately (Defaults to false)
+function GuiInterface:stopEffect(widgetName, effectName, immediate) end
+
+---Stopts an effect playing inside a grid  
+---@param gridName string The name of the grid
+---@param index integer The index in the grid
+---@param effectName string The name of the effect
+function GuiInterface:stopGridEffect(gridName, index, effectName) end
+
+---Adds a quest to the quest tracker  
+---@param name string The name of quest
+---@param title string The quest title to be displayed in the tracker
+---@param mainQuest boolean If the quest is a main quest (Displayed on top in the tracker)
+---@param questTasks table The table of quest tasks to display in the log Task{ name = string, text = string, count = number, target = number, complete = boolean }
+function GuiInterface:trackQuest(name, title, mainQuest, questTasks) end
+
+---Removes a quest from the quest tracker  
+---@param questName string The name of quest
+function GuiInterface:untrackQuest(questName) end
 
 ---A parsed widget in the GUI tree.
 ---@class ReGui.Widget
