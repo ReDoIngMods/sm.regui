@@ -31,6 +31,8 @@ dofile("XMLColorful.lua")
 dofile("Utils.lua")
 dofile("GUIInterfaceWrap.lua")
 
+dofile("Additions/FullscreenInterface.lua")
+
 function sm.regui.internal.executeCode(functionPath, ...)
     ErrorHandler.AssertArgument(functionPath, 1, "string")
 
@@ -48,6 +50,9 @@ ExecuteCodeAsReGui = CreateFunctionForwarder("sm.regui.internal.executeCode")
 
 sm.regui.createGuiFromLayout = CreateFunctionForwarder("sm.regui.guiinterface.new")
 sm.regui.createGui = CreateFunctionForwarder("sm.regui.guiinterface.newBlank")
+
+sm.regui.createFullscreenInterfaceFromLayout = CreateFunctionForwarder("sm.regui.fullscreenInterface.new")
+sm.regui.createFullscreenInterface = CreateFunctionForwarder("sm.regui.fullscreenInterface.newBlank")
 
 dofile("GUIInterface.lua")
 dofile("Widget.lua")

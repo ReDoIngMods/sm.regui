@@ -1,12 +1,4 @@
-local function initalizeTableToMetatable()
-    local createdMetatable = class()
-    createdMetatable.__index = nil
-    createdMetatable.__mode = "k"
-
-    return createdMetatable()
-end
-
-local tableToMetatable = initalizeTableToMetatable()
+local tableToMetatable = {}
 
 ---
 ---Sets the metatable for the given table. If `metatable` is `nil`, removes the metatable of the given table. If the original metatable has a `__metatable` field, raises an error.
@@ -171,12 +163,7 @@ function rawset(tbl, key, value)
 end
 
 function __getmetatable_unsafe(tbl)
-    local metatable = tableToMetatable[tbl]
-    if type(metatable) ~= "table" then
-        return metatable
-    end
-
-    return metatable.__metatable or metatable
+    return tableToMetatable[tbl]
 end
 
 print("Loaded Helper/Metatable.lua")

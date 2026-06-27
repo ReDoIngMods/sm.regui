@@ -1,5 +1,5 @@
 ---@class Internal.ReGui.Widget.Class
-local Widget = {}
+local Widget = sm.regui.widgets or {}
 Widget.__type = "ReGui.Widget"
 Widget.__index = function (tbl, index)
     local isDeleted = rawget(tbl, "isDeleted")
@@ -11,6 +11,7 @@ Widget.__index = function (tbl, index)
 end
 Widget.__tostring = CreateCustomTostringFunction(Widget.__type)
 
+---@type table<ReGui.WidgetType, true>
 local VALID_WIDGET_TYPES = {
     ["Button"] = true,
     ["Canvas"] = true,
@@ -31,6 +32,87 @@ local VALID_WIDGET_TYPES = {
     ["Widget"] = true,
     ["Window"] = true,
     ["StrangeButton"] = true
+}
+
+---@type table<ReGui.FontName, true>
+local VALID_FONT_NAMES = {
+    ["SM_HeaderXLarge_Wide"] = true,
+    ["SM_HeaderLarge_Wide"] = true,
+    ["SM_HeaderLarge_Medium"] = true,
+    ["SM_HeaderLarge_Narrow"] = true,
+    ["SM_HeaderMedium"] = true,
+    ["SM_SubHeader"] = true,
+    ["SM_Header"] = true,
+    ["SM_HeaderSmall"] = true,
+    ["SM_HeaderTiny"] = true,
+    ["SM_Tab"] = true,
+    ["SM_TabSmall"] = true,
+    ["SM_TextLabel"] = true,
+    ["SM_Label"] = true,
+    ["SM_LabelSmall"] = true,
+    ["SM_LabelTiny"] = true,
+    ["SM_LabelMini"] = true,
+    ["SM_SliderLabel"] = true,
+    ["SM_SearchText"] = true,
+    ["SM_ToolTipText"] = true,
+    ["SM_TextLarge"] = true,
+    ["SM_Text"] = true,
+    ["SM_TextDesc"] = true,
+    ["SM_TextSmall"] = true,
+    ["SM_TextTiny"] = true,
+    ["SM_ItemTitle"] = true,
+    ["SM_GameName"] = true,
+    ["SM_ButtonLarge"] = true,
+    ["SM_Button"] = true,
+    ["SM_ButtonSmall"] = true,
+    ["SM_ButtonTiny"] = true,
+    ["SM_ButtonSmallBold"] = true,
+    ["SM_NumberHuge"] = true,
+    ["SM_NumberSmall"] = true,
+    ["SM_NumberTiny"] = true,
+    ["SM_NumberMini"] = true,
+    ["SM_UserName"] = true,
+    ["SM_ListItem"] = true,
+    ["SM_HotbarBinding"] = true,
+    ["SM_IntlText"] = true,
+    ["SM_Digital"] = true,
+    ["X_Interactable_Timer_TimeUnit"] = true,
+    ["X_Interactable_Timer_TickCount"] = true,
+    ["X_Interactable_LogicGate_Category"] = true,
+    ["X_MenuGamemodeMenu_GameMode"] = true,
+    ["X_Hud_Alert"] = true,
+    ["X_Hud_Interaction"] = true,
+    ["X_Hud_PlayerName"] = true,
+    ["X_Hud_ItemStack"] = true,
+    ["HandbookTitle"] = true,
+    ["HandbookSubTitle"] = true,
+    ["HandbookSubTitleItalic"] = true,
+    ["HandbookPageCount"] = true,
+    ["HandbookDescriptionLarge"] = true,
+    ["HandbookDescriptionSmall"] = true,
+    ["HandbookInstructionLarge"] = true,
+    ["HandbookInstructionMedium"] = true,
+    ["HandbookInstructionSmall"] = true,
+    ["HandbookLogicDescription"] = true,
+    ["HandbookFAQQuestion"] = true,
+    ["HandbookFAQAnswer"] = true,
+    ["DeJaVuSans"] = true,
+}
+
+---@type table<ReGui.TextAlign, true>
+local VALID_TEXT_ALIGNMENT_TYPES = {
+    ["[DEFAULT]"] = true,
+    ["Default"] = true,
+    ["Center"] = true,
+    ["Left Top"] = true,
+    ["Left Bottom"] = true,
+    ["Left VCenter"] = true,
+    ["Right Top"] = true,
+    ["Right Bottom"] = true,
+    ["Right VCenter"] = true,
+    ["HCenter Top"] = true,
+    ["HCenter Bottom"] = true,
+    ["HCenter VCenter"] = true,
 }
 
 ---@param parent Internal.ReGui.Widget.Object
@@ -56,6 +138,28 @@ local function ApplyGUIInterfaceRecursive(widget, guiInterface)
     end
 end
 
+-- Returns (screenWidth, screenHeight), falling back to 1 to avoid division by zero.
+---@param widget Internal.ReGui.Widget.Object
+---@return number, number
+local function GetScreenSize(widget)
+    local screenWidth = widget.guiInterface and widget.guiInterface.data.metadata.screenWidth  or 1
+    local screenHeight = widget.guiInterface and widget.guiInterface.data.metadata.screenHeight or 1
+
+    return (screenWidth ~= 0 and screenWidth) or 1, (screenHeight ~= 0 and screenHeight) or 1
+end
+
+-- Returns (parentWidth, parentHeight) if a parent exists, else screen size.
+---@param widget Internal.ReGui.Widget.Object
+---@return number, number
+local function GetReferenceSize(widget)
+    if widget.parent then
+        local parentWidth, parentHeight = widget.parent:getSize()
+        return (parentWidth ~= 0 and parentWidth) or 1, (parentHeight ~= 0 and parentHeight) or 1
+    end
+
+    return GetScreenSize(widget)
+end
+
 ---@param node Internal.ReGui.Meta.RelayoutFile.Child
 ---@param parent Internal.ReGui.Widget.Object?
 ---@param guiInterface Internal.ReGui.GUIInterface.Object?
@@ -67,6 +171,7 @@ function Widget.parseWidget(node, parent, guiInterface)
     self.userStrings = CloneTable(node.userStrings) ---@type PropertyTable
     self.controllers = CloneTable(node.controllers) ---@type Internal.ReGui.Meta.RelayoutFile.Controller[]
     self.coordinate = CloneTable(node.coordinate) ---@type Internal.ReGui.Meta.RelayoutFile.Child.Coordinate
+    self.coordinate.mode = self.coordinate.mode or "Pixels" ---@type ReGui.CoordinateMode
 
     self.parent = parent
     self.guiInterface = guiInterface
@@ -122,7 +227,8 @@ function Widget:addWidget(widgetName, widgetType, widgetSkin)
             x = 0,
             y = 0,
             width = 100,
-            height = 100
+            height = 100,
+            mode = "Pixels"
         },
         children = {}
     }, self, self.guiInterface)
@@ -150,9 +256,8 @@ function Widget:clone()
         childClone:setParent(clone)
     end
 
-    self.translatable = self.translatable
-    self.pendingTextContent = self.pendingTextContent
-
+    clone.translatable = self.translatable
+    clone.pendingTextContent = self.pendingTextContent
     return clone
 end
 
@@ -162,13 +267,47 @@ function Widget:destroy()
 
     self:setParent(nil)
     self:setGUIInterface(nil)
-    self.isDeleted = true
-
+    
     for _, child in pairs(self.children) do
         child:destroy()
     end
-
+    
     self.children = {}
+    self.isDeleted = true
+end
+
+-- WIDGET CREATION --
+
+function Widget:createWidget(name, type, skin)
+    ErrorHandler.AssertArgument(name, 1, "string")
+    ErrorHandler.AssertArgument(type, 2, { "string", "nil" })
+    ErrorHandler.AssertArgument(skin, 3, { "string", "nil" })
+
+    if type and not VALID_WIDGET_TYPES[type] then
+        error(string.format("Invalid widget type: %s", type), 2)
+    end
+
+    local newWidget = Widget.parseWidget({
+        nodeProperties = {
+            name = name,
+            type = type or "Widget",
+            skin = skin or "PanelEmpty"
+        },
+        properties = {},
+        userStrings = {},
+        controllers = {},
+        coordinate = {
+            x = 0,
+            y = 0,
+            width = 100,
+            height = 100,
+            mode = "Pixels"
+        },
+        children = {}
+    }, self, self.guiInterface)
+    table.insert(self.children, newWidget)
+
+    return newWidget
 end
 
 -- USER STRINGS --
@@ -409,22 +548,73 @@ function Widget:getChildren()
     return self.children
 end
 
+-- COORDINATE MODE --
+
+---@param self Internal.ReGui.Widget.Object
+---@return ReGui.CoordinateMode
+function Widget:getCoordinateMode()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    return self.coordinate.mode
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param mode ReGui.CoordinateMode
+function Widget:setCoordinateMode(mode)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(mode, 2, "string")
+    ErrorHandler.AssertCondition(mode == "Pixels" or mode == "Real", 2, "Invalid coordinate mode: " .. tostring(mode))
+
+    if self.coordinate.mode == mode then 
+        return
+    end
+
+    if mode == "Real" then
+        local realX, realY = self:getPositionReal()
+        local realWidth, realHeight = self:getSizeReal()
+
+        self.coordinate.x = realX
+        self.coordinate.y = realY
+        self.coordinate.width  = realWidth
+        self.coordinate.height = realHeight
+    else
+        local x, y = self:getPosition()
+        local w, h = self:getSize()
+
+        self.coordinate.x = x
+        self.coordinate.y = y
+        self.coordinate.width = w
+        self.coordinate.height = h
+    end
+
+    self.coordinate.mode = mode
+end
+
 -- PIXEL POSITION/SIZE --
 
 ---@param self Internal.ReGui.Widget.Object
----@return integer
----@return integer
+---@return integer x
+---@return integer y
 function Widget:getPosition()
     ErrorHandler.AssertSelf(self, Widget.__type)
+
+    if self.coordinate.mode == "Real" then
+        local referenceWidth, referenceHeight = GetReferenceSize(self)
+        return math.floor(self.coordinate.x * referenceWidth + 0.5), math.floor(self.coordinate.y * referenceHeight + 0.5)
+    end
 
     return self.coordinate.x, self.coordinate.y
 end
 
 ---@param self Internal.ReGui.Widget.Object
----@return integer
----@return integer
+---@return integer width
+---@return integer height
 function Widget:getSize()
     ErrorHandler.AssertSelf(self, Widget.__type)
+
+    if self.coordinate.mode == "Real" then
+        local referenceWidth, referenceHeight = GetReferenceSize(self)
+        return math.floor(self.coordinate.width  * referenceWidth + 0.5), math.floor(self.coordinate.height * referenceHeight + 0.5)
+    end
 
     return self.coordinate.width, self.coordinate.height
 end
@@ -439,6 +629,7 @@ function Widget:setPosition(x, y)
 
     self.coordinate.x = x
     self.coordinate.y = y
+    self.coordinate.mode = "Pixels"
 end
 
 ---@param self Internal.ReGui.Widget.Object
@@ -446,125 +637,126 @@ end
 ---@param height integer
 function Widget:setSize(width, height)
     ErrorHandler.AssertSelf(self, Widget.__type)
-    ErrorHandler.AssertArgument(width, 2, "number")
+    ErrorHandler.AssertArgument(width,  2, "number")
     ErrorHandler.AssertArgument(height, 3, "number")
 
     self.coordinate.width = width
     self.coordinate.height = height
+    self.coordinate.mode = "Pixels"
 end
 
 -- REAL UNITS POSITION/SIZE --
 
 ---@param self Internal.ReGui.Widget.Object
----@return number
----@return number
+---@return number rx
+---@return number ry
 function Widget:getPositionReal()
-    local screenWidth = self.guiInterface.data.metadata.screenWidth
-    local screenHeight = self.guiInterface.data.metadata.screenHeight
     ErrorHandler.AssertSelf(self, Widget.__type)
 
-    local x, y = self:getPosition()
-    local parent = self.parent
-
-    if parent then
-        local pw, ph = parent:getSize()
-        pw = pw ~= 0 and pw or 1
-        ph = ph ~= 0 and ph or 1
-        return x / pw, y / ph
+    if self.coordinate.mode == "Pixels" then
+        local referenceWidth, referenceHeight = GetReferenceSize(self)
+        return self.coordinate.x / referenceWidth, self.coordinate.y / referenceHeight
     end
 
-    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
-    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
-
-    return x / screenWidth, y / screenHeight
+    return self.coordinate.x, self.coordinate.y
 end
 
 ---@param self Internal.ReGui.Widget.Object
----@return number
----@return number
+---@return number rw
+---@return number rh
 function Widget:getSizeReal()
-    local screenWidth = self.guiInterface.data.metadata.screenWidth
-    local screenHeight = self.guiInterface.data.metadata.screenHeight
     ErrorHandler.AssertSelf(self, Widget.__type)
 
-    local w, h = self:getSize()
-    local parent = self.parent
-
-    if parent then
-        local pw, ph = parent:getSize()
-        pw = pw ~= 0 and pw or 1
-        ph = ph ~= 0 and ph or 1
-        return w / pw, h / ph
+    if self.coordinate.mode == "Pixels" then
+        local referenceWidth, referenceHeight = GetReferenceSize(self)
+        return self.coordinate.width / referenceWidth, self.coordinate.height / referenceHeight
     end
 
-    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
-    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
+    return self.coordinate.width, self.coordinate.height
+end
 
-    return w / screenWidth, h / screenHeight
+---Stores position as real units and marks this widget as real-mode.
+---@param self Internal.ReGui.Widget.Object
+---@param x number
+---@param y number
+function Widget:setPositionReal(x, y)
+    ErrorHandler.AssertSelf(self, Widget.__type)
+    ErrorHandler.AssertArgument(x, 2, "number")
+    ErrorHandler.AssertArgument(y, 3, "number")
+
+    self.coordinate.x = x
+    self.coordinate.y = y
+    self.coordinate.mode = "Real"
+end
+
+---Stores size as real units and marks this widget as real-mode.
+---@param self Internal.ReGui.Widget.Object
+---@param width number
+---@param height number
+function Widget:setSizeReal(width, height)
+    ErrorHandler.AssertSelf(self, Widget.__type)
+    ErrorHandler.AssertArgument(width, 2, "number")
+    ErrorHandler.AssertArgument(height, 3, "number")
+
+    self.coordinate.width = width
+    self.coordinate.height = height
+    self.coordinate.mode = "Real"
+end
+
+-- FONT --
+
+---@param self Internal.ReGui.Widget.Object
+---@param fontName ReGui.FontName?
+function Widget:setFontName(fontName)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(fontName, 2, {"string", "nil"})
+
+    if fontName then
+        ErrorHandler.AssertCondition(VALID_FONT_NAMES[fontName] == true, 2, "Invalid font name: " .. fontName)
+    end
+
+    self.properties.FontName = fontName
 end
 
 ---@param self Internal.ReGui.Widget.Object
----@param rx number
----@param ry number
-function Widget:setPositionReal(rx, ry)
-    ErrorHandler.AssertSelf(self, Widget.__type)
-    ErrorHandler.AssertArgument(rx, 2, "number")
-    ErrorHandler.AssertArgument(ry, 3, "number")
+---@return ReGui.FontName fontName
+function Widget:getFontName()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
-    local parent = self.parent
-    if parent then
-        local pw, ph = parent:getSize()
-        pw = pw ~= 0 and pw or 1
-        ph = ph ~= 0 and ph or 1
-
-        local x = math.floor(rx * pw + 0.5)
-        local y = math.floor(ry * ph + 0.5)
-
-        self:setPosition(x, y)
-        return
+    local fontName = self.properties.FontName
+    if type(fontName) == "string" then
+        return fontName
     end
 
-    local screenWidth = self.guiInterface and self.guiInterface.data.metadata.screenWidth or 1
-    local screenHeight = self.guiInterface and self.guiInterface.data.metadata.screenHeight or 1
-    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
-    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
+    return "DeJaVuSans"
+end
 
-    local x = math.floor(rx * screenWidth + 0.5)
-    local y = math.floor(ry * screenHeight + 0.5)
+-- TEXT ALIGN --
 
-    self:setPosition(x, y)
+---@param self Internal.ReGui.Widget.Object
+---@param textAlign ReGui.TextAlign
+function Widget:setTextAlign(textAlign)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(textAlign, 2, {"string", "nil"})
+
+    if textAlign then
+        ErrorHandler.AssertCondition(VALID_TEXT_ALIGNMENT_TYPES[textAlign] == true, 2, "Invalid text alignment: " .. textAlign)
+    end
+
+    self.properties.TextAlign = textAlign
 end
 
 ---@param self Internal.ReGui.Widget.Object
----@param rw number
----@param rh number
-function Widget:setSizeReal(rw, rh)
-    ErrorHandler.AssertSelf(self, Widget.__type)
-    ErrorHandler.AssertArgument(rw, 2, "number")
-    ErrorHandler.AssertArgument(rh, 3, "number")
+---@return ReGui.TextAlign? textAlign
+function Widget:getTextAlign()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
 
-    local parent = self.parent
-    if parent then
-        local pw, ph = parent:getSize()
-        pw = pw ~= 0 and pw or 1
-        ph = ph ~= 0 and ph or 1
-
-        local w = math.floor(rw * pw + 0.5)
-        local h = math.floor(rh * ph + 0.5)
-
-        self:setSize(w, h)
-        return
+    local textAlign = self.properties.TextAlign
+    if type(textAlign) == "string" then
+        return textAlign
     end
 
-    local screenWidth = self.guiInterface and self.guiInterface.data.metadata.screenWidth or 1
-    local screenHeight = self.guiInterface and self.guiInterface.data.metadata.screenHeight or 1
-    screenWidth = (screenWidth ~= 0 and screenWidth) or 1
-    screenHeight = (screenHeight ~= 0 and screenHeight) or 1
-
-    local w = math.floor(rw * screenWidth + 0.5)
-    local h = math.floor(rh * screenHeight + 0.5)
-
-    self:setSize(w, h)
+    return "[DEFAULT]"
 end
 
 -- TEXT --
@@ -590,7 +782,7 @@ function Widget:setText(text)
 
     self.properties.Caption = text
 
-    if self.guiInterface and self.guiInterface:isOpen() then
+    if self.guiInterface and self.guiInterface:isActive() then
         if not self.translatable then
             self.guiInterface.activeInternalGui:setText(self.nodeProperties.name, text)
             return
@@ -626,7 +818,6 @@ function Widget:renderWidget(indentationLevel, prettify)
     ErrorHandler.AssertArgument(prettify, 3, { "boolean", "nil" })
 
     indentationLevel = indentationLevel or 0
-
     prettify = type(prettify) == "boolean" and prettify or false
 
     self.nodeProperties.name = self.nodeProperties.name or ""
@@ -644,15 +835,20 @@ function Widget:renderWidget(indentationLevel, prettify)
         return string.rep("    ", level)
     end
 
+    -- Decide whether to emit position_real or position.
+    -- Per-widget mode takes precedence; the guiInterface flag is a fallback
+    -- for widgets that were never explicitly assigned a mode.
     local function insertCoordinates()
-        local useRealCoordinates = self.guiInterface and self.guiInterface:isAutoConversionToRealUnitsEnabled()
-        if useRealCoordinates then
-            local realPositionX, realPositionY = self:getPositionReal()
-            local realSizeX, realSizeY = self:getSizeReal()
+        local useReal = self.coordinate.mode == "Real" or (self.coordinate.mode == "Pixels" and self.guiInterface and self.guiInterface:isAutoConversionToRealUnitsEnabled())
+        if useReal then
+            local realX, realY = self:getPositionReal()
+            local realWidth, realHeight = self:getSizeReal()
 
-            table.insert(buffer, string.format("position_real=\"%.3f %.3f %.3f %.3f\"", realPositionX, realPositionY, realSizeX, realSizeY))
+            table.insert(buffer, string.format("position_real=\"%.6f %.6f %.6f %.6f\"", realX, realY, realWidth, realHeight))
         else
-            table.insert(buffer, string.format("position=\"%d %d %d %d\"", self.coordinate.x, self.coordinate.y, self.coordinate.width, self.coordinate.height))
+            local x, y = self:getPosition()
+            local width, height = self:getSize()
+            table.insert(buffer, string.format( "position=\"%d %d %d %d\"", x, y, width, height))
         end
     end
 

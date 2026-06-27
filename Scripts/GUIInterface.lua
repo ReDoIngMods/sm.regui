@@ -1,5 +1,5 @@
 ---@class Internal.ReGui.GUIInterface.Class
-local GUIInterface = {}
+local GUIInterface = sm.regui.guiinterface or {}
 GUIInterface.__type = "ReGui.GUIInterface"
 GUIInterface.__index = GUIInterface
 GUIInterface.__tostring = CreateCustomTostringFunction(GUIInterface.__type)
@@ -138,7 +138,7 @@ end
 function GUIInterface.newBlank()
     local screenWidth, screenHeight = GetMyGuiScreenSize()
 
-    local self = {}
+    local self = setmetatable({}, GUIInterface)
     self.filePath = nil
     self.data = {
         version = 2,
@@ -168,7 +168,7 @@ function GUIInterface.newBlank()
 
     self.commands = {}
 
-    return setmetatable(self, GUIInterface)
+    return self
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object
