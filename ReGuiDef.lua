@@ -1189,6 +1189,11 @@ function sm.regui.createFullscreenInterface() end
 ---@return ReGui.ControllerBase controller The created controller
 function sm.regui.createController(type) end
 
+---Gets the screen resolution for MyGui layout files. Eg if ur on 1920x1080, this will return 1920x1080. If ur on 1600x900, this will return 1280x720.
+---@return number width The width of the MyGui screen resolution
+---@return number height The height of the MyGui screen resolution
+function sm.regui.getMyGuiScreenSize() end
+
 --- UTILS --
 
 ---A XMLColorful theme. Keys are token names, Values are the color associated to that token.

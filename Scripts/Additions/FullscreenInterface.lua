@@ -63,7 +63,6 @@ function FullscreenInterface.new(path)
     ErrorHandler.AssertValue(path, 1, sm.json.fileExists, "File not found")
 
     local fullScreenInterface = FullscreenInterface.newBlank()
-    local guiInterface = fullScreenInterface:getGuiInterface()
 
     local inputInterface = sm.regui.createGuiFromLayout(path)
     local rootWidgets = inputInterface:getRootWidgets()

@@ -20,8 +20,7 @@ end
 function DebugInteractableClass:client_onInteract(character, state)
     if not state then return end
 
-    local myGuiScreenWidth, myGuiScreenHeight = GetMyGuiScreenSize()
-
+    local myGuiScreenWidth, myGuiScreenHeight = sm.regui.getMyGuiScreenSize()
     local fullscreenGui = sm.regui.createFullscreenInterfaceFromLayout("$CONTENT_DATA/DevTools/LayoutToRelayout/output.relayout")
     fullscreenGui:setAspectRatioEnabled(true)
     fullscreenGui:setAspectRatioValues(16, 9)
