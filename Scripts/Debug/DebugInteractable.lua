@@ -15,64 +15,106 @@ end
 
 function DebugInteractableClass:client_onCreate()
     print("DebugInteractableClass:client_onCreate")
-
-    -- self.gui = sm.regui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/Test.relayout")
-    
-    -- local textManager = self.gui:getTextManager()
-    -- textManager:setTranslationFunction(function(key)
-    --     if key == "test.text" then
-    --         return "This is a translated text!"
-    --     end
-
-    --     return key
-    -- end)
-
-    -- self.fullscreenGui = sm.regui.createFullscreenInterface()
-    -- self.gui = self.fullscreenGui:getGuiInterface()
-
-    -- local rootWidget = self.fullscreenGui:getRootWidget()
-    
-    -- local textBox = rootWidget:createWidget("Text", "EditBox", "EditBox")
-    -- textBox:setText("Hello, World!")
-    -- textBox:setFontName("SM_Text")
-    -- textBox:setTextAlign("Center")
-    -- textBox:setSizeReal(1, 1)
 end
 
 function DebugInteractableClass:client_onInteract(character, state)
     if not state then return end
+
+    local gui = sm.regui.createGui()
+    local backPanel = gui:createWidget("MainPanel", "Widget", "WhiteSkin")
+    backPanel:setSize(1920, 1080)
+    backPanel:setProperty("Colour", sm.color.new(16 / 255, 16 / 255, 32 / 255))
     
-    local fullscreenGui = sm.regui.createFullscreenInterface()
-    local gui = fullscreenGui:getGuiInterface()
 
-    local rootWidget = fullscreenGui:getRootWidget()
 
-    do
-        local textBox = rootWidget:createWidget("Text", "TextBox", "TextBox")
-        textBox:setText("#000000I EAT CRAYONS BTW")
-        textBox:setFontName("HandbookTitle")
-        textBox:setTextAlign("Center")
-        textBox:setSizeReal(1, 1)
 
-        ---@type ReGui.ControllerFadeAlpha
-        local controller = rootWidget:createController("ControllerFadeAlpha")
-        controller:setAlpha(0)
-        controller:setCoefSeconds(4)
-        controller:destroy()
-    end
 
-    do
-        local whiteSkin = rootWidget:createWidget("Skin", "Widget", "WhiteSkin")
-        whiteSkin:setSizeReal(1, 1)
 
-        ---@type ReGui.ControllerFadeAlpha
-        local controller = rootWidget:createController("ControllerFadeAlpha")
-        controller:setAlpha(0)
-        controller:setCoefSeconds(4)
-        controller:destroy()
-    end
-    
-    fullscreenGui:update()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    local subWidget = backPanel:createWidget("SubWidget", "Widget", "WhiteSkin")
+    subWidget:setSize(250, 250)
+    subWidget:setPositionReal(0.5, 0.5)
+    subWidget:setAnchorPoint(0.5, 0.5)
+    subWidget:setProperty("Colour", sm.color.new(1, 0, 0))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    local lineA = backPanel:createWidget("LineA", "Widget", "WhiteSkin")
+    lineA:setSize(1920, 2)
+    lineA:setPositionReal(0, 0.5)
+    lineA:setAnchorPoint(0, 0.5)
+    lineA:setProperty("Colour", sm.color.new(.75, .75, .75))
+
+    local lineB = backPanel:createWidget("LineB", "Widget", "WhiteSkin")
+    lineB:setSize(2, 1080)
+    lineB:setPositionReal(0.5, 0)
+    lineB:setAnchorPoint(0.5, 0)
+    lineB:setProperty("Colour", sm.color.new(.75, .75, .75))
+
     gui:open()
 end
 

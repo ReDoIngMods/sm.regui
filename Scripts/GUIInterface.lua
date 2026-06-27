@@ -241,10 +241,11 @@ function GUIInterface:open()
     
     self.activeInternalGui = sm.gui.createGuiFromLayout(filePath, true, self.settings)
     for _, command in pairs(self.commands) do
-        self.activeInternalGui[command.name](self.activeInternalGui, unpack(command.arguments))
+        self.activeInternalGui[command.name](self.activeInternalGui, unpack(command.arguments, 1, command.totalArguments))
     end
-
+    
     self.activeInternalGui:open()
+    self.activeInternalGui:setColor("SubWidget", sm.color.new(1,0,0))
 end
 
 ---@param self Internal.ReGui.GUIInterface.Object

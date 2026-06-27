@@ -347,8 +347,8 @@ local COMMANDS = {
 
 local function generateMethods()
     for name, definition in pairs(COMMANDS) do
-        sm.regui[name] = function(self, ...)
-            ErrorHandler.AssertSelf(self, "ReGui.GuiInterface", #definition.arguments > 0 )
+        sm.regui.guiinterface[name] = function(self, ...)
+            ErrorHandler.AssertSelf(self, "ReGui.GUIInterface", #definition.arguments > 0 )
             
             local arguments = {...}
             for index, typeSet in ipairs(definition.arguments) do
@@ -368,7 +368,7 @@ local function generateMethods()
                 eraseCross(self.commands, definition.crossErases.names, arguments, definition.crossErases.slots)
             end
 
-            table.insert(self.commands, {name = name, arguments = arguments})
+            table.insert(self.commands, {name = name, arguments = arguments, totalArguments = select("#", ...)})
             if self:isActive() then
                 self.gui[name](self.gui, ...)
             end

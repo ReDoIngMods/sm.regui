@@ -29,7 +29,6 @@ sm.regui.internal = sm.regui.internal or {}
 
 dofile("XMLColorful.lua")
 dofile("Utils.lua")
-dofile("GUIInterfaceWrap.lua")
 
 dofile("Additions/FullscreenInterface.lua")
 
@@ -57,6 +56,8 @@ sm.regui.createFullscreenInterface = CreateFunctionForwarder("sm.regui.fullscree
 sm.regui.createController = CreateFunctionForwarder("sm.regui.controller.newBlank")
 
 dofile("GUIInterface.lua")
+dofile("GUIInterfaceWrap.lua")
+
 dofile("Widget.lua")
 dofile("Controller.lua")
 

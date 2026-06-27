@@ -178,6 +178,8 @@ function Widget.parseWidget(node, parent, guiInterface)
     self.translatable = true
     self.pendingTextContent = nil ---@type string?
 
+    self.anchorPoint = node.anchorPoint and CloneTable(node.anchorPoint) or {x = 0, y = 0} ---@type {x: number, y: number}?
+
     self.nodeProperties.name = self.nodeProperties.name or ""
     self.nodeProperties.skin = self.nodeProperties.skin or "PanelEmpty"
     self.nodeProperties.type = self.nodeProperties.type or "Widget"
@@ -262,6 +264,9 @@ function Widget:clone()
 
     clone.translatable = self.translatable
     clone.pendingTextContent = self.pendingTextContent
+    clone.anchorPoint = self.anchorPoint and CloneTable(self.anchorPoint) or nil
+    clone.customProperties = CloneTable(self.customProperties)
+
     return clone
 end
 
@@ -271,11 +276,11 @@ function Widget:destroy()
 
     self:setParent(nil)
     self:setGUIInterface(nil)
-    
+
     for _, child in pairs(self.children) do
         child:destroy()
     end
-    
+
     self.children = {}
     self.isDeleted = true
 end
@@ -328,7 +333,7 @@ function Widget:setNodeProperty(key, value)
     ErrorHandler.AssertArgument(value, 3, "string")
 
     ErrorHandler.AssertCondition(key ~= "name" and key ~= "type" and key ~= "skin" and key ~= "position" and key ~= "position_real", 2, "Cannot set reserved node property: " .. key)
-    
+
     self.nodeProperties[key] = value
 end
 
@@ -358,10 +363,10 @@ end
 function Widget:setProperty(key, value)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
     ErrorHandler.AssertArgument(key, 2, "string")
-    ErrorHandler.AssertArgument(value, 3, "string")
+    ErrorHandler.AssertArgument(value, 3, {"boolean", "number", "string", "Color", "nil"})
 
     ErrorHandler.AssertCondition(key ~= "Caption" and key ~= "Image" and key ~= "Color" and key ~= "FontName" and key ~= "TextAlign", 2, "Cannot set reserved property: " .. key)
-    
+
     self.properties[key] = value
 end
 
@@ -433,7 +438,7 @@ end
 ---@return string name
 function Widget:getName()
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    
+
     ---@diagnostic disable-next-line: return-type-mismatch
     return self.nodeProperties.name
 end
@@ -442,7 +447,7 @@ end
 ---@return string skin
 function Widget:getSkin()
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    
+
     ---@diagnostic disable-next-line: return-type-mismatch
     return self.nodeProperties.skin
 end
@@ -451,7 +456,7 @@ end
 ---@return string type
 function Widget:getType()
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    
+
     ---@diagnostic disable-next-line: return-type-mismatch
     return self.nodeProperties.type
 end
@@ -461,7 +466,7 @@ end
 function Widget:setName(name)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
     ErrorHandler.AssertArgument(name, 2, "string")
-    
+
     self.nodeProperties.name = name
 end
 
@@ -470,7 +475,7 @@ end
 function Widget:setSkin(skin)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
     ErrorHandler.AssertArgument(skin, 2, "string")
-    
+
     self.nodeProperties.skin = skin
 end
 
@@ -499,7 +504,7 @@ function Widget:findWidget(name, recursive)
         if child:getName() == name then
             return child
         end
-        
+
         if recursive then
             local foundInChild = child:findWidget(name, true)
             if foundInChild then
@@ -534,7 +539,7 @@ function Widget:setCoordinateMode(mode)
     ErrorHandler.AssertArgument(mode, 2, "string")
     ErrorHandler.AssertCondition(mode == "Pixels" or mode == "Real", 2, "Invalid coordinate mode: " .. tostring(mode))
 
-    if self.coordinate.mode == mode then 
+    if self.coordinate.mode == mode then
         return
     end
 
@@ -597,9 +602,10 @@ function Widget:setPosition(x, y)
     ErrorHandler.AssertArgument(x, 2, "number")
     ErrorHandler.AssertArgument(y, 3, "number")
 
+    self:setCoordinateMode("Pixels")
+
     self.coordinate.x = x
     self.coordinate.y = y
-    self.coordinate.mode = "Pixels"
 end
 
 ---@param self Internal.ReGui.Widget.Object
@@ -610,9 +616,10 @@ function Widget:setSize(width, height)
     ErrorHandler.AssertArgument(width,  2, "number")
     ErrorHandler.AssertArgument(height, 3, "number")
 
+    self:setCoordinateMode("Pixels")
+
     self.coordinate.width = width
     self.coordinate.height = height
-    self.coordinate.mode = "Pixels"
 end
 
 -- REAL UNITS POSITION/SIZE --
@@ -654,9 +661,10 @@ function Widget:setPositionReal(x, y)
     ErrorHandler.AssertArgument(x, 2, "number")
     ErrorHandler.AssertArgument(y, 3, "number")
 
+    self:setCoordinateMode("Real")
+
     self.coordinate.x = x
     self.coordinate.y = y
-    self.coordinate.mode = "Real"
 end
 
 ---Stores size as real units and marks this widget as real-mode.
@@ -668,9 +676,10 @@ function Widget:setSizeReal(width, height)
     ErrorHandler.AssertArgument(width, 2, "number")
     ErrorHandler.AssertArgument(height, 3, "number")
 
+    self:setCoordinateMode("Real")
+
     self.coordinate.width = width
     self.coordinate.height = height
-    self.coordinate.mode = "Real"
 end
 
 -- FONT --
@@ -735,7 +744,7 @@ end
 ---@return string? text
 function Widget:getText()
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    
+
     local text = self.properties.Caption
     if type(text) == "string" then
         return text
@@ -794,7 +803,7 @@ function Widget:createController(controllerType)
     }, self)
 
     table.insert(self.controllers, controller)
-    
+
     ---@diagnostic disable-next-line: return-type-mismatch
     return controller
 end
@@ -804,6 +813,31 @@ end
 function Widget:getControllers()
     ErrorHandler.AssertSelf(self, Widget.__type, true)
     return self.controllers
+end
+
+-- ANCHOR POINT --
+
+---@param self Internal.ReGui.Widget.Object
+---@return number anchorX
+---@return number anchorY
+function Widget:getAnchorPoint()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    return self.anchorPoint.x, self.anchorPoint.y
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@param anchorX number
+---@param anchorY number
+function Widget:setAnchorPoint(anchorX, anchorY)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(anchorX, 2, "number")
+    ErrorHandler.AssertArgument(anchorY, 3, "number")
+
+    ErrorHandler.AssertCondition(anchorX >= 0 and anchorX <= 1, 2, "anchorX must be between 0 and 1")
+    ErrorHandler.AssertCondition(anchorY >= 0 and anchorY <= 1, 3, "anchorY must be between 0 and 1")
+
+    self.anchorPoint.x = anchorX
+    self.anchorPoint.y = anchorY
 end
 
 -- RENDERING --
@@ -834,21 +868,33 @@ function Widget:renderWidget(indentationLevel, prettify)
         return string.rep("    ", level)
     end
 
-    -- Decide whether to emit position_real or position.
-    -- Per-widget mode takes precedence; the guiInterface flag is a fallback
-    -- for widgets that were never explicitly assigned a mode.
     local function insertCoordinates()
         local useReal = self.coordinate.mode == "Real" or (self.coordinate.mode == "Pixels" and self.guiInterface and self.guiInterface:isAutoConversionToRealUnitsEnabled())
         if useReal then
             local realX, realY = self:getPositionReal()
             local realWidth, realHeight = self:getSizeReal()
 
+            if self.anchorPoint then
+                local anchorX, anchorY = self:getAnchorPoint()
+                realX = realX - anchorX * realWidth
+                realY = realY - anchorY * realHeight
+            end
+
             table.insert(buffer, string.format("position_real=\"%.6f %.6f %.6f %.6f\"", realX, realY, realWidth, realHeight))
         else
             local x, y = self:getPosition()
             local width, height = self:getSize()
-            table.insert(buffer, string.format( "position=\"%d %d %d %d\"", x, y, width, height))
+
+            if self.anchorPoint then
+                local anchorX, anchorY = self:getAnchorPoint()
+                x = x - math.floor(anchorX * width + 0.5)
+                y = y - math.floor(anchorY * height + 0.5)
+            end
+
+            table.insert(buffer, string.format("position=\"%d %d %d %d\"", x, y, width, height))
         end
+
+        print(buffer[#buffer])
     end
 
     local function renderMinimal()
@@ -858,7 +904,7 @@ function Widget:renderWidget(indentationLevel, prettify)
         insertCoordinates()
 
         table.insert(buffer, " ")
-        
+
         local fullString = {}
         for key, value in PredictablePairs(self.nodeProperties) do
             table.insert(fullString, string.format("%s=%q", key, value))
@@ -872,7 +918,16 @@ function Widget:renderWidget(indentationLevel, prettify)
                 local translatedText = self.guiInterface and self.guiInterface.textManager:translateText(value) or value
                 table.insert(buffer, string.format("<Property key=%q value=%q/>", key, translatedText))
             else
-                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
+                local convertedValue = value
+                if type(value) == "Color" then
+                    convertedValue = string.format("%.6f %.6f %.6f %.6f", value.r, value.g, value.b, value.a)
+                elseif type(value) == "boolean" then
+                    convertedValue = value and "true" or "false"
+                elseif type(value) == "number" then
+                    convertedValue = string.format("%.6f", value)
+                end
+
+                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, convertedValue))
             end
         end
 
@@ -890,7 +945,7 @@ function Widget:renderWidget(indentationLevel, prettify)
     local function renderPrettified()
         table.insert(buffer, generateIndentation(indentationLevel))
         table.insert(buffer, "<Widget")
-        
+
         table.insert(buffer, " ")
         insertCoordinates()
 
@@ -911,7 +966,16 @@ function Widget:renderWidget(indentationLevel, prettify)
                 local translatedText = self.guiInterface and self.guiInterface.textManager:translateText(value) or value
                 table.insert(buffer, string.format("<Property key=%q value=%q/>", key, translatedText))
             else
-                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, value))
+                local convertedValue = value
+                if type(value) == "Color" then
+                    convertedValue = string.format("%.6f %.6f %.6f %.6f", value.r, value.g, value.b, value.a)
+                elseif type(value) == "boolean" then
+                    convertedValue = value and "true" or "false"
+                elseif type(value) == "number" then
+                    convertedValue = string.format("%.6f", value)
+                end
+                
+                table.insert(buffer, string.format("<Property key=%q value=%q/>", key, convertedValue))
             end
         end
 
