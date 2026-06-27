@@ -1,4 +1,3 @@
-
 ---@class Internal.ReGui.FullscreenInterface.Class
 local FullscreenInterface = {}
 FullscreenInterface.__type = "ReGui.FullscreenInterface"
@@ -35,9 +34,10 @@ function FullscreenInterface.newBlank()
     self.guiInterface = sm.regui.createGui()
 
     self.backPanel = self.guiInterface:createWidget("BackPanel", "Widget", "PanelEmpty")
-    self.backPanel:setSize(1920, 1080)
+    self.backPanel:setSizeReal(2, 2)
     
-    self.outputWidget = self.backPanel:createWidget("REGUI_FULLSCREENINTERFACE_OutputWidget", "Widget", "PanelEmpty")
+    self.innerWidget = self.backPanel:createWidget("REGUI_FULLSCREENINTERFACE_InnerWidget", "Widget", "PanelEmpty")
+    self.outputWidget = self.innerWidget:createWidget("REGUI_FULLSCREENINTERFACE_OutputWidget", "Widget", "PanelEmpty")
 
     self.aspectRatio = {
         enabled = false,
@@ -68,7 +68,7 @@ function FullscreenInterface.new(path)
     local inputInterface = sm.regui.createGuiFromLayout(path)
     local rootWidgets = inputInterface:getRootWidgets()
     for _, widget in ipairs(rootWidgets) do
-        widget:setParent(guiInterface)
+        widget:setParent(fullScreenInterface.outputWidget)
     end
 
     return fullScreenInterface
@@ -178,25 +178,77 @@ function FullscreenInterface:update()
     self.backPanel:setSize(screenWidth * 2, screenHeight * 2)
 
     local myGuiScreenWidth, myGuiScreenHeight = GetMyGuiScreenSize()
-
-    -- (I do not trust this)
-    -- Formula (11/180) * myGuiScreenHeight - 2
     local yOffset = 0.0611111111111 * myGuiScreenHeight - 2
-    
-    local backPanelWidth = myGuiScreenWidth * 2
-    local backPanelHeight = myGuiScreenHeight * 2
 
-    local outputX = screenWidth / 2
-    local outputY = screenHeight / 2
-    local outputWidth = screenWidth
-    local outputHeight = screenHeight
+    self.innerWidget:setPosition(screenWidth / 2, (screenHeight / 2) + yOffset)
+    self.innerWidget:setSize(screenWidth, screenHeight)
 
-    -- TODO: Alignment support
-    -- TODO: Aspect ratio support
-    -- TODO: Size constraints support
+    local outputWidth, outputHeight = screenWidth, screenHeight
 
-    self.outputWidget:setPosition(outputX, outputY + yOffset)
+    local ALIGNMENT_CONVERSION = {
+        ["[DEFAULT]"] = "Left Top",
+        ["Default"] = "Left Top",
+        ["Stretch"] = "HStretch VStretch",
+        ["Center"] = "HCenter VCenter",
+    }
+
+    local alignment = self.alignment
+    while ALIGNMENT_CONVERSION[alignment] do
+        alignment = ALIGNMENT_CONVERSION[alignment]
+    end
+
+    local outputAnchorX, outputAnchorY = 0, 0
+    local ALIGNMENT_FUNCTIONS = {
+        ["HStretch"] = function ()
+            outputWidth = screenWidth
+        end,
+        ["VStretch"] = function ()
+            outputHeight = screenHeight
+        end,
+
+        ["Left"] = function ()
+            outputAnchorX = 0
+        end,
+        ["HCenter"] = function ()
+            outputAnchorX = 0.5
+        end,
+        ["Right"] = function ()
+            outputAnchorX = 1
+        end,
+
+        ["Top"] = function ()
+            outputAnchorY = 0
+        end,
+        ["VCenter"] = function ()
+            outputAnchorY = 0.5
+        end,
+        ["Bottom"] = function ()
+            outputAnchorY = 1
+        end
+    }
+
+    for alignmentPart in string.gmatch(alignment, "%S+") do
+        local func = ALIGNMENT_FUNCTIONS[alignmentPart]
+        if func then
+            func()
+        end
+    end
+
+    if self.sizeConstraints.minWidth then outputWidth = math.max(outputWidth, self.sizeConstraints.minWidth) end
+    if self.sizeConstraints.minHeight then outputHeight = math.max(outputHeight, self.sizeConstraints.minHeight) end
+    if self.sizeConstraints.maxWidth then outputWidth = math.min(outputWidth, self.sizeConstraints.maxWidth) end
+    if self.sizeConstraints.maxHeight then outputHeight = math.min(outputHeight, self.sizeConstraints.maxHeight) end
+
     self.outputWidget:setSize(outputWidth, outputHeight)
+    self.outputWidget:setPositionReal(outputAnchorX, outputAnchorY)
+    self.outputWidget:setAnchorPoint(outputAnchorX, outputAnchorY)
+end
+
+function FullscreenInterface:open()
+    ErrorHandler.AssertSelf(self, FullscreenInterface.__type)
+
+    self:update()
+    self.guiInterface:open()
 end
 
 sm.regui.fullscreenInterface = FullscreenInterface

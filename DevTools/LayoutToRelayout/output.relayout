@@ -1,1 +1,254 @@
-{"version":2,"metadata":{"screenWidth":1920,"screenHeight":1080},"data":{"type":"Layout","version":"3.2.0","children":[{"nodeProperties":{"type":"Widget","skin":"PanelEmpty","name":"BackPanel"},"properties":{},"userStrings":{},"controllers":[],"children":[{"nodeProperties":{"type":"Widget","skin":"BackgroundDarkRoundedUpperRight","name":"TitlePanel"},"properties":{},"userStrings":{},"controllers":[],"children":[{"nodeProperties":{"type":"TextBox","skin":"TextBox","name":"TitleText"},"properties":{"TextAlign":"Center","FontName":"SM_HeaderLarge_Wide","Caption":"test.text"},"userStrings":{},"controllers":[],"children":[],"coordinate":{"x":0,"y":0,"width":1344,"height":129}}],"coordinate":{"x":0,"y":0,"width":1344,"height":129}},{"nodeProperties":{"type":"Widget","skin":"BackgroundLightRoundedLowerLeft","name":"MainPanel"},"properties":{},"userStrings":{},"controllers":[],"children":[{"nodeProperties":{"type":"TextBox","skin":"TextBox","name":"MainText"},"properties":{"Caption":"FARD FARD","FontName":"DejaVuSansFont_28"},"userStrings":{},"controllers":[],"children":[],"coordinate":{"x":20.0,"y":20.0,"width":570.0,"height":280.0}},{"nodeProperties":{"type":"Button","skin":"Button","name":"TestButton"},"properties":{"Caption":"BALLS","FontName":"SM_Button"},"userStrings":{},"controllers":[],"children":[],"coordinate":{"x":880.0,"y":440.0,"width":350.0,"height":120.0}}],"coordinate":{"x":0,"y":129,"width":1344,"height":734}}],"coordinate":{"x":0,"y":0,"width":1344,"height":864}}]}}
+{
+    "version": 2,
+    "metadata": {
+        "screenWidth": 1920,
+        "screenHeight": 1080
+    },
+    "data": {
+        "type": "Layout",
+        "version": "3.2.0",
+        "children": [
+            {
+                "nodeProperties": {
+                    "type": "Widget",
+                    "skin": "PanelEmpty",
+                    "name": "BindingPanel"
+                },
+                "properties": {
+                    "NeedKey": false,
+                    "NeedMouse": false
+                },
+                "userStrings": {},
+                "controllers": [],
+                "children": [
+                    {
+                        "nodeProperties": {
+                            "type": "Button",
+                            "skin": "HudBackgroundIcon",
+                            "align": [
+                                "Right",
+                                "Bottom"
+                            ],
+                            "name": "InventoryIconBackground"
+                        },
+                        "properties": {},
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [
+                            {
+                                "nodeProperties": {
+                                    "type": "ImageBox",
+                                    "skin": "ImageBox"
+                                },
+                                "properties": {
+                                    "ImageTexture": "gui_icon_hud_backpack.png"
+                                },
+                                "userStrings": {},
+                                "controllers": [],
+                                "children": [],
+                                "coordinate": {
+                                    "x": 13,
+                                    "y": 12,
+                                    "width": 29,
+                                    "height": 29
+                                }
+                            }
+                        ],
+                        "coordinate": {
+                            "x": 0,
+                            "y": 37,
+                            "width": 56,
+                            "height": 55
+                        }
+                    },
+                    {
+                        "nodeProperties": {
+                            "type": "Button",
+                            "skin": "HotbarItemKeybindingBackground",
+                            "align": [
+                                "Right",
+                                "Bottom"
+                            ],
+                            "name": "InventoryBinding"
+                        },
+                        "properties": {
+                            "Caption": "I",
+                            "FontName": "SM_HotbarBinding",
+                            "TextAlign": "Center"
+                        },
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [],
+                        "coordinate": {
+                            "x": 17,
+                            "y": 83,
+                            "width": 21,
+                            "height": 15
+                        }
+                    },
+                    {
+                        "nodeProperties": {
+                            "type": "Button",
+                            "skin": "HudBackgroundIcon",
+                            "align": [
+                                "Right",
+                                "Bottom"
+                            ],
+                            "name": "LogbookIconBackground"
+                        },
+                        "properties": {},
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [
+                            {
+                                "nodeProperties": {
+                                    "type": "ImageBox",
+                                    "skin": "ImageBox",
+                                    "name": "LogbookImageBox"
+                                },
+                                "properties": {
+                                    "ImageTexture": "gui_icon_hud_logbook.png"
+                                },
+                                "userStrings": {},
+                                "controllers": [],
+                                "children": [],
+                                "coordinate": {
+                                    "x": 13,
+                                    "y": 12,
+                                    "width": 29,
+                                    "height": 29
+                                }
+                            }
+                        ],
+                        "coordinate": {
+                            "x": 57,
+                            "y": 37,
+                            "width": 56,
+                            "height": 55
+                        }
+                    },
+                    {
+                        "nodeProperties": {
+                            "type": "Button",
+                            "skin": "HotbarItemKeybindingBackground",
+                            "align": [
+                                "Right",
+                                "Bottom"
+                            ],
+                            "name": "LogbookBinding"
+                        },
+                        "properties": {
+                            "Caption": "L",
+                            "FontName": "SM_HotbarBinding",
+                            "TextAlign": "Center"
+                        },
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [],
+                        "coordinate": {
+                            "x": 75,
+                            "y": 83,
+                            "width": 21,
+                            "height": 15
+                        }
+                    },
+                    {
+                        "nodeProperties": {
+                            "type": "Button",
+                            "skin": "HudBackgroundIcon",
+                            "align": [
+                                "Right",
+                                "Bottom"
+                            ],
+                            "name": "HandbookIconBackground"
+                        },
+                        "properties": {},
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [
+                            {
+                                "nodeProperties": {
+                                    "type": "ImageBox",
+                                    "skin": "ImageBox"
+                                },
+                                "properties": {
+                                    "ImageTexture": "gui_icon_hud_handbook.png"
+                                },
+                                "userStrings": {},
+                                "controllers": [],
+                                "children": [],
+                                "coordinate": {
+                                    "x": 13,
+                                    "y": 12,
+                                    "width": 29,
+                                    "height": 29
+                                }
+                            }
+                        ],
+                        "coordinate": {
+                            "x": 115,
+                            "y": 37,
+                            "width": 56,
+                            "height": 55
+                        }
+                    },
+                    {
+                        "nodeProperties": {
+                            "type": "Button",
+                            "skin": "HotbarItemKeybindingBackground",
+                            "align": [
+                                "Right",
+                                "Bottom"
+                            ],
+                            "name": "HandbookBinding"
+                        },
+                        "properties": {
+                            "Caption": "H",
+                            "FontName": "SM_HotbarBinding",
+                            "TextAlign": "Center"
+                        },
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [],
+                        "coordinate": {
+                            "x": 133,
+                            "y": 83,
+                            "width": 21,
+                            "height": 15
+                        }
+                    },
+                    {
+                        "nodeProperties": {
+                            "type": "ImageBox",
+                            "skin": "ImageBox",
+                            "align": [
+                                "Right",
+                                "Bottom"
+                            ],
+                            "name": "LogbookNotification"
+                        },
+                        "properties": {
+                            "ImageTexture": "gui_logbook_item_exclamation.png",
+                            "Visible": false
+                        },
+                        "userStrings": {},
+                        "controllers": [],
+                        "children": [],
+                        "coordinate": {
+                            "x": 98,
+                            "y": 41,
+                            "width": 17,
+                            "height": 26
+                        }
+                    }
+                ],
+                "coordinate": {
+                    "x": 1702,
+                    "y": 961,
+                    "width": 218,
+                    "height": 119
+                }
+            }
+        ]
+    }
+}

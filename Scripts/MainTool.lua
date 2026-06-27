@@ -55,6 +55,8 @@ sm.regui.createFullscreenInterface = CreateFunctionForwarder("sm.regui.fullscree
 
 sm.regui.createController = CreateFunctionForwarder("sm.regui.controller.newBlank")
 
+sm.regui.getMyGuiScreenSize = GetMyGuiScreenSize
+
 dofile("GUIInterface.lua")
 dofile("GUIInterfaceWrap.lua")
 

@@ -1,22 +1,41 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Layout" version="3.2.0">
-    <Widget type="Widget" skin="PanelEmpty" position_real="0 0 0.69999999999999996 0.80000000000000004" name="BackPanel">
-        <Widget type="Widget" skin="BackgroundDarkRoundedUpperRight" position_real="0 0 1 0.14930555555555555" name="TitlePanel">
-            <Widget type="TextBox" skin="TextBox" position_real="0 0 1 1" name="TitleText">
-                <Property key="TextAlign" value="Center"/>
-                <Property key="FontName" value="SM_HeaderLarge_Wide"/>
-                <Property key="Caption" value="test.text"/>
+    <Widget type="Widget" skin="PanelEmpty" position_real="0.88645833333333335 0.88981481481481484 0.11354166666666667 0.11018518518518519" name="BindingPanel">
+        <Property key="NeedKey" value="false"/>
+        <Property key="NeedMouse" value="false"/>
+        <Widget type="Button" skin="HudBackgroundIcon" position_real="0 0.31092436974789917 0.25688073394495414 0.46218487394957986" align="Right Bottom" name="InventoryIconBackground">
+            <Widget type="ImageBox" skin="ImageBox" position_real="0.23214285714285715 0.21818181818181817 0.5178571428571429 0.52727272727272723">
+                <Property key="ImageTexture" value="gui_icon_hud_backpack.png"/>
             </Widget>
         </Widget>
-        <Widget type="Widget" skin="BackgroundLightRoundedLowerLeft" position_real="0 0.14930555555555555 1 0.84953703703703709" name="MainPanel">
-            <Widget type="TextBox" skin="TextBox" position="20 20 570 280" name="MainText">
-                <Property key="Caption" value="FARD FARD"/>
-                <Property key="FontName" value="DejaVuSansFont_28"/>
+        <Widget type="Button" skin="HotbarItemKeybindingBackground" position_real="0.077981651376146793 0.69747899159663862 0.096330275229357804 0.12605042016806722" align="Right Bottom" name="InventoryBinding">
+            <Property key="Caption" value="I"/>
+            <Property key="FontName" value="SM_HotbarBinding"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="Button" skin="HudBackgroundIcon" position_real="0.26146788990825687 0.31092436974789917 0.25688073394495414 0.46218487394957986" align="Right Bottom" name="LogbookIconBackground">
+            <Widget type="ImageBox" skin="ImageBox" position_real="0.23214285714285715 0.21818181818181817 0.5178571428571429 0.52727272727272723" name="LogbookImageBox">
+                <Property key="ImageTexture" value="gui_icon_hud_logbook.png"/>
             </Widget>
-            <Widget type="Button" skin="Button" position="880 440 350 120" name="TestButton">
-                <Property key="Caption" value="BALLS"/>
-                <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="Button" skin="HotbarItemKeybindingBackground" position_real="0.34403669724770641 0.69747899159663862 0.096330275229357804 0.12605042016806722" align="Right Bottom" name="LogbookBinding">
+            <Property key="Caption" value="L"/>
+            <Property key="FontName" value="SM_HotbarBinding"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="Button" skin="HudBackgroundIcon" position_real="0.52752293577981646 0.31092436974789917 0.25688073394495414 0.46218487394957986" align="Right Bottom" name="HandbookIconBackground">
+            <Widget type="ImageBox" skin="ImageBox" position_real="0.23214285714285715 0.21818181818181817 0.5178571428571429 0.52727272727272723">
+                <Property key="ImageTexture" value="gui_icon_hud_handbook.png"/>
             </Widget>
+        </Widget>
+        <Widget type="Button" skin="HotbarItemKeybindingBackground" position_real="0.61009174311926606 0.69747899159663862 0.096330275229357804 0.12605042016806722" align="Right Bottom" name="HandbookBinding">
+            <Property key="Caption" value="H"/>
+            <Property key="FontName" value="SM_HotbarBinding"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="ImageBox" skin="ImageBox" position_real="0.44954128440366975 0.34453781512605042 0.077981651376146793 0.21848739495798319" align="Right Bottom" name="LogbookNotification">
+            <Property key="ImageTexture" value="gui_logbook_item_exclamation.png"/>
+            <Property key="Visible" value="false"/>
         </Widget>
     </Widget>
     <CodeGeneratorSettings/>

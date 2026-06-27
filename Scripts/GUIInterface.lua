@@ -19,12 +19,12 @@ local function VerifyLayoutFile(contents, argumentIndex)
 
         for key, value in pairs(node.properties) do
             ErrorHandler.AssertArgument(key, nil, "string")
-            ErrorHandler.AssertArgument(value, nil, "string")
+            ErrorHandler.AssertTableValue(node.properties, nil, key, {"string", "number", "boolean"}, path .. ".properties." .. key)
         end
 
         for key, value in pairs(node.userStrings) do
             ErrorHandler.AssertArgument(key, nil, "string")
-            ErrorHandler.AssertArgument(value, nil, "string")
+            ErrorHandler.AssertTableValue(node.userStrings, nil, key, "string", path .. ".userStrings." .. key)
         end
 
         ErrorHandler.AssertTableValue(node, nil, "coordinate", "table", path .. ".coordinate")

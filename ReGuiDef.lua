@@ -1793,14 +1793,24 @@ function Widget:isTranslationEnabled() end
 ---@param enabled boolean True to enable translation, false to disable.
 function Widget:setTranslationEnabled(enabled) end
 
----Gets all controllers attached to this widget.
----@return ReGui.ControllerBase[] controllers A list of attached controllers.
-function Widget:getControllers() end
-
 ---Creates a new controller of the specified type and attaches it to this widget.
 ---@param type ReGui.ControllerType The type of controller to create.
 ---@return ReGui.ControllerBase controller The created controller.
 function Widget:createController(type) end
+
+---Gets all controllers attached to this widget.
+---@return ReGui.ControllerBase[] controllers A list of attached controllers.
+function Widget:getControllers() end
+
+---Gets the anchor point of this widget.
+---@return number x The x-coordinate of the anchor point (0–1).
+---@return number y The y-coordinate of the anchor point (0–1).
+function Widget:getAnchorPoint() end
+
+---Sets the anchor point of this widget.
+---@param x number The x-coordinate of the anchor point (0–1).
+---@param y number The y-coordinate of the anchor point (0–1).
+function Widget:setAnchorPoint(x, y) end
 
 ---Renders this widget and its children into a MyGUI layout XML fragment.
 ---@param indentationLevel number? The base indentation level for pretty rendering. Defaults to 0.
@@ -1998,9 +2008,9 @@ function FullscreenInterface:getAlignment() end
 ---@param alignment ReGui.WidgetAlignmentType The new alignment to set.
 function FullscreenInterface:setAlignment(alignment) end
 
----Enables/disables whether a aspect ratio should be maintained for this FullscreenInterface. When enabled, the interface will maintain its aspect ratio regardless of screen size or resolution.
----@param enabled boolean True to enable aspect ratio maintenance, false to disable.
-function FullscreenInterface:setMaintainAspectRatio(enabled) end
+---Enables or disables the aspect ratio for this FullscreenInterface. When enabled, the interface will maintain its aspect ratio regardless of screen size changes.
+---@param enabled boolean True to enable aspect ratio, false to disable.
+function FullscreenInterface:setAspectRatioEnabled(enabled) end
 
 ---Returns true if theres a aspect ratio applied
 ---@return boolean enabled True if aspect ratio is enabled, false otherwise.
@@ -2038,3 +2048,10 @@ function FullscreenInterface:getRootWidget() end
 ---Updates the FullscreenInterface, applying any changes to alignment, aspect ratio, or size constraints.
 ---Call this every time you want the GUIInterface to open.
 function FullscreenInterface:update() end
+
+---Updates the FullscreenInterface & opens the GUIInterface. This is the same as:
+---```lua
+---fullscreenInterface:update()
+---fullscreenInterface:getGuiInterface():open()
+---```
+function FullscreenInterface:open() end
