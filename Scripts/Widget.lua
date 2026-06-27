@@ -4,7 +4,7 @@ Widget.__type = "ReGui.Widget"
 Widget.__index = function (tbl, index)
     local isDeleted = rawget(tbl, "isDeleted")
     if isDeleted then
-        error(string.format("Attempt to access %q on deleted widget", tostring(index)), 2)
+        error(string.format("Attempt to access %s on deleted widget", tostring(index)), 2)
     end
 
     return Widget[index]
@@ -205,25 +205,24 @@ end
 -- ADDING & CLONING & DELETION --
 
 ---@param self Internal.ReGui.Widget.Object
----@param widgetName string
----@param widgetType string?
----@param widgetSkin string?
+---@param name string
+---@param type string?
+---@param skin string?
 ---@return Internal.ReGui.Widget.Object newWidget
-function Widget:addWidget(widgetName, widgetType, widgetSkin)
-    ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(widgetName, 2, "string")
-    ErrorHandler.AssertArgument(widgetType, 3, {"string", "nil"})
-    ErrorHandler.AssertArgument(widgetSkin, 4, {"string", "nil"})
+function Widget:createWidget(name, type, skin)
+    ErrorHandler.AssertArgument(name, 1, "string")
+    ErrorHandler.AssertArgument(type, 2, { "string", "nil" })
+    ErrorHandler.AssertArgument(skin, 3, { "string", "nil" })
 
-    if widgetType and not VALID_WIDGET_TYPES[widgetType] then
-        error(string.format("Invalid widget type: %s", widgetType), 2)
+    if type and not VALID_WIDGET_TYPES[type] then
+        error(string.format("Invalid widget type: %s", type), 2)
     end
 
     local newWidget = Widget.parseWidget({
         nodeProperties = {
-            name = widgetName,
-            type = widgetType or "Widget",
-            skin = widgetSkin or "PanelEmpty"
+            name = name,
+            type = type or "Widget",
+            skin = skin or "PanelEmpty"
         },
         properties = {},
         userStrings = {},
@@ -237,8 +236,8 @@ function Widget:addWidget(widgetName, widgetType, widgetSkin)
         },
         children = {}
     }, self, self.guiInterface)
-
     table.insert(self.children, newWidget)
+
     return newWidget
 end
 
@@ -279,40 +278,6 @@ function Widget:destroy()
     
     self.children = {}
     self.isDeleted = true
-end
-
--- WIDGET CREATION --
-
-function Widget:createWidget(name, type, skin)
-    ErrorHandler.AssertArgument(name, 1, "string")
-    ErrorHandler.AssertArgument(type, 2, {"string", "nil"})
-    ErrorHandler.AssertArgument(skin, 3, {"string", "nil"})
-
-    if type and not VALID_WIDGET_TYPES[type] then
-        error(string.format("Invalid widget type: %s", type), 2)
-    end
-
-    local newWidget = Widget.parseWidget({
-        nodeProperties = {
-            name = name,
-            type = type or "Widget",
-            skin = skin or "PanelEmpty"
-        },
-        properties = {},
-        userStrings = {},
-        controllers = {},
-        coordinate = {
-            x = 0,
-            y = 0,
-            width = 100,
-            height = 100,
-            mode = "Pixels"
-        },
-        children = {}
-    }, self, self.guiInterface)
-    table.insert(self.children, newWidget)
-
-    return newWidget
 end
 
 -- USER STRINGS --
@@ -426,7 +391,7 @@ end
 ---@param parent Internal.ReGui.Widget.Object?
 function Widget:setParent(parent)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(parent, 2, {"ReGui.Widget", "nil"})
+    ErrorHandler.AssertArgument(parent, 2, { "ReGui.Widget", "nil" })
     ErrorHandler.AssertCondition(parent ~= self, 2, "Widget cannot be its own parent")
 
     if self.parent ~= nil then
@@ -457,7 +422,7 @@ end
 ---@param guiInterface Internal.ReGui.GUIInterface.Object?
 function Widget:setGUIInterface(guiInterface)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(guiInterface, 2, {"ReGui.GUIInterface", "nil"})
+    ErrorHandler.AssertArgument(guiInterface, 2, { "ReGui.GUIInterface", "nil" })
 
     ApplyGUIInterfaceRecursive(self, guiInterface)
 end
@@ -528,7 +493,7 @@ end
 function Widget:findWidget(name, recursive)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
     ErrorHandler.AssertArgument(name, 2, "string")
-    ErrorHandler.AssertArgument(recursive, 3, {"boolean", "nil"})
+    ErrorHandler.AssertArgument(recursive, 3, { "boolean", "nil" })
 
     for _, child in pairs(self.children) do
         if child:getName() == name then
@@ -642,7 +607,7 @@ end
 ---@param height integer
 function Widget:setSize(width, height)
     ErrorHandler.AssertSelf(self, Widget.__type)
-    ErrorHandler.AssertArgument(width, 2, "number")
+    ErrorHandler.AssertArgument(width,  2, "number")
     ErrorHandler.AssertArgument(height, 3, "number")
 
     self.coordinate.width = width
@@ -783,7 +748,7 @@ end
 ---@param text string?
 function Widget:setText(text)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(text, 2, {"string", "nil"})
+    ErrorHandler.AssertArgument(text, 2, { "string", "nil" })
 
     self.properties.Caption = text
 
@@ -826,7 +791,7 @@ function Widget:createController(controllerType)
 
     local controller = sm.regui.controllers.parseController({
         type = controllerType
-   }, self)
+    }, self)
 
     table.insert(self.controllers, controller)
     
@@ -848,8 +813,8 @@ end
 ---@param prettify boolean?
 function Widget:renderWidget(indentationLevel, prettify)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(indentationLevel, 2, {"number", "nil"})
-    ErrorHandler.AssertArgument(prettify, 3, {"boolean", "nil"})
+    ErrorHandler.AssertArgument(indentationLevel, 2, { "number", "nil" })
+    ErrorHandler.AssertArgument(prettify, 3, { "boolean", "nil" })
 
     indentationLevel = indentationLevel or 0
     prettify = type(prettify) == "boolean" and prettify or false

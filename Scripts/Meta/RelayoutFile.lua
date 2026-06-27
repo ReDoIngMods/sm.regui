@@ -1,7 +1,7 @@
 ---@alias PropertyTable table<string, string|integer|number|boolean>
 
 ---@class Internal.ReGui.Meta.RelayoutFile
----@field version integer Expected to be 2
+---@field version 2
 ---@field metadata Internal.ReGui.Meta.RelayoutFile.Metadata
 ---@field data Internal.ReGui.Meta.RelayoutFile.Root
 
@@ -10,7 +10,7 @@
 ---@field screenHeight integer
 
 ---@class Internal.ReGui.Meta.RelayoutFile.Root
----@field type string Expected to be Layout
+---@field type "Layout"
 ---@field version string
 ---@field children Internal.ReGui.Meta.RelayoutFile.Child[]
 
@@ -27,6 +27,7 @@
 ---@field y number
 ---@field width number
 ---@field height number
+---@field mode ReGui.CoordinateMode
 
 ---@class Internal.ReGui.Meta.RelayoutFile.Controller
 ---@field type "ControllerPosition"|"ControllerFadeAlpha"|"ControllerEdgeHide"
