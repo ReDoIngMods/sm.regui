@@ -41,21 +41,37 @@ end
 
 function DebugInteractableClass:client_onInteract(character, state)
     if not state then return end
-
+    
     local fullscreenGui = sm.regui.createFullscreenInterface()
     local gui = fullscreenGui:getGuiInterface()
 
     local rootWidget = fullscreenGui:getRootWidget()
 
-    -- local textBox = rootWidget:createWidget("Text", "EditBox", "EditBox")
-    -- textBox:setText("Hello, World!")
-    -- textBox:setFontName("SM_Text")
-    -- textBox:setTextAlign("Center")
-    -- textBox:setSizeReal(1, 1)
+    do
+        local textBox = rootWidget:createWidget("Text", "TextBox", "TextBox")
+        textBox:setText("#000000I EAT CRAYONS BTW")
+        textBox:setFontName("HandbookTitle")
+        textBox:setTextAlign("Center")
+        textBox:setSizeReal(1, 1)
 
-    local colorWidget = rootWidget:createWidget("TestPanel", "Widget", "WhiteSkin")
-    colorWidget:setSizeReal(1, 1)
+        ---@type ReGui.ControllerFadeAlpha
+        local controller = rootWidget:createController("ControllerFadeAlpha")
+        controller:setAlpha(0)
+        controller:setCoefSeconds(4)
+        controller:destroy()
+    end
 
+    do
+        local whiteSkin = rootWidget:createWidget("Skin", "Widget", "WhiteSkin")
+        whiteSkin:setSizeReal(1, 1)
+
+        ---@type ReGui.ControllerFadeAlpha
+        local controller = rootWidget:createController("ControllerFadeAlpha")
+        controller:setAlpha(0)
+        controller:setCoefSeconds(4)
+        controller:destroy()
+    end
+    
     fullscreenGui:update()
     gui:open()
 end

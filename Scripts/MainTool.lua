@@ -40,7 +40,7 @@ function sm.regui.internal.executeCode(functionPath, ...)
 
     local packetData = {}
     packetData.functionPath = functionPath
-    packetData.arguments = { ... }
+    packetData.arguments = {...}
     packetData.totalArguments = select("#", ...)
 
     sm.event.sendToTool(sm.regui.internal.tool, "svcl_executeCode", packetData)
@@ -54,8 +54,11 @@ sm.regui.createGui = CreateFunctionForwarder("sm.regui.guiinterface.newBlank")
 sm.regui.createFullscreenInterfaceFromLayout = CreateFunctionForwarder("sm.regui.fullscreenInterface.new")
 sm.regui.createFullscreenInterface = CreateFunctionForwarder("sm.regui.fullscreenInterface.newBlank")
 
+sm.regui.createController = CreateFunctionForwarder("sm.regui.controller.newBlank")
+
 dofile("GUIInterface.lua")
 dofile("Widget.lua")
+dofile("Controller.lua")
 
 dofile("Cache/CacheManager.lua")
 

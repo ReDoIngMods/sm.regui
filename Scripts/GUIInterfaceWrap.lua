@@ -79,159 +79,158 @@ end
 ---@type table<string, CommandDefinition>
 local COMMANDS = {
     setVisible = {
-        arguments = { "string", "boolean" },
-        erases = { true, false },
+        arguments = {"string", "boolean"},
+        erases = {true, false},
     },
-
     setColor = {
-        arguments = { "string", "Color" },
-        erases = { true, false },
+        arguments = {"string", "Color"},
+        erases = {true, false},
     },
 
     setFocus = {
-        arguments = { "string" },
-        erases = { true },
+        arguments = {"string"},
+        erases = {true},
     },
 
     setHost = {
-        arguments = { "string", {"Shape", "Character"}, {"string", "nil"} },
-        erases = { true, false, false },
+        arguments = {"string", {"Shape", "Character"}, {"string", "nil"}},
+        erases = {true, false, false},
     },
 
     setWorldPosition = {
-        arguments = { "string", {"World", "nil"} },
-        erases = { true, false },
+        arguments = {"string", {"World", "nil"}},
+        erases = {true, false},
     },
 
     setFadeRange = {
-        arguments = { "number" },
-        erases = { false },
+        arguments = {"number"},
+        erases = {false},
     },
 
     setMaxRenderDistance = {
-        arguments = { "number" },
-        erases = { false },
+        arguments = {"number"},
+        erases = {false},
     },
 
     setRequireLineOfSight = {
-        arguments = { "boolean" },
-        erases = { false },
+        arguments = {"boolean"},
+        erases = {false},
     },
 
     setImage = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     setIconImage = {
-        arguments = { "string", "Uuid" },
-        erases = { true, false },
+        arguments = {"string", "Uuid"},
+        erases = {true, false},
     },
 
     setItemIcon = {
-        arguments = { "string", "string", "string", "string" },
-        erases = { true, false, false, false },
+        arguments = {"string", "string", "string", "string"},
+        erases = {true, false, false, false},
     },
 
     setMeshPreview = {
-        arguments = { "string", "Uuid" },
-        erases = { true, false },
+        arguments = {"string", "Uuid"},
+        erases = {true, false},
     },
 
     setButtonCallback = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     setButtonState = {
-        arguments = { "string", "boolean" },
-        erases = { true, false },
+        arguments = {"string", "boolean"},
+        erases = {true, false},
     },
 
     setGridButtonCallback = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     createHorizontalSlider = {
-        arguments = { "string", "number", "number", "string", {"boolean", "nil"} },
-        erases = { true, false, false, false, false },
+        arguments = {"string", "number", "number", "string", {"boolean", "nil"}},
+        erases = {true, false, false, false, false},
     },
 
     createVerticalSlider = {
-        arguments = { "string", "number", "number", "string" },
-        erases = { true, false, false, false },
+        arguments = {"string", "number", "number", "string"},
+        erases = {true, false, false, false},
     },
 
     setSliderCallback = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     setSliderData = {
-        arguments = { "string", "number", "number" },
-        erases = { true, false, false },
+        arguments = {"string", "number", "number"},
+        erases = {true, false, false},
     },
 
     setSliderRange = {
-        arguments = { "string", "number" },
-        erases = { true, false },
+        arguments = {"string", "number"},
+        erases = {true, false},
     },
 
     setSliderRangeLimit = {
-        arguments = { "string", "number" },
-        erases = { true, false },
+        arguments = {"string", "number"},
+        erases = {true, false},
     },
 
     setSliderPosition = {
-        arguments = { "string", "number" },
-        erases = { true, false },
+        arguments = {"string", "number"},
+        erases = {true, false},
     },
 
     createDropDown = {
-        arguments = { "string", "string", "table" },
-        erases = { true, false, false },
+        arguments = {"string", "string", "table"},
+        erases = {true, false, false},
     },
 
     setSelectedDropDownItem = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     addListItem = {
-        arguments = { "string", "string", "table" },
+        arguments = {"string", "string", "table"},
     },
 
     clearList = {
-        arguments = { "string" },
-        erases = { true },
+        arguments = {"string"},
+        erases = {true},
         crossErases = {
-            names = { "addListItem", "setSelectedListItem", "setListSelectionCallback" },
-            slots = { true },
+            names = {"addListItem", "setSelectedListItem", "setListSelectionCallback"},
+            slots = {true},
         },
     },
 
     setListSelectionCallback = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     setSelectedListItem = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     addGridItem = {
-        arguments = { "string", "table" },
+        arguments = {"string", "table"},
     },
 
     addGridItemsFromFile = {
-        arguments = { "string", "string", {"table", "nil"} },
+        arguments = {"string", "string", {"table", "nil"}},
     },
 
     clearGrid = {
-        arguments = { "string" },
-        erases = { true },
+        arguments = {"string"},
+        erases = {true},
         crossErases = {
             names = {
                 "addGridItem", "addGridItemsFromFile",
@@ -239,13 +238,13 @@ local COMMANDS = {
                 "setGridItemChangedCallback", "setGridMouseFocusCallback",
                 "setGridButtonCallback",
             },
-            slots = { true },
+            slots = {true},
         },
     },
 
     createGridFromJson = {
-        arguments = { "string", "table" },
-        erases = { true, false },
+        arguments = {"string", "table"},
+        erases = {true, false},
         validate = function(arguments)
             local data = arguments[2]
             ErrorHandler.AssertTableValue(data, "type", "string")
@@ -257,33 +256,33 @@ local COMMANDS = {
     },
 
     setGridItem = {
-        arguments = { "string", {"number"}, "table" },
-        erases = { true, true, false },
+        arguments = {"string", {"number"}, "table"},
+        erases = {true, true, false},
     },
 
     setGridSize = {
-        arguments = { "string", {"number"} },
-        erases = { true, false },
+        arguments = {"string", {"number"}},
+        erases = {true, false},
     },
 
     setGridItemChangedCallback = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     setGridMouseFocusCallback = {
-        arguments = { "string", "string", "string" },
-        erases = { true, false, false },
+        arguments = {"string", "string", "string"},
+        erases = {true, false, false},
     },
 
     setContainer = {
-        arguments = { "string", {"Container"} },
-        erases = { true, false },
+        arguments = {"string", {"Container"}},
+        erases = {true, false},
     },
 
     setContainers = {
-        arguments = { "string", "table" },
-        erases = { true, false },
+        arguments = {"string", "table"},
+        erases = {true, false},
         validate = function(arguments)
             local containers = arguments[2]
             for index, container in ipairs(containers) do
@@ -293,43 +292,43 @@ local COMMANDS = {
     },
 
     playEffect = {
-        arguments = { "string", "string", {"boolean", "nil"} },
+        arguments = {"string", "string", {"boolean", "nil"}},
     },
 
     stopEffect = {
-        arguments = { "string", "string", {"boolean", "nil"} },
+        arguments = {"string", "string", {"boolean", "nil"}},
     },
 
     playGridEffect = {
-        arguments = { "string", "number", "string", {"boolean", "nil"} },
+        arguments = {"string", "number", "string", {"boolean", "nil"}},
     },
 
     stopGridEffect = {
-        arguments = { "string", "number", "string" },
+        arguments = {"string", "number", "string"},
     },
 
     setOnCloseCallback = {
-        arguments = { "string" },
-        erases = { false },
+        arguments = {"string"},
+        erases = {false},
     },
 
     setTextAcceptedCallback = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     setTextChangedCallback = {
-        arguments = { "string", "string" },
-        erases = { true, false },
+        arguments = {"string", "string"},
+        erases = {true, false},
     },
 
     addToPickupDisplay = {
-        arguments = { "Uuid", "number" },
+        arguments = {"Uuid", "number"},
     },
 
     trackQuest = {
-        arguments = { "string", "string", "boolean", "table" },
-        erases = { true, false, false, false },
+        arguments = {"string", "string", "boolean", "table"},
+        erases = {true, false, false, false},
         validate = function(arguments)
             local tasks = arguments[4]
             ErrorHandler.AssertTableValue(tasks, "name", "string")
@@ -341,8 +340,8 @@ local COMMANDS = {
     },
 
     untrackQuest = {
-        arguments = { "string" },
-        erases = { true },
+        arguments = {"string"},
+        erases = {true},
     },
 }
 
@@ -351,7 +350,7 @@ local function generateMethods()
         sm.regui[name] = function(self, ...)
             ErrorHandler.AssertSelf(self, "ReGui.GuiInterface", #definition.arguments > 0 )
             
-            local arguments = { ... }
+            local arguments = {...}
             for index, typeSet in ipairs(definition.arguments) do
                 ErrorHandler.AssertArgument(arguments[index], index, typeSet)
             end
@@ -369,7 +368,7 @@ local function generateMethods()
                 eraseCross(self.commands, definition.crossErases.names, arguments, definition.crossErases.slots)
             end
 
-            table.insert(self.commands, { name = name, arguments = arguments })
+            table.insert(self.commands, {name = name, arguments = arguments})
             if self:isActive() then
                 self.gui[name](self.gui, ...)
             end

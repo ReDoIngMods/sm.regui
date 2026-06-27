@@ -4,7 +4,7 @@ Widget.__type = "ReGui.Widget"
 Widget.__index = function (tbl, index)
     local isDeleted = rawget(tbl, "isDeleted")
     if isDeleted then
-        error(string.format("Attempt to access %s on deleted widget", tostring(index)), 2)
+        error(string.format("Attempt to access %q on deleted widget", tostring(index)), 2)
     end
 
     return Widget[index]
@@ -169,7 +169,6 @@ function Widget.parseWidget(node, parent, guiInterface)
     self.nodeProperties = CloneTable(node.nodeProperties) ---@type PropertyTable
     self.properties = CloneTable(node.properties) ---@type PropertyTable
     self.userStrings = CloneTable(node.userStrings) ---@type PropertyTable
-    self.controllers = CloneTable(node.controllers) ---@type Internal.ReGui.Meta.RelayoutFile.Controller[]
     self.coordinate = CloneTable(node.coordinate) ---@type Internal.ReGui.Meta.RelayoutFile.Child.Coordinate
     self.coordinate.mode = self.coordinate.mode or "Pixels" ---@type ReGui.CoordinateMode
 
@@ -194,6 +193,12 @@ function Widget.parseWidget(node, parent, guiInterface)
         table.insert(self.children, Widget.parseWidget(childNode, self, guiInterface))
     end
 
+    ---@type Internal.ReGui.Controller.Object[]
+    self.controllers = {}
+    for _, controllerNode in pairs(node.controllers) do
+        table.insert(self.controllers, sm.regui.controller.parseController(controllerNode, self))
+    end
+
     return self
 end
 
@@ -207,8 +212,8 @@ end
 function Widget:addWidget(widgetName, widgetType, widgetSkin)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
     ErrorHandler.AssertArgument(widgetName, 2, "string")
-    ErrorHandler.AssertArgument(widgetType, 3, { "string", "nil" })
-    ErrorHandler.AssertArgument(widgetSkin, 4, { "string", "nil" })
+    ErrorHandler.AssertArgument(widgetType, 3, {"string", "nil"})
+    ErrorHandler.AssertArgument(widgetSkin, 4, {"string", "nil"})
 
     if widgetType and not VALID_WIDGET_TYPES[widgetType] then
         error(string.format("Invalid widget type: %s", widgetType), 2)
@@ -280,8 +285,8 @@ end
 
 function Widget:createWidget(name, type, skin)
     ErrorHandler.AssertArgument(name, 1, "string")
-    ErrorHandler.AssertArgument(type, 2, { "string", "nil" })
-    ErrorHandler.AssertArgument(skin, 3, { "string", "nil" })
+    ErrorHandler.AssertArgument(type, 2, {"string", "nil"})
+    ErrorHandler.AssertArgument(skin, 3, {"string", "nil"})
 
     if type and not VALID_WIDGET_TYPES[type] then
         error(string.format("Invalid widget type: %s", type), 2)
@@ -421,7 +426,7 @@ end
 ---@param parent Internal.ReGui.Widget.Object?
 function Widget:setParent(parent)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(parent, 2, { "ReGui.Widget", "nil" })
+    ErrorHandler.AssertArgument(parent, 2, {"ReGui.Widget", "nil"})
     ErrorHandler.AssertCondition(parent ~= self, 2, "Widget cannot be its own parent")
 
     if self.parent ~= nil then
@@ -452,7 +457,7 @@ end
 ---@param guiInterface Internal.ReGui.GUIInterface.Object?
 function Widget:setGUIInterface(guiInterface)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(guiInterface, 2, { "ReGui.GUIInterface", "nil" })
+    ErrorHandler.AssertArgument(guiInterface, 2, {"ReGui.GUIInterface", "nil"})
 
     ApplyGUIInterfaceRecursive(self, guiInterface)
 end
@@ -523,7 +528,7 @@ end
 function Widget:findWidget(name, recursive)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
     ErrorHandler.AssertArgument(name, 2, "string")
-    ErrorHandler.AssertArgument(recursive, 3, { "boolean", "nil" })
+    ErrorHandler.AssertArgument(recursive, 3, {"boolean", "nil"})
 
     for _, child in pairs(self.children) do
         if child:getName() == name then
@@ -637,7 +642,7 @@ end
 ---@param height integer
 function Widget:setSize(width, height)
     ErrorHandler.AssertSelf(self, Widget.__type)
-    ErrorHandler.AssertArgument(width,  2, "number")
+    ErrorHandler.AssertArgument(width, 2, "number")
     ErrorHandler.AssertArgument(height, 3, "number")
 
     self.coordinate.width = width
@@ -778,7 +783,7 @@ end
 ---@param text string?
 function Widget:setText(text)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(text, 2, { "string", "nil" })
+    ErrorHandler.AssertArgument(text, 2, {"string", "nil"})
 
     self.properties.Caption = text
 
@@ -809,13 +814,42 @@ function Widget:setTranslationEnabled(enabled)
     self.translatable = enabled
 end
 
+
+-- CONTROLLERS --
+
+---@param self Internal.ReGui.Widget.Object
+---@param controllerType ReGui.ControllerType
+---@return Internal.ReGui.Controller.Object controller
+function Widget:createController(controllerType)
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    ErrorHandler.AssertArgument(controllerType, 2, "string")
+
+    local controller = sm.regui.controllers.parseController({
+        type = controllerType
+   }, self)
+
+    table.insert(self.controllers, controller)
+    
+    ---@diagnostic disable-next-line: return-type-mismatch
+    return controller
+end
+
+---@param self Internal.ReGui.Widget.Object
+---@return Internal.ReGui.Controller.Object[] controllers
+function Widget:getControllers()
+    ErrorHandler.AssertSelf(self, Widget.__type, true)
+    return self.controllers
+end
+
 -- RENDERING --
 
 ---@param self Internal.ReGui.Widget.Object
+---@param indentationLevel integer?
+---@param prettify boolean?
 function Widget:renderWidget(indentationLevel, prettify)
     ErrorHandler.AssertSelf(self, Widget.__type, true)
-    ErrorHandler.AssertArgument(indentationLevel, 2, { "number", "nil" })
-    ErrorHandler.AssertArgument(prettify, 3, { "boolean", "nil" })
+    ErrorHandler.AssertArgument(indentationLevel, 2, {"number", "nil"})
+    ErrorHandler.AssertArgument(prettify, 3, {"boolean", "nil"})
 
     indentationLevel = indentationLevel or 0
     prettify = type(prettify) == "boolean" and prettify or false
@@ -878,29 +912,7 @@ function Widget:renderWidget(indentationLevel, prettify)
         end
 
         for _, controller in PredictablePairs(self.controllers) do
-            table.insert(buffer, "<Controller ")
-            table.insert(buffer, "type=")
-            table.insert(buffer, string.format("%q", controller.type))
-            table.insert(buffer, ">")
-
-            for key, value in PredictablePairs(controller) do
-                if key ~= "type" then
-                    table.insert(buffer, generateIndentation(indentationLevel + 2))
-                    table.insert(buffer, string.format("<Property key=%q value=", key))
-
-                    if key == "Coord" then
-                        table.insert(buffer, string.format("\"%d %d %d %d\"", value.x, value.y, value.width, value.height))
-                    elseif key == "Position" or key == "Size" then
-                        table.insert(buffer, string.format("\"%d %d\"", value.x, value.y))
-                    else
-                        table.insert(buffer, string.format("%q", value))
-                    end
-
-                    table.insert(buffer, "/>")
-                end
-            end
-
-            table.insert(buffer, "</Controller>")
+            table.insert(buffer, controller:renderController(indentationLevel + 1, prettify))
         end
 
         for _, value in PredictablePairs(self.children) do
@@ -939,34 +951,8 @@ function Widget:renderWidget(indentationLevel, prettify)
         end
 
         for _, controller in PredictablePairs(self.controllers) do
-            table.insert(buffer, "\n")
-            table.insert(buffer, generateIndentation(indentationLevel + 1))
-            table.insert(buffer, "<Controller ")
-            table.insert(buffer, "type=")
-            table.insert(buffer, string.format("%q", controller.type))
-            table.insert(buffer, ">")
-            table.insert(buffer, "\n")
-
-            for key, value in PredictablePairs(controller) do
-                if key ~= "type" then
-                    table.insert(buffer, generateIndentation(indentationLevel + 2))
-                    table.insert(buffer, string.format("<Property key=%q value=", key))
-
-                    if key == "Coord" then
-                        table.insert(buffer, string.format("\"%d %d %d %d\"", value.x, value.y, value.width, value.height))
-                    elseif key == "Position" or key == "Size" then
-                        table.insert(buffer, string.format("\"%d %d\"", value.x, value.y))
-                    else
-                        table.insert(buffer, string.format("%q", value))
-                    end
-
-                    table.insert(buffer, "/>")
-                end
-            end
-
-            table.insert(buffer, "\n")
-            table.insert(buffer, generateIndentation(indentationLevel + 1))
-            table.insert(buffer, "</Controller>")
+            local renderedController = controller:renderController(indentationLevel + 1, prettify)
+            table.insert(buffer, renderedController)
         end
 
         for _, value in PredictablePairs(self.children) do

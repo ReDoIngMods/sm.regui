@@ -88,7 +88,7 @@ function Binding:CreateBind(func, ...)
     ErrorHandler.AssertSelf(self, BindingClassType, true)
     ErrorHandler.AssertArgument(func, 2, "function")
 
-    local boundArguments = { ... }
+    local boundArguments = {...}
     local boundCount = select("#", ...)
 
     local ignoreCallArgs = boundCount >= 1 and IsIgnoreArgs(boundArguments[1])
@@ -104,7 +104,7 @@ function Binding:CreateBind(func, ...)
             return func(unpack(resolved, 1, boundCount - 1))
         end
 
-        local callArguments = { ... }
+        local callArguments = {...}
         for index = 1, boundCount do
             local boundedArgument = boundArguments[index]
 

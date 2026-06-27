@@ -11,7 +11,7 @@ local function VerifyLayoutFile(contents, argumentIndex)
         ErrorHandler.AssertTableValue(node, nil, "nodeProperties", "table", path .. ".nodeProperties")
         ErrorHandler.AssertTableValue(node.nodeProperties, nil, "type", "string", path .. ".nodeProperties.type")
         ErrorHandler.AssertTableValue(node.nodeProperties, nil, "skin", "string", path .. ".nodeProperties.skin")
-        ErrorHandler.AssertTableValue(node.nodeProperties, nil, "name", { "string", "nil" }, path .. ".nodeProperties.name")
+        ErrorHandler.AssertTableValue(node.nodeProperties, nil, "name", {"string", "nil"}, path .. ".nodeProperties.name")
         node.nodeProperties.name = node.nodeProperties.name or ""
         
         ErrorHandler.AssertTableValue(node, nil, "properties", "table", path .. ".properties")
@@ -28,30 +28,30 @@ local function VerifyLayoutFile(contents, argumentIndex)
         end
 
         ErrorHandler.AssertTableValue(node, nil, "coordinate", "table", path .. ".coordinate")
-        ErrorHandler.AssertTableValue(node.coordinate, nil, "x", { "number" }, path .. ".coordinate.x")
-        ErrorHandler.AssertTableValue(node.coordinate, nil, "y", { "number" }, path .. ".coordinate.y")
-        ErrorHandler.AssertTableValue(node.coordinate, nil, "width", { "number" }, path .. ".coordinate.width")
-        ErrorHandler.AssertTableValue(node.coordinate, nil, "height", { "number" }, path .. ".coordinate.height")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "x", {"number"}, path .. ".coordinate.x")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "y", {"number"}, path .. ".coordinate.y")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "width", {"number"}, path .. ".coordinate.width")
+        ErrorHandler.AssertTableValue(node.coordinate, nil, "height", {"number"}, path .. ".coordinate.height")
         ErrorHandler.AssertTableValue(node, nil, "controllers", "table", path .. ".controllers")
         ErrorHandler.AssertTableValue(node, nil, "children", "table", path .. ".children")
 
         for index, controller in ipairs(node.controllers) do
             local controllerPath = string.format("%s.controllers[%d]", path, index)
             ErrorHandler.AssertArgument(controller, nil, "table")
-            ErrorHandler.AssertTableValue(controller, nil, "type", { "string" }, controllerPath .. ".type")
+            ErrorHandler.AssertTableValue(controller, nil, "type", {"string"}, controllerPath .. ".type")
 
             if controller.type == "ControllerPosition" then
                 ErrorHandler.AssertTableValue(controller, nil, "Coord", "table", controllerPath .. ".Coord")
-                ErrorHandler.AssertTableValue(controller.Coord, nil, "x", { "number" }, controllerPath .. ".Coord.x")
-                ErrorHandler.AssertTableValue(controller.Coord, nil, "y", { "number" }, controllerPath .. ".Coord.y")
-                ErrorHandler.AssertTableValue(controller.Coord, nil, "width", { "number" }, controllerPath .. ".Coord.width")
-                ErrorHandler.AssertTableValue(controller.Coord, nil, "height", { "number" }, controllerPath .. ".Coord.height")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "x", {"number"}, controllerPath .. ".Coord.x")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "y", {"number"}, controllerPath .. ".Coord.y")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "width", {"number"}, controllerPath .. ".Coord.width")
+                ErrorHandler.AssertTableValue(controller.Coord, nil, "height", {"number"}, controllerPath .. ".Coord.height")
                 ErrorHandler.AssertTableValue(controller, nil, "Position", "table", controllerPath .. ".Position")
-                ErrorHandler.AssertTableValue(controller.Position, nil, "x", { "number" }, controllerPath .. ".Position.x")
-                ErrorHandler.AssertTableValue(controller.Position, nil, "y", { "number" }, controllerPath .. ".Position.y")
+                ErrorHandler.AssertTableValue(controller.Position, nil, "x", {"number"}, controllerPath .. ".Position.x")
+                ErrorHandler.AssertTableValue(controller.Position, nil, "y", {"number"}, controllerPath .. ".Position.y")
                 ErrorHandler.AssertTableValue(controller, nil, "Size", "table", controllerPath .. ".Size")
-                ErrorHandler.AssertTableValue(controller.Size, nil, "x", { "number" }, controllerPath .. ".Size.x")
-                ErrorHandler.AssertTableValue(controller.Size, nil, "y", { "number" }, controllerPath .. ".Size.y")
+                ErrorHandler.AssertTableValue(controller.Size, nil, "x", {"number"}, controllerPath .. ".Size.x")
+                ErrorHandler.AssertTableValue(controller.Size, nil, "y", {"number"}, controllerPath .. ".Size.y")
                 ErrorHandler.AssertTableValue(controller, nil, "Function", "string", controllerPath .. ".Function")
                 ErrorHandler.AssertTableValue(controller, nil, "Time", "number", controllerPath .. ".Time")
             elseif controller.type == "ControllerFadeAlpha" then
@@ -59,9 +59,9 @@ local function VerifyLayoutFile(contents, argumentIndex)
                 ErrorHandler.AssertTableValue(controller, nil, "Coef", "number", controllerPath .. ".Coef")
                 ErrorHandler.AssertTableValue(controller, nil, "Enabled", "boolean", controllerPath .. ".Enabled")
             elseif controller.type == "ControllerEdgeHide" then
-                ErrorHandler.AssertTableValue(controller, nil, "RemainPixels", { "number" }, controllerPath .. ".RemainPixels")
-                ErrorHandler.AssertTableValue(controller, nil, "ShadowSize", { "number" }, controllerPath .. ".ShadowSize")
-                ErrorHandler.AssertTableValue(controller, nil, "Time", { "number" }, controllerPath .. ".Time")
+                ErrorHandler.AssertTableValue(controller, nil, "RemainPixels", {"number"}, controllerPath .. ".RemainPixels")
+                ErrorHandler.AssertTableValue(controller, nil, "ShadowSize", {"number"}, controllerPath .. ".ShadowSize")
+                ErrorHandler.AssertTableValue(controller, nil, "Time", {"number"}, controllerPath .. ".Time")
             else
                 ErrorHandler.AssertCondition(false, nil, string.format("'%s.type': unknown controller type '%s'", controllerPath, controller.type))
             end
@@ -74,7 +74,7 @@ local function VerifyLayoutFile(contents, argumentIndex)
 
     local success, message = pcall(function()
         ErrorHandler.AssertArgument(contents, argumentIndex, "table")
-        ErrorHandler.AssertTableValue(contents, argumentIndex, "version", "number",  "version")
+        ErrorHandler.AssertTableValue(contents, argumentIndex, "version", "number", "version")
         ErrorHandler.AssertTableValue(contents, argumentIndex, "metadata", "table", "metadata")
         ErrorHandler.AssertTableValue(contents.metadata, argumentIndex, "screenWidth", "number", "metadata.screenWidth")
         ErrorHandler.AssertTableValue(contents.metadata, argumentIndex, "screenHeight", "number", "metadata.screenHeight")
@@ -116,7 +116,7 @@ function GUIInterface.new(path)
     self.renderer = {
         needsRendering = true,
         renderPath = ""
-    }
+   }
 
     ---@type Internal.ReGui.Widget.Object[]
     self.rootWidgets = {}
@@ -145,19 +145,19 @@ function GUIInterface.newBlank()
         metadata = {
             screenWidth = screenWidth,
             screenHeight = screenHeight,
-        },
+       },
         data = {
             type = "Layout",
             version = "3.2.0",
             children = {}
-        }
-    }
+       }
+   }
     self.toRealCoordinates = true
 
     self.renderer = {
         needsRendering = true,
         renderPath = ""
-    }
+   }
 
     ---@type Internal.ReGui.Widget.Object[]
     self.rootWidgets = {}
@@ -201,7 +201,7 @@ end
 ---@param self Internal.ReGui.GUIInterface.Object
 function GUIInterface:render(prettify)
     ErrorHandler.AssertSelf(self, GUIInterface.__type, true)
-    ErrorHandler.AssertArgument(prettify, 2, { "boolean", "nil" })
+    ErrorHandler.AssertArgument(prettify, 2, {"boolean", "nil"})
 
     prettify = type(prettify) == "boolean" and prettify or false
 
@@ -278,7 +278,7 @@ function GUIInterface:setData(widgetName, properties)
 
     for key, value in pairs(properties) do
         ErrorHandler.AssertArgument(key, nil, "string")
-        ErrorHandler.AssertArgument(value, nil, { "boolean", "number", "string" })
+        ErrorHandler.AssertArgument(value, nil, {"boolean", "number", "string"})
     end
 
     for key, value in pairs(properties) do
@@ -322,19 +322,19 @@ end
 ---@param settings ReGui.GuiSettings?
 function GUIInterface:setSettings(settings)
     ErrorHandler.AssertSelf(self, GUIInterface.__type, true)
-    ErrorHandler.AssertArgument(settings, 2, { "table", "nil" })
+    ErrorHandler.AssertArgument(settings, 2, {"table", "nil"})
 
     if not settings then
         self.settings = nil
         return
     end
 
-    ErrorHandler.AssertTableValue(settings, 2, "isHud", { "boolean", "nil" })
-    ErrorHandler.AssertTableValue(settings, 2, "isInteractive", { "boolean", "nil" })
-    ErrorHandler.AssertTableValue(settings, 2, "needsCursor", { "boolean", "nil" })
-    ErrorHandler.AssertTableValue(settings, 2, "hidesHotbar", { "boolean", "nil" })
-    ErrorHandler.AssertTableValue(settings, 2, "isOverlapped", { "boolean", "nil" })
-    ErrorHandler.AssertTableValue(settings, 2, "backgroundAlpha", { "number", "nil" })
+    ErrorHandler.AssertTableValue(settings, 2, "isHud", {"boolean", "nil"})
+    ErrorHandler.AssertTableValue(settings, 2, "isInteractive", {"boolean", "nil"})
+    ErrorHandler.AssertTableValue(settings, 2, "needsCursor", {"boolean", "nil"})
+    ErrorHandler.AssertTableValue(settings, 2, "hidesHotbar", {"boolean", "nil"})
+    ErrorHandler.AssertTableValue(settings, 2, "isOverlapped", {"boolean", "nil"})
+    ErrorHandler.AssertTableValue(settings, 2, "backgroundAlpha", {"number", "nil"})
 
     self.settings = CloneTable(settings)
 end
@@ -347,7 +347,7 @@ end
 function GUIInterface:findWidget(widgetName, recursive)
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
     ErrorHandler.AssertArgument(widgetName, 2, "string")
-    ErrorHandler.AssertArgument(recursive, 3, { "boolean", "nil" })
+    ErrorHandler.AssertArgument(recursive, 3, {"boolean", "nil"})
 
     for _, widget in pairs(self.rootWidgets) do
         if widget:getName() == widgetName then
@@ -380,15 +380,15 @@ end
 function GUIInterface:createWidget(widgetName, widgetType, widgetSkin)
     ErrorHandler.AssertSelf(self, GUIInterface.__type)
     ErrorHandler.AssertArgument(widgetName, 2, "string")
-    ErrorHandler.AssertArgument(widgetType, 3, { "string", "nil" })
-    ErrorHandler.AssertArgument(widgetSkin, 4, { "string", "nil" })
+    ErrorHandler.AssertArgument(widgetType, 3, {"string", "nil"})
+    ErrorHandler.AssertArgument(widgetSkin, 4, {"string", "nil"})
 
     local widgetData = {
         nodeProperties = {
             name = widgetName,
             type = widgetType or "Widget",
             skin = widgetSkin or "PanelEmpty"
-        },
+       },
         properties = {},
         userStrings = {},
         coordinate = {
@@ -396,10 +396,10 @@ function GUIInterface:createWidget(widgetName, widgetType, widgetSkin)
             y = 0,
             width = 100,
             height = 100
-        },
+       },
         controllers = {},
         children = {}
-    }
+   }
 
     local widgetObject = sm.regui.widgets.parseWidget(widgetData, nil, self)
     table.insert(self.rootWidgets, widgetObject)

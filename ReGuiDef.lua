@@ -2,10 +2,10 @@
 
 ---MyGui Widget Alignment types
 ---@alias ReGui.WidgetAlignmentType
----| "[DEFAULT]" Same as: Left Top
----| "Default" Same as: Left Top
----| "Stretch" Same as: HStretch VStretch
----| "Center" Same as: HCenter VCenter
+---| "[DEFAULT]" # Same as: Left Top
+---| "Default" # Same as: Left Top
+---| "Stretch" # Same as: HStretch VStretch
+---| "Center" # Same as: HCenter VCenter
 ---| "Left Top"
 ---| "Left Bottom"
 ---| "Left VStretch"
@@ -25,9 +25,9 @@
 
 ---MyGui Text Alignment types
 ---@alias ReGui.TextAlign
----| "[DEFAULT]" Same as: Left Top
----| "Default" Same as: Left Top
----| "Center" Same as: HCenter VCenter
+---| "[DEFAULT]" # Same as: Left Top
+---| "Default" # Same as: Left Top
+---| "Center" # Same as: HCenter VCenter
 ---| "Left Top"
 ---| "Left Bottom"
 ---| "Left VCenter"
@@ -62,29 +62,29 @@
 
 ---MyGui, New & old Scrap Mechanic skins
 ---@alias ReGui.SkinType
----| "InventoryBackground" [Old Scrap Mechanic]
----| "VerticalScroll" [Old Scrap Mechanic]
----| "GenericButton" [Old Scrap Mechanic]
----| "LeftArrow" [Old Scrap Mechanic]
----| "RightArrow" [Old Scrap Mechanic]
+---| "InventoryBackground" # [Old Scrap Mechanic]
+---| "VerticalScroll" # [Old Scrap Mechanic]
+---| "GenericButton" # [Old Scrap Mechanic]
+---| "LeftArrow" # [Old Scrap Mechanic]
+---| "RightArrow" # [Old Scrap Mechanic]
 ---| "TransparentTextBox"
----| "TabButton" [Old Scrap Mechanic]
+---| "TabButton" # [Old Scrap Mechanic]
 ---| "CameraBorder"
 ---| "SelectionFieldBox"
----| "InventoryVScroll" [Old Scrap Mechanic]
----| "DebugHSlider" [Old Scrap Mechanic]
+---| "InventoryVScroll" # [Old Scrap Mechanic]
+---| "DebugHSlider" # [Old Scrap Mechanic]
 ---| "SMEditBox"
----| "SMButton" [Old Scrap Mechanic]
+---| "SMButton" # [Old Scrap Mechanic]
 ---| "SMWhiteButton"
----| "SMSmallButton" [Old Scrap Mechanic]
+---| "SMSmallButton" # [Old Scrap Mechanic]
 ---| "SMTextBox_NoBackground"
 ---| "SMTextBox_Small_NoBackground"
----| "SMListBoxItem" [Old Scrap Mechanic]
----| "SMListBox" [Old Scrap Mechanic]
----| "SMTabHeaderButton" [Old Scrap Mechanic]
----| "SMTabControl" [Old Scrap Mechanic]
+---| "SMListBoxItem" # [Old Scrap Mechanic]
+---| "SMListBox" # [Old Scrap Mechanic]
+---| "SMTabHeaderButton" # [Old Scrap Mechanic]
+---| "SMTabControl" # [Old Scrap Mechanic]
 ---| "SMEmptyScrollView"
----| "SMScrollView" [Old Scrap Mechanic]
+---| "SMScrollView" # [Old Scrap Mechanic]
 ---| "HyperTextLine"
 ---| "TileEditorHyperTextBox"
 ---| "PanelEmpty"
@@ -93,88 +93,88 @@
 ---| "ImageBox"
 ---| "Canvas"
 ---| "EditClientSkin"
----| "CheckBoxSkin" [Old MyGui]
----| "RadioButtonSkin" [Old MyGui]
----| "ButtonCloseSkin" [Old MyGui]
----| "ButtonDownSkin" [Old MyGui]
----| "ButtonUpSkin" [Old MyGui]
----| "ButtonLeftSkin" [Old MyGui]
----| "ButtonRightSkin" [Old MyGui]
----| "SliderTrackVSkin" [Old MyGui]
----| "ScrollTrackVSkin" [Old MyGui]
----| "SliderTrackHSkin" [Old MyGui]
----| "ScrollTrackHSkin" [Old MyGui]
----| "ButtonSkin" [Old MyGui]
----| "ButtonEmptySkin" [Old MyGui]
----| "EditBoxSkin" [Old MyGui]
----| "MenuBarSkin" [Old MyGui]
----| "MenuItemSkin" [Old MyGui]
----| "ScrollPanelHSkin" [Old MyGui]
----| "ScrollPanelVSkin" [Old MyGui]
----| "ListBoxItemSkin" [Old MyGui]
----| "SepDownHSkin" [Old MyGui]
----| "SepUpHSkin" [Old MyGui]
----| "SepDownVSkin" [Old MyGui]
----| "SepUpVSkin" [Old MyGui]
----| "ClientDefaultSkin" [Old MyGui]
----| "ClientTileSkin" [Old MyGui]
----| "PanelSkin" [Old MyGui]
+---| "CheckBoxSkin" # [Old MyGui]
+---| "RadioButtonSkin" # [Old MyGui]
+---| "ButtonCloseSkin" # [Old MyGui]
+---| "ButtonDownSkin" # [Old MyGui]
+---| "ButtonUpSkin" # [Old MyGui]
+---| "ButtonLeftSkin" # [Old MyGui]
+---| "ButtonRightSkin" # [Old MyGui]
+---| "SliderTrackVSkin" # [Old MyGui]
+---| "ScrollTrackVSkin" # [Old MyGui]
+---| "SliderTrackHSkin" # [Old MyGui]
+---| "ScrollTrackHSkin" # [Old MyGui]
+---| "ButtonSkin" # [Old MyGui]
+---| "ButtonEmptySkin" # [Old MyGui]
+---| "EditBoxSkin" # [Old MyGui]
+---| "MenuBarSkin" # [Old MyGui]
+---| "MenuItemSkin" # [Old MyGui]
+---| "ScrollPanelHSkin" # [Old MyGui]
+---| "ScrollPanelVSkin" # [Old MyGui]
+---| "ListBoxItemSkin" # [Old MyGui]
+---| "SepDownHSkin" # [Old MyGui]
+---| "SepUpHSkin" # [Old MyGui]
+---| "SepDownVSkin" # [Old MyGui]
+---| "SepUpVSkin" # [Old MyGui]
+---| "ClientDefaultSkin" # [Old MyGui]
+---| "ClientTileSkin" # [Old MyGui]
+---| "PanelSkin" # [Old MyGui]
 ---| "WhiteSkin"
----| "CaptionEmptySkin" [Old MyGui]
----| "CaptionSkin" [Old MyGui]
----| "CaptionWithButtonSkin" [Old MyGui]
----| "WindowFrameSkin" [Old MyGui]
----| "WindowResizeLeftDownSkin" [Old MyGui]
----| "WindowResizeRightDownSkin" [Old MyGui]
----| "TabHeaderButtonSkin" [Old MyGui]
----| "TabHeaderEmptySkin" [Old MyGui]
----| "TabPanelSkin" [Old MyGui]
----| "MenuItemNormalSkin" [Old MyGui]
----| "MenuItemPopupButtonSkin" [Old MyGui]
----| "MenuItemCheckButtonSkin" [Old MyGui]
----| "ProgressBarTrackHSkin" [Old MyGui]
----| "MultiListButtonSkin" [Old MyGui]
----| "CheckBox" [Old MyGui]
----| "RadioButton" [Old MyGui]
----| "ScrollBarH" [Old MyGui]
----| "ScrollBarV" [Old MyGui]
----| "SliderH" [Old MyGui]
----| "SliderV" [Old MyGui]
----| "SliderHEmpty" [Old MyGui]
----| "SliderVEmpty" [Old MyGui]
----| "Button" [Old MyGui]
+---| "CaptionEmptySkin" # [Old MyGui]
+---| "CaptionSkin" # [Old MyGui]
+---| "CaptionWithButtonSkin" # [Old MyGui]
+---| "WindowFrameSkin" # [Old MyGui]
+---| "WindowResizeLeftDownSkin" # [Old MyGui]
+---| "WindowResizeRightDownSkin" # [Old MyGui]
+---| "TabHeaderButtonSkin" # [Old MyGui]
+---| "TabHeaderEmptySkin" # [Old MyGui]
+---| "TabPanelSkin" # [Old MyGui]
+---| "MenuItemNormalSkin" # [Old MyGui]
+---| "MenuItemPopupButtonSkin" # [Old MyGui]
+---| "MenuItemCheckButtonSkin" # [Old MyGui]
+---| "ProgressBarTrackHSkin" # [Old MyGui]
+---| "MultiListButtonSkin" # [Old MyGui]
+---| "CheckBox" # [Old MyGui]
+---| "RadioButton" # [Old MyGui]
+---| "ScrollBarH" # [Old MyGui]
+---| "ScrollBarV" # [Old MyGui]
+---| "SliderH" # [Old MyGui]
+---| "SliderV" # [Old MyGui]
+---| "SliderHEmpty" # [Old MyGui]
+---| "SliderVEmpty" # [Old MyGui]
+---| "Button" # [Old MyGui]
 ---| "ButtonImage"
 ---| "TextBox"
----| "EditBox" [Old MyGui]
----| "EditBoxStretch" [Old MyGui]
+---| "EditBox" # [Old MyGui]
+---| "EditBoxStretch" # [Old MyGui]
 ---| "EditBoxEmpty"
 ---| "WordWrapEmpty"
----| "ComboBox" [Old MyGui]
----| "Window" [Old MyGui]
----| "WindowC" [Old MyGui]
----| "WindowCS" [Old MyGui]
----| "WindowCX" [Old MyGui]
----| "WindowCSX" [Old MyGui]
----| "MenuBar" [Old MyGui]
----| "MenuBarButton" [Old MyGui]
----| "MenuBarSeparator" [Old MyGui]
----| "PopupMenu" [Old MyGui]
----| "PopupMenuSeparator" [Old MyGui]
----| "PopupMenuNormal" [Old MyGui]
----| "PopupMenuPopup" [Old MyGui]
----| "ProgressBar" [Old MyGui]
----| "ProgressBarFill" [Old MyGui]
----| "ListBoxItem" [Old MyGui]
----| "ListBox" [Old MyGui]
----| "ItemBox" [Old MyGui]
----| "ItemBoxEmpty" [Old MyGui]
----| "ScrollView" [Old MyGui]
----| "ScrollViewEmpty" [Old MyGui]
----| "TabHeaderButton" [Old MyGui]
----| "TabControl" [Old MyGui]
----| "MultiListBox" [Old MyGui]
----| "MultiListButton" [Old MyGui]
----| "MultiSubListBox" [Old MyGui]
+---| "ComboBox" # [Old MyGui]
+---| "Window" # [Old MyGui]
+---| "WindowC" # [Old MyGui]
+---| "WindowCS" # [Old MyGui]
+---| "WindowCX" # [Old MyGui]
+---| "WindowCSX" # [Old MyGui]
+---| "MenuBar" # [Old MyGui]
+---| "MenuBarButton" # [Old MyGui]
+---| "MenuBarSeparator" # [Old MyGui]
+---| "PopupMenu" # [Old MyGui]
+---| "PopupMenuSeparator" # [Old MyGui]
+---| "PopupMenuNormal" # [Old MyGui]
+---| "PopupMenuPopup" # [Old MyGui]
+---| "ProgressBar" # [Old MyGui]
+---| "ProgressBarFill" # [Old MyGui]
+---| "ListBoxItem" # [Old MyGui]
+---| "ListBox" # [Old MyGui]
+---| "ItemBox" # [Old MyGui]
+---| "ItemBoxEmpty" # [Old MyGui]
+---| "ScrollView" # [Old MyGui]
+---| "ScrollViewEmpty" # [Old MyGui]
+---| "TabHeaderButton" # [Old MyGui]
+---| "TabControl" # [Old MyGui]
+---| "MultiListBox" # [Old MyGui]
+---| "MultiListButton" # [Old MyGui]
+---| "MultiSubListBox" # [Old MyGui]
 ---| "TextureBox"
 ---| "WhiteButton"
 ---| "SMEditorListBox"
@@ -1154,9 +1154,15 @@
 
 ---Coordinate storage mode for a widget.
 ---@alias ReGui.CoordinateMode
----| "Pixels" Coordinates are stored as integer pixel values.
----| "Real"   Coordinates are stored as real units (0–1, relative to parent size or screen size).
+---| "Pixels" # Coordinates are stored as integer pixel values.
+---| "Real" # Coordinates are stored as real units (0–1, relative to parent size or screen size).
 
+---Controller type for a widget's controller.
+---@alias ReGui.ControllerType
+---| "ControllerEdgeHide" # Hides the widget by sliding it off-screen when it and its children lose focus, leaving a small portion visible. Slides back in when focus is regained.
+---| "ControllerFadeAlpha" # Smoothly changes the widget's alpha over time.
+---| "ControllerPosition" # Smoothly changes the widget's position over time.
+---
 ---sm.regui, ReDoing Graphical User Interfaces
 sm.regui = {}
 
@@ -1177,6 +1183,11 @@ function sm.regui.createFullscreenInterfaceFromLayout(path) end
 ---Creates an empty FullscreenInterface
 ---@return ReGui.FullscreenInterface fullscreeninterface The created FullscreenInterface object
 function sm.regui.createFullscreenInterface() end
+
+---Creates a new controller
+---@param type ReGui.ControllerType The type of controller to create
+---@return ReGui.ControllerBase controller The created controller
+function sm.regui.createController(type) end
 
 --- UTILS --
 
@@ -1782,11 +1793,170 @@ function Widget:isTranslationEnabled() end
 ---@param enabled boolean True to enable translation, false to disable.
 function Widget:setTranslationEnabled(enabled) end
 
+---Gets all controllers attached to this widget.
+---@return ReGui.ControllerBase[] controllers A list of attached controllers.
+function Widget:getControllers() end
+
+---Creates a new controller of the specified type and attaches it to this widget.
+---@param type ReGui.ControllerType The type of controller to create.
+---@return ReGui.ControllerBase controller The created controller.
+function Widget:createController(type) end
+
 ---Renders this widget and its children into a MyGUI layout XML fragment.
 ---@param indentationLevel number? The base indentation level for pretty rendering. Defaults to 0.
 ---@param prettify boolean? Whether to render with indentation and line breaks. Defaults to false.
 ---@return string output The rendered XML fragment for this widget and its subtree.
 function Widget:renderWidget(indentationLevel, prettify) end
+
+---A MyGui base widget controller that can be attached to a widget that modifies its behavior over time.
+---@class ReGui.ControllerBase
+local ControllerBase = {}
+
+---Clones this controller and returns the new instance.
+---@return ReGui.ControllerBase clone The cloned controller.
+function ControllerBase:clone() end
+
+---Destroys this controller, removing it from its parent widget and freeing associated resources.
+function ControllerBase:destroy() end
+
+---Gets the parent widget of this controller.
+---@return ReGui.Widget? parent The parent widget, or nil if this controller is not attached
+function ControllerBase:getParent() end
+
+---Sets the parent widget of this controller. Pass nil to detach this controller from its current parent.
+---@param parent ReGui.Widget? The new parent widget, or nil to detach.
+function ControllerBase:setParent(parent) end
+
+---Gets the type of this controller.
+---@return ReGui.ControllerType type The type of this controller.
+function ControllerBase:getType() end
+
+---Renders this controller into a MyGUI layout XML fragment.
+---@param indentationLevel number? The base indentation level for pretty rendering. Defaults to 0.
+---@param prettify boolean? Whether to render with indentation and line breaks. Defaults to false.
+---@return string output The rendered XML fragment for this controller.
+function ControllerBase:renderController(indentationLevel, prettify) end
+
+---ControllerPosition is a controller that smoothly changes the position and size of a widget over time.
+---@class ReGui.ControllerPosition : ReGui.ControllerBase
+local ControllerPosition = {}
+
+---Gets the coordinate of this controller.
+---@return number x The x-coordinate of the target position.
+---@return number y The y-coordinate of the target position.
+---@return number width The width of the target size.
+---@return number height The height of the target size.
+function ControllerPosition:getCoordinate() end
+
+---Gets the function path of this controller.
+---@return string? functionPath The function path, or nil if not set.
+function ControllerPosition:getFunctionPath() end
+
+---Gets the target position of this controller.
+---@return number x The x-coordinate of the target position.
+---@return number y The y-coordinate of the target position.
+function ControllerPosition:getPosition() end
+
+---Gets the target size of this controller.
+---@return number x The width of the target size.
+---@return number y The height of the target size.
+function ControllerPosition:getSize() end
+
+---Gets the duration of the position transition in seconds.
+---@return number? time The duration of the transition, or nil if not set.
+function ControllerPosition:getTime() end
+
+-- function ControllerPosition:setCoordinate(coordinate) end
+---Sets the coordinate of this controller.
+---@param x number? The x-coordinate of the target position. Defaults to previous value if not provided.
+---@param y number? The y-coordinate of the target position. Defaults to previous value if not provided.
+---@param width number? The width of the target size. Defaults to previous value if not provided.
+---@param height number? The height of the target size. Defaults to previous value if not provided.
+function ControllerPosition:setCoordinate(x, y, width, height) end
+
+---Sets the function path of this controller.
+---@param functionPath string? The function path to set, or nil to clear.
+function ControllerPosition:setFunctionPath(functionPath) end
+
+---Sets the target position of this controller.
+---@param x number? The x-coordinate of the target position. Defaults to previous value if not provided.
+---@param y number? The y-coordinate of the target position. Defaults to previous value if not provided.
+function ControllerPosition:setPosition(x, y) end
+
+---Sets the target size of this controller.
+---@param width number? The width of the target size. Defaults to previous value if not provided
+---@param height number? The height of the target size. Defaults to previous value if not provided
+function ControllerPosition:setSize(width, height) end
+
+---Sets the duration of the position transition in seconds.
+---@param time number?
+function ControllerPosition:setTime(time) end
+
+---ControllerFadeAlpha is a controller that smoothly fades the alpha (opacity) of a widget over time.
+---@class ReGui.ControllerFadeAlpha : ReGui.ControllerBase
+local ControllerFadeAlpha = {}
+
+---Gets the target alpha value of this controller.
+---@return number? alpha
+function ControllerFadeAlpha:getAlpha() end
+
+---Gets the fade coefficient (speed factor) of this controller.
+---@return number? coef
+function ControllerFadeAlpha:getCoef() end
+
+---(This is a convenience function of getCoef)
+---Gets the fade cofficient (speed factor) of this controller in seconds.
+---@return number? seconds The duration in seconds for the fade transition, or nil if not set
+function ControllerFadeAlpha:getCoefSeconds() end
+
+---Gets whether this controller is enabled.
+---@return boolean? enabled
+function ControllerFadeAlpha:isEnabled() end
+
+---Sets the target alpha value of this controller.
+---@param alpha number?
+function ControllerFadeAlpha:setAlpha(alpha) end
+
+---Sets the fade coefficient (speed factor) of this controller.
+---@param coef number?
+function ControllerFadeAlpha:setCoef(coef) end
+
+---(This is a convenience function of setCoef)
+---Sets the fade cofficient (speed factor) of this controller via seconds.
+---@param seconds number? The duration in seconds for the fade transition. If nil, the coefficient is cleared.
+function ControllerFadeAlpha:setCoefSeconds(seconds) end
+
+---Sets whether this controller is enabled.
+---@param enabled boolean?
+function ControllerFadeAlpha:setEnabled(enabled) end
+
+---ControllerEdgeHide is a controller that hides a widget by sliding it off the edge of the screen, leaving a configurable number of pixels visible.
+---@class ReGui.ControllerEdgeHide : ReGui.ControllerBase
+local ControllerEdgeHide = {}
+
+---Gets the number of pixels that remain visible when the widget is hidden at the screen edge.
+---@return integer? remainPixels
+function ControllerEdgeHide:getRemainPixels() end
+
+---Gets the size of the shadow rendered at the screen edge when the widget is hidden.
+---@return integer? shadowSize
+function ControllerEdgeHide:getShadowSize() end
+
+---Sets the number of pixels that remain visible when the widget is hidden at the screen edge.
+---@param remainPixels integer?
+function ControllerEdgeHide:setRemainPixels(remainPixels) end
+
+---Sets the size of the shadow rendered at the screen edge when the widget is hidden.
+---@param shadowSize integer?
+function ControllerEdgeHide:setShadowSize(shadowSize) end
+
+---Gets the duration of the edge hide transition in seconds.
+---@return number? time The duration of the transition, or nil if not set.
+function ControllerEdgeHide:getTime() end
+
+---Sets the duration of the edge hide transition in seconds.
+---@param time number?
+function ControllerEdgeHide:setTime(time) end
 
 ---Manages text for proper updating & translation
 ---@class ReGui.TextManager
