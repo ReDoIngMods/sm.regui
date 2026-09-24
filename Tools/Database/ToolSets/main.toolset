@@ -1,10 +1,13 @@
 {
 	"toolList": [
 		{
-			"uuid": "a4f45ac4-99e4-4d01-b787-f8897dc442db",
+			"uuid": "03ec3c4c-6e3c-4c61-8365-d67b159434aa",
 			"showInInventory": false,
 			"autoTool": true,
-			"script": { "class": "MainToolClass", "file": "$CONTENT_DATA/Scripts/MainTool.lua" }
+			"script": {
+				"class": "LoaderToolClass",
+				"file": "$CONTENT_DATA/Scripts/Game/LoaderTool.lua"
+			}
 		}
 	]
 }

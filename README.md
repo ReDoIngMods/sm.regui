@@ -1,49 +1,55 @@
-<img alt="Thumbnail" src="preview.png" style="width: 100%; height: auto;" />
+<img src="preview.jpg" alt="preview" width="100%" />
 
----
 
-<h1 align="center">A Community-Based GUI Library for Scrap Mechanic</h1>
+<h1 align="center">
+    <code>SM.REGUI</code> | Remaking MyGui in MyGui, while being better
+</h1>
 
-`sm.regui` is a [**Scrap Mechanic**](https://store.steampowered.com/app/387990/Scrap_Mechanic/) library mod that allows modders to create graphical user interfaces that are normally not possible with `sm.gui`.
+sm.regui (or simply just call it *ReGui*) is a GUI library built on top of JsonGui from Scrap Mechanic, designed to make it stupidly easy to make quality GUIs for your mods. Originally made on-top of the outdated system of GuiInterface's via a unintended workaround, now is built with JsonGui's.
+
+## TODO
 
 > [!NOTE]
-> Thanks to **The Red Builder**, I have been able to create this GUI library for all modders out there! Without him, this library wouldn’t even exist and none of this would've been possible.
-
-With `sm.regui`, you can:
-- **Create, destroy, and fully control widgets**
-- Use a flexible template system
-- Support fullscreen GUIs (allowing widgets to be placed anywhere on the screen and adapt to all in-game resolutions)
-- Use functions that are now implemented! (e.g., `GuiInterface:setData`)
-- Easily translate text with a built-in translation system
-- Draw any font you desire in any rotation*
-- Create lists with the flexible widgets API.
-- Play high-quality compressed 720p video.
-
-For examples, check out the [Examples](/Examples/) directory!  
-For documentation, refer to the [ReGuiDef.lua](/ReGuiDef.lua) definition file!
-
----
-<h3 align="center">Notes about this library:</h3>
+> Anything marked with a star (`*`) means it may be scrapped!
 
 > [!IMPORTANT]
-> This GUI library uses a JSON bug that allows modders to create MyGui Layout Files! As a result, the library may break in future game updates.
+> There may be more to than what's listed here, but this is the main list of things that need to be done.
 
-> [!CAUTION]
-> **Consider optimization if you're using `sm.regui` for animations, etc.**
->   
-> The JSON bug being used will result in bloated files that **cannot be deleted without user assistance**.  
-> 
-> For example, Anything related for positioning and resizing (as a animation) should be done with controllers to reduce bloat.
+- [ ] Implement widget system
+    - [ ] Implement renderer
+    - [ ] Implement being able to create widget types out of pure code
+    - [ ] Inheritance system for widgets
 
-> [!NOTE]
-> The latest known version that works with this library is: `Scrap Mechanic BETA Ver 0.7.3 Build 776`
+- [ ] Basic Widgets
+    - [ ] Widget
+    - [ ] Label (inherits: `Widget`)
+    - [ ] Button (inherits: `Label`)
+    - [ ] Image (inherits: `Widget`)
+    - [ ] EditBox (inherits: `TextBox`)
+    - [ ] ProgressBar (inherits: `Widget`)
 
-> [!WARNING]
-> **Not Supported in MyGui LayoutEditor**
-> 
-> `sm.regui` uses a custom layout file structure (called relayout with the .relayout extension) that wont work with the **MyGui Layout** editor at all!
-> 
-> If you want to create `relayout` files, you only got a few choices:
-> -  Use a editor like ~~[MyGui.NET For SM](https://github.com/ReDoIngMods/MyGui.net-For-SM)~~ *(Note: MyGui.NET For SM does **not** support this yet, but support is planned.)*
-> - Write the relayout file manually.
-> - Use a `.layout` to `.relayout` converter. (One provided in DevTools/LayoutToRelayout/)
+- [ ] Advanced Widgets
+    - [ ] VideoWidget (inherits: `Widget`)
+    - [ ] RichTextBox (inherits: `TextBox`)
+    - [ ] RichEditBox (inherits: `RichTextBox`)
+
+- [ ] UI Components
+    - [ ] UIAspectRatioConstraint
+    - [ ] UISizeConstraint
+    - [ ] UIFlexItem
+    - [ ] UIGridLayout
+    - [ ] UIListLayout
+    - [ ] UIPageLayout
+    - [ ] UITableLayout*
+    - [ ] UIPadding
+    - [ ] UIMargin
+
+- [ ] Layout System
+    - [ ] Create a compact version of .relayout to save space
+    - [ ] Implement loading .relayout files
+    - [ ] Implement saving .relayout files
+    - [ ] Implement loading/saving raw JsonGui files
+
+- [ ] Rendering Pipelines
+    - [ ] 3D Renderer (why the fuck not)
+    - [ ] 2D Renderer

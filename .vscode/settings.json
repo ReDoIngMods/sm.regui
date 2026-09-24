@@ -1,7 +1,7 @@
 {
     "Lua.runtime.version": "LuaJIT",
     "Lua.workspace.library": [
-        "sm.lua",
+        "meta/sm.lua"
     ],
     "Lua.diagnostics.disable": [
         "duplicate-set-field",
@@ -17,15 +17,19 @@
         "assign-type-mismatch",
         "redefined-local",
         "cast-local-type",
-        "redundant-return-value"
+        "redundant-return-value",
+        "missing-return",
+        "return-type-mismatch"
     ],
     "files.associations": {
         "*.layout": "xml",
         "*.json": "jsonc",
+        "*.shapeset": "jsonc",
+        "*.shapedb": "jsonc",
+        "*.rotationset": "jsonc",
+        "*.rend": "jsonc",
+        "*.effectset": "jsonc",
         "*.tooldb": "jsonc",
         "*.toolset": "jsonc",
-        "*.relayout": "jsonc",
-        "*.shapedb": "jsonc",
-        "*.shapeset": "jsonc"
     }
 }
