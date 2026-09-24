@@ -1,4 +1,4 @@
-print("sm.regui Hello, World!")
+dofile("$CONTENT_DATA/Scripts/Library/LibraryLoader.lua")
 
 ---@class LoaderToolClass : ToolClass
 LoaderToolClass = class()

@@ -11,7 +11,7 @@
             "renderable": "$GAME_DATA/Objects/Renderable/Interactive/obj_interactive_logicgate.rend",
             "rotationSet": "PropYZ",
             "scripted": {
-                "classname": "DebugInteractable",
+                "classname": "DebugInteractableClass",
                 "filename": "$CONTENT_DATA/Scripts/Debug/DebugInteractable.lua"
             },
             "sticky": "-X+X-Y+Y-Z+Z",
