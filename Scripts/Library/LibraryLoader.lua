@@ -1,6 +1,8 @@
 sm.regui = type(sm.regui) == "table" and sm.regui or {}
 
-dofile("$CONTENT_DATA/Scripts/Modules/Console.lua")
+local modules = sm.json.open("$CONTENT_DATA/Scripts/Modules/modules.json", true)
+for _, modulePath in ipairs(modules.modules) do
+    dofile(modulePath)
 
-print("Scrap Mechanic: " .. sm.version)
-print("ReGuiEditor detected: " .. (reguieditor and "true (" .. reguieditor.version .. ")" or "false"))
+    print("Loaded module: " .. modulePath)
+end

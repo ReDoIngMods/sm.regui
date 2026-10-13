@@ -47,4 +47,7 @@ assert = function(condition, ...)
     end
 end
 
-print("Initialized ReGui Console")
+print("Scrap Mechanic: " .. sm.version)
+print("ReGuiEditor detected: " .. (reguieditor and "true (" .. reguieditor.version .. ")" or "false"))
+
+print("Initialized ReGuiConsole")
