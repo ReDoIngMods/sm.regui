@@ -1,5 +1,8 @@
 dofile("$CONTENT_DATA/Scripts/Library/LibraryLoader.lua")
 
+---@type JsonGui?
+local gui = nil
+
 ---Called when the editor is updating.
 ---@param deltaTime number The time in seconds since the last update.
 function OnUpdate(deltaTime)
@@ -15,7 +18,11 @@ end
 ---@param layoutPath string The path to the layout file to load.
 ---@return boolean success Whether the layout was successfully loaded. If false, the editor will not load the layout.
 function LoadLayout(layoutPath)
-    print("Loading layout...", layoutPath)
+    if not gui then
+        gui = sm.jsonGui.createGui({})
+    end
+
+    gui:render(sm.json.open(layoutPath))
     return true
 end
 
