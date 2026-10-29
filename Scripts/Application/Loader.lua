@@ -14,8 +14,9 @@ end
 ---Called when the editor wants to load a new layout
 ---@param layoutPath string The path to the layout file to load.
 ---@return boolean success Whether the layout was successfully loaded. If false, the editor will not load the layout.
-function OnLoadLayout(layoutPath)
-    return false
+function LoadLayout(layoutPath)
+    print("Loading layout...", layoutPath)
+    return true
 end
 
 ---Called when the editor wants to get the layout tree for the current layout. This is used to display the Explorer panel in the editor.
