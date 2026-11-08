@@ -1,0 +1,30 @@
+{
+    "x" : 0,
+    "y" : 0,
+    "width" : 1706,
+    "height" : 720,
+    "Type" : "Widget",
+    "Skin" : "WhiteSkin",
+    "Colour" : "1 0 0",
+    "Childs" : 
+    [
+        {
+            "x" : 0,
+            "y" : 0,
+            "width": 100,
+            "height": 100,
+            "Type" : "Widget",
+            "Skin" : "WhiteSkin",
+            "Colour" : "0 1 0"
+        },
+        {
+            "x" : 1180,
+            "y" : 620,
+            "width": 100,
+            "height": 100,
+            "Type" : "Widget",
+            "Skin" : "WhiteSkin",
+            "Colour" : "0 0 1"
+        }
+    ]
+}

@@ -1,56 +1,66 @@
 dofile("$CONTENT_DATA/Scripts/Library/LibraryLoader.lua")
 
----@type JsonGui?
-local gui = nil
+LoaderClass = class()
+
+---Called when the editor is starting up.
+function LoaderClass:init()
+    if self.gui then
+        self.gui:close()
+    end
+
+    self.gui = sm.jsonGui.createGui()
+    self.guiData = nil
+end
+
+---Called when the script reloads.
+function LoaderClass:refresh()
+    self:init()
+end
 
 ---Called when the editor is updating.
 ---@param deltaTime number The time in seconds since the last update.
-function OnUpdate(deltaTime)
+function LoaderClass:update(deltaTime)
 
 end
 
 ---Called on a 40 TPS interval. Recommended to put your non-render logic here.
-function OnTick()
+function LoaderClass:tick()
 
 end
 
 ---Called when the editor wants to load a new layout
 ---@param layoutPath string The path to the layout file to load.
 ---@return boolean success Whether the layout was successfully loaded. If false, the editor will not load the layout.
-function LoadLayout(layoutPath)
-    if not gui then
-        gui = sm.jsonGui.createGui({})
+function LoaderClass:loadLayout(layoutPath)
+    local success, data = pcall(sm.json.open, layoutPath, true)
+    if not success then
+        print("Failed to read file " .. layoutPath .. ": " .. data)
+        return false
     end
 
-    gui:render(sm.json.open(layoutPath))
+    self.guiData = data
+    self.gui:render(data)
+
     return true
 end
 
 ---Called when the editor wants to get the layout tree for the current layout. This is used to display the Explorer panel in the editor.
 ---@return ReGuiEditor.LayoutTreeNode[]? layoutTreeRoot The layout tree for the current layout, or nil if the layout tree is not available.
-function GetLayoutTree()
+function LoaderClass:getLayoutTree()
     return nil
 end
 
 ---Called whether the editor needs information about a widget type. This is used to display the properties panel for the widget.
 ---@param widgetType string The type of the widget to get information about.
 ---@return ReGuiEditor.WidgetInfo? widgetInfo The information about the widget type, or nil if not found.
-function GetWidgetInfo(widgetType)
+function LoaderClass:getWidgetInfo(widgetType)
     return nil
 end
 
 ---Called when the editor requests the properties values of a widget.
 ---@param uniqueId Uuid The unique ID of the widget to get the property value for.
 ---@return ReGuiEditor.WidgetProperties? widgetProperties The properties of the widget, or nil if not found.
-function GetWidgetProperties(uniqueId)
-    return nil
-end
-
----Returns a uniqueId for when the user presses on the mygui render view
----@param mousePositionX number The X position of the mouse in the render view.
----@param mousePositionY number The Y position of the mouse in the render view.
----@return Uuid? uniqueId The unique ID of the widget under the mouse position, or nil if no widget is under the mouse.
-function GetWidgetUnderMouse(mousePositionX, mousePositionY)
+function LoaderClass:getWidgetProperties(uniqueId)
     return nil
 end
 
@@ -59,6 +69,15 @@ end
 ---@param propertyName string The name of the property to set.
 ---@param propertyValue ReGuiEditor.WidgetPropertiesData The value of the property to set.
 ---@return boolean success Whether the property was successfully set. If false, the property will not be set.
-function SetWidgetProperty(uniqueId, propertyName, propertyValue)
+function LoaderClass:setWidgetProperty(uniqueId, propertyName, propertyValue)
     return false
 end
+
+---Returns a uniqueId for when the user presses on the mygui render view
+---@param mousePositionX number The X position of the mouse in the render view.
+---@param mousePositionY number The Y position of the mouse in the render view.
+---@return Uuid? uniqueId The unique ID of the widget under the mouse position, or nil if no widget is under the mouse.
+function LoaderClass:getWidgetUnderMouse(mousePositionX, mousePositionY)
+    return nil
+end
+

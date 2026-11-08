@@ -15,20 +15,17 @@ local sm_log_error = sm.log.error
 
 local table_concat = table.concat
 
-local function parseVariadicArguments(...)
-    return table_concat({ ... }, "\t", 1, select("#", ...))
-end
-
 for line in banner:gmatch("[^\n]+") do
     sm.log.info(line)
 end
 
+oldPrint = oldPrint or print
 print = function(...)
-    sm_log_info("[ReGui] INFO:", parseVariadicArguments(...))
+    sm_log_info("[ReGui] INFO:", ...)
 end
 
 warn = function(...)
-    sm_log_warning("[ReGui] WARNING:", parseVariadicArguments(...))
+    sm_log_warning("[ReGui] WARNING:", ...)
 end
 
 oldError = oldError or error
@@ -46,6 +43,8 @@ assert = function(condition, ...)
         oldError(message, 2)
     end
 end
+
+debugPrint = oldPrint
 
 print("Scrap Mechanic: " .. sm.version)
 print("ReGuiEditor detected: " .. (reguieditor and "true (" .. reguieditor.version .. ")" or "false"))

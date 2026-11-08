@@ -1,7 +1,5 @@
 sm.regui.errorHandler = {}
 
-local __getmetatable_unsafe = __getmetatable_unsafe or getmetatable
-
 local math_floor = math.floor
 local table_concat = table.concat
 local string_find = string.find
@@ -13,7 +11,7 @@ local function getRealType(value)
     local luaType = type(value)
     if luaType ~= "number" then
         if luaType == "table" then
-            local meta = __getmetatable_unsafe(value)
+            local meta = (__getmetatable_unsafe or getmetatable)(value)
             if type(meta) == "table" and type(meta.__type) == "string" then
                 return meta.__type
             end

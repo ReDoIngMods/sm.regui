@@ -1,0 +1,8 @@
+{
+    "version": 1,
+    "type": "Loader",
+    "script": {
+        "filename": "$CONTENT_DATA/Scripts/Application/Loader.lua",
+        "classname": "LoaderClass"
+    }
+}
