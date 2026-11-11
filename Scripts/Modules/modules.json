@@ -1,6 +1,5 @@
 {
     "modules": [
-        "$CONTENT_DATA/Scripts/Modules/Console.lua",
         "$CONTENT_DATA/Scripts/Modules/ErrorHandler.lua",
         "$CONTENT_DATA/Scripts/Modules/Metatable.lua"
     ]
